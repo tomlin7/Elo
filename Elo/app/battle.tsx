@@ -33,6 +33,7 @@ export default function BattleScreen() {
   const [showTelemetry, setShowTelemetry] = useState(false);
   const [fps, setFps] = useState(60);
   const [ping, setPing] = useState(12);
+  const [connectedRegion, setConnectedRegion] = useState("APAC-South");
 
   const wsRef = useRef<WebSocket | null>(null);
   const prevStateRef = useRef<any>(null);
@@ -45,6 +46,17 @@ export default function BattleScreen() {
   const [timeRemaining, setTimeRemaining] = useState(60);
 
   useEffect(() => {
+    // Geoping the closest edge region
+    const fetchRegion = async () => {
+      try {
+        const urls = getBackendUrls();
+        const res = await fetch(`${urls.http}/api/ping-region`);
+        const data = await res.json();
+        if (data.regionLabel) setConnectedRegion(data.regionLabel);
+      } catch {}
+    };
+    fetchRegion();
+
     // 1. Measure FPS
     let frames = 0;
     let lastFpsTime = Date.now();
@@ -388,7 +400,7 @@ export default function BattleScreen() {
             {showTelemetry && (
               <View style={[styles.telemetryPill, { backgroundColor: colors.cardBg, borderColor: colors.accentMuted }]}>
                 <Text style={[styles.telemetryDataText, { color: colors.text }]}>
-                  FPS: {fps} | PING: {ping}ms | LOSS: 0%
+                  FPS: {fps} | PING: {ping}ms [{connectedRegion}] | LOSS: 0%
                 </Text>
               </View>
             )}
