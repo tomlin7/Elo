@@ -109,6 +109,28 @@ db.run(`
   )
 `);
 
+// Planetary Database Shard Topology Directory
+db.run(`
+  CREATE TABLE IF NOT EXISTS cluster_shards (
+    id TEXT PRIMARY KEY,
+    region_code TEXT NOT NULL UNIQUE,
+    connection_string TEXT NOT NULL,
+    is_healthy INTEGER DEFAULT 1,
+    last_ping_timestamp INTEGER NOT NULL
+  )
+`);
+
+// Aggregated Infrastructure Health Snapshot
+db.run(`
+  CREATE TABLE IF NOT EXISTS system_metrics_snapshot (
+    timestamp INTEGER PRIMARY KEY,
+    active_connections INTEGER NOT NULL,
+    avg_ping_ms REAL NOT NULL,
+    active_rooms INTEGER NOT NULL,
+    anti_cheat_flags_count INTEGER NOT NULL
+  )
+`);
+
 // Run Migrations dynamically for Phase 2, 4 & 6 columns
 const addColumn = (col: string, defVal: string) => {
   try {
@@ -452,3 +474,56 @@ export const dbService = {
     return query.all() as any[];
   }
 };
+
+import { Database } from "bun:sqlite";
+
+export class ShardRouter {
+  static getShardDb(region: string): Database {
+    const rCode = region.toLowerCase();
+    const filename = `shard_${rCode}.db`;
+    const shardDb = new Database(filename);
+    shardDb.run(`
+      CREATE TABLE IF NOT EXISTS players (
+        id TEXT PRIMARY KEY,
+        username TEXT NOT NULL,
+        elo INTEGER NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    `);
+    return shardDb;
+  }
+
+  static routeRegistration(playerId: string, username: string, elo: number, region: string): void {
+    const sDb = this.getShardDb(region);
+    const insert = sDb.prepare(`
+      INSERT OR REPLACE INTO players (id, username, elo, created_at)
+      VALUES (?, ?, ?, ?)
+    `);
+    insert.run(playerId, username, elo, new Date().toISOString());
+  }
+
+  static getPlayerFromShard(playerId: string, region: string): any {
+    const sDb = this.getShardDb(region);
+    const select = sDb.prepare("SELECT * FROM players WHERE id = ?");
+    return select.get(playerId);
+  }
+}
+
+// Global leaderboard map-reduce consolidation loop (runs every 10 seconds)
+setInterval(() => {
+  try {
+    const apacDb = ShardRouter.getShardDb("apac");
+    const euDb = ShardRouter.getShardDb("eu");
+    const usDb = ShardRouter.getShardDb("us");
+
+    const fetchAll = (sDb: Database) => sDb.query("SELECT * FROM players").all() as any[];
+    const allPlayers = [...fetchAll(apacDb), ...fetchAll(euDb), ...fetchAll(usDb)];
+
+    allPlayers.forEach(p => {
+      db.run(`
+        INSERT OR REPLACE INTO players (id, username, elo, is_guest, created_at)
+        VALUES (?, ?, ?, 1, ?)
+      `, [p.id, p.username, p.elo, p.created_at]);
+    });
+  } catch {}
+}, 10000);
