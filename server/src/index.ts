@@ -3,7 +3,7 @@ import { dbService } from "./db.ts";
 import { Matchmaker } from "./matchmaker.ts";
 import { GameManager } from "./game.ts";
 
-const ClientAction = elo.v1.ClientAction;
+const ClientAction = elo.v2.ClientAction;
 
 // Start matchmaker ticker
 Matchmaker.start();
