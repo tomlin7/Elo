@@ -247,10 +247,10 @@ export class GameRoom {
       player.lastKeystrokeTime = clientTime;
     }
 
-    if (action.currentInput !== undefined || action.payload === "currentInput") {
+    if (action.payload === "currentInput") {
       player.ghostInput = action.currentInput || "";
       this.broadcastState();
-    } else if (action.submittedAnswer !== undefined || action.payload === "submittedAnswer") {
+    } else if (action.payload === "submittedAnswer") {
       const submitted = action.submittedAnswer || "";
       const currentQuestion = this.questions[player.questionIndex];
       player.ghostInput = submitted;
