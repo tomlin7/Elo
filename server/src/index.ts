@@ -2,8 +2,12 @@ import { elo } from "./proto/elo_proto.js";
 import { dbService } from "./db.ts";
 import { Matchmaker } from "./matchmaker.ts";
 import { GameManager } from "./game.ts";
+import { TournamentManager } from "./tournament.ts";
 
-const ClientAction = elo.v2.ClientAction;
+const ClientAction = elo.v3.ClientAction;
+const ServerGameStateUpdate = elo.v3.ServerGameStateUpdate;
+const MatchState = elo.v3.MatchState;
+const RoomType = elo.v3.RoomType;
 
 // Start matchmaker ticker
 Matchmaker.start();
@@ -185,6 +189,31 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
           console.log(`Join Queue Request for ${pId}`);
           Matchmaker.join(pId, ws);
           ws.data.playerId = pId;
+        } else if (action.payload === "joinTournamentPlayerId") {
+          console.log(`Join Tournament Request for ${action.joinTournamentPlayerId}`);
+          TournamentManager.joinQueue(action.joinTournamentPlayerId, ws);
+          ws.data.playerId = action.joinTournamentPlayerId;
+        } else if (action.payload === "spectateRoomId") {
+          console.log(`Spectate Room Request for ${action.spectateRoomId}`);
+          const room = GameManager.getRoom(action.spectateRoomId);
+          if (room) {
+            room.spectators.push(ws);
+            room.broadcastState();
+          }
+        } else if (action.payload === "emojiBurst") {
+          const room = GameManager.getRoom(action.roomId);
+          if (room && action.emojiBurst) {
+            const burstUpdate = ServerGameStateUpdate.create({
+              roomId: action.roomId,
+              emojiBurst: action.emojiBurst
+            });
+            const burstBuffer = ServerGameStateUpdate.encode(burstUpdate).finish();
+            room.playerOne.socket?.send(burstBuffer);
+            room.playerTwo.socket?.send(burstBuffer);
+            room.spectators.forEach(s => {
+              try { s.send(burstBuffer); } catch {}
+            });
+          }
         } else if (action.payload === "createCustomRoom") {
           const code = GameManager.createPrivateLobby(action.playerId, ws, action.createCustomRoom);
           const responseUpdate = ServerGameStateUpdate.create({

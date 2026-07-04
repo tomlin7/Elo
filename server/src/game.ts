@@ -82,6 +82,7 @@ export class GameRoom {
   allowDivision: boolean = false;
   allowMultiplication: boolean = true;
   durationSeconds: number = 60;
+  spectators: any[] = [];
 
   private countdownTimer: Timer | null = null;
   private gameTimer: Timer | null = null;
@@ -108,6 +109,7 @@ export class GameRoom {
     this.playerOne = p1;
     this.playerTwo = p2;
     this.roomType = roomType;
+    this.spectators = [];
     this.privateRoomCode = privateRoomCode;
     this.allowDivision = allowDivision;
     this.allowMultiplication = allowMultiplication;
@@ -529,6 +531,20 @@ export class GameRoom {
       } catch (err) {
         console.error("Error sending update to P2:", err);
       }
+    }
+
+    // Broadcast to spectators
+    if (this.spectators.length > 0) {
+      const q1 = this.questions[this.playerOne.questionIndex]?.text || "";
+      const q2 = this.questions[this.playerTwo.questionIndex]?.text || "";
+      update.nextQuestionText = `${q1}|${q2}`;
+      
+      const buffer = ServerGameStateUpdate.encode(update).finish();
+      this.spectators.forEach(ws => {
+        try {
+          ws.send(buffer);
+        } catch {}
+      });
     }
   }
 }
