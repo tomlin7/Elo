@@ -83,6 +83,32 @@ db.run(`
   )
 `);
 
+// Community Plugin Registry Catalog
+db.run(`
+  CREATE TABLE IF NOT EXISTS community_plugins (
+    id TEXT PRIMARY KEY,
+    author_id TEXT NOT NULL,
+    plugin_name TEXT NOT NULL,
+    version_tag TEXT NOT NULL,
+    source_url TEXT NOT NULL,
+    sha256_fingerprint TEXT NOT NULL,
+    is_verified INTEGER DEFAULT 0,
+    created_at INTEGER NOT NULL
+  )
+`);
+
+// Generative Problem Templates Index
+db.run(`
+  CREATE TABLE IF NOT EXISTS problem_templates (
+    id TEXT PRIMARY KEY,
+    mode_name TEXT NOT NULL,
+    difficulty_tier INTEGER NOT NULL,
+    template_json TEXT NOT NULL,
+    is_active INTEGER DEFAULT 1,
+    created_at INTEGER NOT NULL
+  )
+`);
+
 // Run Migrations dynamically for Phase 2, 4 & 6 columns
 const addColumn = (col: string, defVal: string) => {
   try {
@@ -384,5 +410,45 @@ export const dbService = {
       WHERE id = $id
     `);
     update.run({ $version: version, $now: Date.now(), $id: playerId });
+  },
+
+  registerPlugin(plugin: { id: string; authorId: string; pluginName: string; versionTag: string; sourceUrl: string; sha256Fingerprint: string }): void {
+    const query = db.query(`
+      INSERT OR REPLACE INTO community_plugins (id, author_id, plugin_name, version_tag, source_url, sha256_fingerprint, created_at)
+      VALUES ($id, $authorId, $pluginName, $versionTag, $sourceUrl, $sha256, $now)
+    `);
+    query.run({
+      $id: plugin.id,
+      $authorId: plugin.authorId,
+      $pluginName: plugin.pluginName,
+      $versionTag: plugin.versionTag,
+      $sourceUrl: plugin.sourceUrl,
+      $sha256: plugin.sha256Fingerprint,
+      $now: Date.now()
+    });
+  },
+
+  getVerifiedPlugins(): any[] {
+    const query = db.query("SELECT * FROM community_plugins WHERE is_verified = 1 ORDER BY created_at DESC");
+    return query.all() as any[];
+  },
+
+  saveProblemTemplate(template: { id: string; modeName: string; difficultyTier: number; templateJson: string }): void {
+    const query = db.query(`
+      INSERT OR REPLACE INTO problem_templates (id, mode_name, difficulty_tier, template_json, created_at)
+      VALUES ($id, $modeName, $difficulty, $template, $now)
+    `);
+    query.run({
+      $id: template.id,
+      $modeName: template.modeName,
+      $difficulty: template.difficultyTier,
+      $template: template.templateJson,
+      $now: Date.now()
+    });
+  },
+
+  getActiveTemplates(): any[] {
+    const query = db.query("SELECT * FROM problem_templates WHERE is_active = 1");
+    return query.all() as any[];
   }
 };
