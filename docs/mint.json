@@ -1,54 +1,39 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "$schema": "https://mintlify.com/schema.json",
+  "theme": "venus",
   "name": "Elo",
   "colors": {
     "primary": "#6366F1",
     "light": "#818CF8",
     "dark": "#4F46E5"
   },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Player Guide",
-        "pages": [
-          "introduction",
-          "user-guide"
-        ]
-      },
-      {
-        "group": "Developer Portal",
-        "pages": [
-          "getting-started",
-          "architecture",
-          "tournaments"
-        ]
-      },
-      {
-        "group": "Protocol Specifications",
-        "pages": [
-          "api-reference/rest-endpoints",
-          "api-reference/websocket-protocol"
-        ]
-      }
-    ]
-  },
+  "navigation": [
+    {
+      "group": "Player Guide",
+      "pages": [
+        "introduction",
+        "user-guide"
+      ]
+    },
+    {
+      "group": "Developer Portal",
+      "pages": [
+        "getting-started",
+        "architecture",
+        "tournaments"
+      ]
+    },
+    {
+      "group": "Protocol Specifications",
+      "pages": [
+        "api-reference/rest-endpoints",
+        "api-reference/websocket-protocol"
+      ]
+    }
+  ],
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
   },
   "footer": {
     "socials": {
