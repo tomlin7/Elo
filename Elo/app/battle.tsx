@@ -34,6 +34,8 @@ export default function BattleScreen() {
   const [fps, setFps] = useState(60);
   const [ping, setPing] = useState(12);
   const [connectedRegion, setConnectedRegion] = useState("APAC-South");
+  const [packetLoss, setPacketLoss] = useState(0);
+  const [jitter, setJitter] = useState(0.8);
 
   const wsRef = useRef<WebSocket | null>(null);
   const prevStateRef = useRef<any>(null);
@@ -400,7 +402,7 @@ export default function BattleScreen() {
             {showTelemetry && (
               <View style={[styles.telemetryPill, { backgroundColor: colors.cardBg, borderColor: colors.accentMuted }]}>
                 <Text style={[styles.telemetryDataText, { color: colors.text }]}>
-                  FPS: {fps} | PING: {ping}ms [{connectedRegion}] | LOSS: 0%
+                  FPS: {fps} | PING: {ping}ms [{connectedRegion}] | LOSS: {packetLoss}% | JITTER: {jitter}ms
                 </Text>
               </View>
             )}
