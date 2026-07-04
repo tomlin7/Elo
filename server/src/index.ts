@@ -3,11 +3,15 @@ import { dbService } from "./db.ts";
 import { Matchmaker } from "./matchmaker.ts";
 import { GameManager } from "./game.ts";
 import { TournamentManager } from "./tournament.ts";
+import { ClusterManager } from "./cluster.ts";
 
 const ClientAction = elo.v3.ClientAction;
 const ServerGameStateUpdate = elo.v3.ServerGameStateUpdate;
 const MatchState = elo.v3.MatchState;
 const RoomType = elo.v3.RoomType;
+
+// Start cluster hot-standby replication
+ClusterManager.start();
 
 // Start matchmaker ticker
 Matchmaker.start();
@@ -33,6 +37,21 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
     // REST API routes
     if (url.pathname === "/api/ping") {
       return new Response("pong", { headers: corsHeaders });
+    }
+
+    if (url.pathname === "/api/ping-region" && req.method === "GET") {
+      return new Response(JSON.stringify({
+        closestZone: "REGION_ZONE_APAC_SOUTH",
+        regionLabel: "APAC-South",
+        nodes: [
+          { zone: "REGION_ZONE_APAC_SOUTH", label: "APAC-South", latencyMs: 24 },
+          { zone: "REGION_ZONE_EU_CENTRAL", label: "EU-Central", latencyMs: 142 },
+          { zone: "REGION_ZONE_US_EAST", label: "US-East", latencyMs: 220 },
+          { zone: "REGION_ZONE_ME_CENTRAL", label: "ME-Central", latencyMs: 88 }
+        ]
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
     if (url.pathname === "/api/auth/guest" && req.method === "POST") {
