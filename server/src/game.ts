@@ -18,6 +18,9 @@ export interface GamePlayer {
   questionIndex: number;
   level: number;
   activeTitle: string;
+  lastKeystrokeTime: number;
+  consecutiveFastInputs: number;
+  isFlaggedCheat: boolean;
 }
 
 interface Question {
@@ -225,6 +228,24 @@ export class GameRoom {
     if (this.state !== MatchState.MATCH_STATE_ACTIVE) return;
 
     const player = this.playerOne.id === playerId ? this.playerOne : this.playerTwo;
+
+    // Server-Side Anti-Cheat Keystroke Cadence Check
+    if (!player.isBot) {
+      const clientTime = action.timestamp ? Number(action.timestamp) : Date.now();
+      if (player.lastKeystrokeTime > 0) {
+        const delta = clientTime - player.lastKeystrokeTime;
+        if (delta > 0 && delta < 120) {
+          player.consecutiveFastInputs++;
+          if (player.consecutiveFastInputs >= 4 && !player.isFlaggedCheat) {
+            player.isFlaggedCheat = true;
+            console.warn(`[SECURITY ALERT] Player ${player.username} (${player.id}) flagged for bot-like cadence (<120ms consecutive inputs)`);
+          }
+        } else if (delta > 0) {
+          player.consecutiveFastInputs = 0;
+        }
+      }
+      player.lastKeystrokeTime = clientTime;
+    }
 
     if (action.currentInput !== undefined || action.payload === "currentInput") {
       player.ghostInput = action.currentInput || "";
@@ -537,7 +558,10 @@ class GameManagerClass {
       socket: p1Socket,
       questionIndex: 0,
       level: p1User ? p1User.level : 1,
-      activeTitle: p1User ? p1User.active_title : ""
+      activeTitle: p1User ? p1User.active_title : "",
+      lastKeystrokeTime: 0,
+      consecutiveFastInputs: 0,
+      isFlaggedCheat: false
     };
 
     const playerTwo: GamePlayer = {
@@ -552,7 +576,10 @@ class GameManagerClass {
       socket: p2Socket,
       questionIndex: 0,
       level: p2User ? p2User.level : 1,
-      activeTitle: p2User ? p2User.active_title : ""
+      activeTitle: p2User ? p2User.active_title : "",
+      lastKeystrokeTime: 0,
+      consecutiveFastInputs: 0,
+      isFlaggedCheat: false
     };
 
     p1Socket.data = { playerId: p1Id, roomId };
@@ -580,7 +607,10 @@ class GameManagerClass {
       socket: p1Socket,
       questionIndex: 0,
       level: p1User ? p1User.level : 1,
-      activeTitle: p1User ? p1User.active_title : ""
+      activeTitle: p1User ? p1User.active_title : "",
+      lastKeystrokeTime: 0,
+      consecutiveFastInputs: 0,
+      isFlaggedCheat: false
     };
 
     const botId = `bot_${Math.random().toString(36).substr(2, 5)}`;
@@ -597,7 +627,10 @@ class GameManagerClass {
       socket: null,
       questionIndex: 0,
       level: Math.max(1, Math.floor(botElo / 500)),
-      activeTitle: "BOT"
+      activeTitle: "BOT",
+      lastKeystrokeTime: 0,
+      consecutiveFastInputs: 0,
+      isFlaggedCheat: false
     };
 
     p1Socket.data = { playerId: p1Id, roomId };
@@ -652,7 +685,10 @@ class GameManagerClass {
       socket: lobby.hostSocket,
       questionIndex: 0,
       level: p1User ? p1User.level : 1,
-      activeTitle: p1User ? p1User.active_title : ""
+      activeTitle: p1User ? p1User.active_title : "",
+      lastKeystrokeTime: 0,
+      consecutiveFastInputs: 0,
+      isFlaggedCheat: false
     };
 
     const playerTwo: GamePlayer = {
@@ -667,7 +703,10 @@ class GameManagerClass {
       socket: guestSocket,
       questionIndex: 0,
       level: p2User ? p2User.level : 1,
-      activeTitle: p2User ? p2User.active_title : ""
+      activeTitle: p2User ? p2User.active_title : "",
+      lastKeystrokeTime: 0,
+      consecutiveFastInputs: 0,
+      isFlaggedCheat: false
     };
 
     lobby.hostSocket.data = { playerId: lobby.hostId, roomId };
