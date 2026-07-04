@@ -265,11 +265,19 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
+            style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg, marginBottom: 12 }]}
             onPress={handlePrivateMatch}
             activeOpacity={0.85}
           >
             <Text style={[styles.secondaryBtnText, { color: colors.text }]}>PRIVATE FRIENDLY DUEL</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
+            onPress={() => router.push("/analytics")}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.secondaryBtnText, { color: colors.text }]}>PERFORMANCE ANALYTICS</Text>
           </TouchableOpacity>
         </View>
       </View>

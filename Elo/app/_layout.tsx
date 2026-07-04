@@ -20,6 +20,7 @@ export default function RootLayout() {
         <Stack.Screen name="private-lobby" options={{ headerShown: false }} />
         <Stack.Screen name="tournament-lobby" options={{ headerShown: false }} />
         <Stack.Screen name="spectator" options={{ headerShown: false }} />
+        <Stack.Screen name="analytics" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
       <StatusBar style="auto" />
