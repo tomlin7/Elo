@@ -21,6 +21,8 @@ export interface GamePlayer {
   lastKeystrokeTime: number;
   consecutiveFastInputs: number;
   isFlaggedCheat: boolean;
+  operationStats?: Map<string, { totalPresented: number; totalCorrect: number; totalSolveTimeMs: number }>;
+  currentQuestionStartTime?: number;
 }
 
 interface Question {
@@ -262,7 +264,27 @@ export class GameRoom {
       const currentQuestion = this.questions[player.questionIndex];
       player.ghostInput = submitted;
 
+      if (!player.operationStats) player.operationStats = new Map();
+      if (!player.currentQuestionStartTime) player.currentQuestionStartTime = Date.now();
+
+      const opType = currentQuestion.text.includes("*")
+        ? "MULTIPLICATION"
+        : currentQuestion.text.includes("/")
+        ? "DIVISION"
+        : "ADD_SUB";
+
+      let statsRec = player.operationStats.get(opType);
+      if (!statsRec) {
+        statsRec = { totalPresented: 0, totalCorrect: 0, totalSolveTimeMs: 0 };
+        player.operationStats.set(opType, statsRec);
+      }
+
       if (submitted === currentQuestion.answer) {
+        statsRec.totalPresented++;
+        statsRec.totalCorrect++;
+        statsRec.totalSolveTimeMs += (Date.now() - player.currentQuestionStartTime);
+        player.currentQuestionStartTime = Date.now();
+
         player.score++;
         player.streak++;
         player.maxStreak = Math.max(player.maxStreak, player.streak);
@@ -280,6 +302,7 @@ export class GameRoom {
         }
       } else {
         if (!currentQuestion.answer.startsWith(submitted) || submitted.length >= currentQuestion.answer.length) {
+          statsRec.totalPresented++; // incorrect attempt counts as presented
           player.streak = 0;
           this.broadcastState();
         } else {
@@ -382,6 +405,25 @@ export class GameRoom {
         player_one_elo_change: this.playerOneEloChange,
         player_two_elo_change: this.playerTwoEloChange,
       });
+
+      const getTelemetryStats = (player: GamePlayer) => {
+        const stats: any[] = [];
+        if (player.operationStats) {
+          player.operationStats.forEach((val, key) => {
+            const avg = val.totalCorrect > 0 ? Math.round(val.totalSolveTimeMs / val.totalCorrect) : 0;
+            stats.push({
+              operationType: key,
+              totalPresented: val.totalPresented,
+              totalCorrect: val.totalCorrect,
+              averageSolveTimeMs: avg
+            });
+          });
+        }
+        return stats;
+      };
+
+      dbService.saveMatchTelemetry(this.id, this.playerOne.id, getTelemetryStats(this.playerOne));
+      dbService.saveMatchTelemetry(this.id, this.playerTwo.id, getTelemetryStats(this.playerTwo));
     }
 
     setTimeout(() => {
