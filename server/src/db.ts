@@ -3,7 +3,7 @@ import * as path from "path";
 
 // Initialize database
 const dbPath = path.join(process.cwd(), "elo.db");
-const db = new Database(dbPath);
+export const db = new Database(dbPath);
 
 // Initialize tables
 db.run(`
