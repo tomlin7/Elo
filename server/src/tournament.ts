@@ -1,6 +1,7 @@
 import { elo } from "./proto/elo_proto.js";
 import { GameManager, GamePlayer, GameRoom } from "./game.ts";
 import { dbService } from "./db.ts";
+import { NotificationService } from "./notification.ts";
 
 const MatchNodeStatus = elo.v3.MatchNodeStatus;
 const TournamentRound = elo.v3.TournamentRound;
@@ -97,6 +98,18 @@ export class Tournament {
 
       const p1 = this.players.find(p => p.id === node.playerOneId)!;
       const p2 = this.players.find(p => p.id === node.playerTwoId)!;
+
+      // Dispatch simulated high-priority FCM tournament invitations
+      NotificationService.sendFCMNotification(
+        p1.id,
+        "🏆 Tournament Match Ready!",
+        `Your tournament match in Node ${node.nodeId} is ready to start now!`
+      );
+      NotificationService.sendFCMNotification(
+        p2.id,
+        "🏆 Tournament Match Ready!",
+        `Your tournament match in Node ${node.nodeId} is ready to start now!`
+      );
 
       const gameP1: GamePlayer = {
         id: p1.id,
