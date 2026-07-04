@@ -757,6 +757,363 @@ export namespace elo {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
+        /** Properties of a NetworkHandshake. */
+        interface INetworkHandshake {
+
+            /** NetworkHandshake playerId */
+            playerId?: (string|null);
+
+            /** NetworkHandshake sessionToken */
+            sessionToken?: (string|null);
+
+            /** NetworkHandshake reconnectionToken */
+            reconnectionToken?: (string|null);
+
+            /** NetworkHandshake lastReceivedServerTick */
+            lastReceivedServerTick?: (number|Long|null);
+        }
+
+        /** Represents a NetworkHandshake. */
+        class NetworkHandshake implements INetworkHandshake {
+
+            /**
+             * Constructs a new NetworkHandshake.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.INetworkHandshake);
+
+            /** NetworkHandshake playerId. */
+            public playerId: string;
+
+            /** NetworkHandshake sessionToken. */
+            public sessionToken: string;
+
+            /** NetworkHandshake reconnectionToken. */
+            public reconnectionToken: string;
+
+            /** NetworkHandshake lastReceivedServerTick. */
+            public lastReceivedServerTick: (number|Long);
+
+            /**
+             * Creates a new NetworkHandshake instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns NetworkHandshake instance
+             */
+            public static create(properties?: elo.v3.INetworkHandshake): elo.v3.NetworkHandshake;
+
+            /**
+             * Encodes the specified NetworkHandshake message. Does not implicitly {@link elo.v3.NetworkHandshake.verify|verify} messages.
+             * @param message NetworkHandshake message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.INetworkHandshake, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified NetworkHandshake message, length delimited. Does not implicitly {@link elo.v3.NetworkHandshake.verify|verify} messages.
+             * @param message NetworkHandshake message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.INetworkHandshake, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a NetworkHandshake message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns NetworkHandshake
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.NetworkHandshake;
+
+            /**
+             * Decodes a NetworkHandshake message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns NetworkHandshake
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.NetworkHandshake;
+
+            /**
+             * Verifies a NetworkHandshake message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a NetworkHandshake message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns NetworkHandshake
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.NetworkHandshake;
+
+            /**
+             * Creates a plain object from a NetworkHandshake message. Also converts values to other types if specified.
+             * @param message NetworkHandshake
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.NetworkHandshake, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this NetworkHandshake to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for NetworkHandshake
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of an OperationTelemetry. */
+        interface IOperationTelemetry {
+
+            /** OperationTelemetry operationType */
+            operationType?: (string|null);
+
+            /** OperationTelemetry totalPresented */
+            totalPresented?: (number|null);
+
+            /** OperationTelemetry totalCorrect */
+            totalCorrect?: (number|null);
+
+            /** OperationTelemetry averageSolveTimeMs */
+            averageSolveTimeMs?: (number|Long|null);
+        }
+
+        /** Represents an OperationTelemetry. */
+        class OperationTelemetry implements IOperationTelemetry {
+
+            /**
+             * Constructs a new OperationTelemetry.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IOperationTelemetry);
+
+            /** OperationTelemetry operationType. */
+            public operationType: string;
+
+            /** OperationTelemetry totalPresented. */
+            public totalPresented: number;
+
+            /** OperationTelemetry totalCorrect. */
+            public totalCorrect: number;
+
+            /** OperationTelemetry averageSolveTimeMs. */
+            public averageSolveTimeMs: (number|Long);
+
+            /**
+             * Creates a new OperationTelemetry instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns OperationTelemetry instance
+             */
+            public static create(properties?: elo.v3.IOperationTelemetry): elo.v3.OperationTelemetry;
+
+            /**
+             * Encodes the specified OperationTelemetry message. Does not implicitly {@link elo.v3.OperationTelemetry.verify|verify} messages.
+             * @param message OperationTelemetry message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IOperationTelemetry, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified OperationTelemetry message, length delimited. Does not implicitly {@link elo.v3.OperationTelemetry.verify|verify} messages.
+             * @param message OperationTelemetry message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IOperationTelemetry, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes an OperationTelemetry message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns OperationTelemetry
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.OperationTelemetry;
+
+            /**
+             * Decodes an OperationTelemetry message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns OperationTelemetry
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.OperationTelemetry;
+
+            /**
+             * Verifies an OperationTelemetry message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates an OperationTelemetry message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns OperationTelemetry
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.OperationTelemetry;
+
+            /**
+             * Creates a plain object from an OperationTelemetry message. Also converts values to other types if specified.
+             * @param message OperationTelemetry
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.OperationTelemetry, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this OperationTelemetry to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for OperationTelemetry
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a HistoricalMatchSummary. */
+        interface IHistoricalMatchSummary {
+
+            /** HistoricalMatchSummary matchId */
+            matchId?: (string|null);
+
+            /** HistoricalMatchSummary opponentUsername */
+            opponentUsername?: (string|null);
+
+            /** HistoricalMatchSummary isVictory */
+            isVictory?: (boolean|null);
+
+            /** HistoricalMatchSummary eloDelta */
+            eloDelta?: (number|null);
+
+            /** HistoricalMatchSummary matchTimestamp */
+            matchTimestamp?: (number|Long|null);
+
+            /** HistoricalMatchSummary stats */
+            stats?: (elo.v3.IOperationTelemetry[]|null);
+        }
+
+        /** Represents a HistoricalMatchSummary. */
+        class HistoricalMatchSummary implements IHistoricalMatchSummary {
+
+            /**
+             * Constructs a new HistoricalMatchSummary.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IHistoricalMatchSummary);
+
+            /** HistoricalMatchSummary matchId. */
+            public matchId: string;
+
+            /** HistoricalMatchSummary opponentUsername. */
+            public opponentUsername: string;
+
+            /** HistoricalMatchSummary isVictory. */
+            public isVictory: boolean;
+
+            /** HistoricalMatchSummary eloDelta. */
+            public eloDelta: number;
+
+            /** HistoricalMatchSummary matchTimestamp. */
+            public matchTimestamp: (number|Long);
+
+            /** HistoricalMatchSummary stats. */
+            public stats: elo.v3.IOperationTelemetry[];
+
+            /**
+             * Creates a new HistoricalMatchSummary instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns HistoricalMatchSummary instance
+             */
+            public static create(properties?: elo.v3.IHistoricalMatchSummary): elo.v3.HistoricalMatchSummary;
+
+            /**
+             * Encodes the specified HistoricalMatchSummary message. Does not implicitly {@link elo.v3.HistoricalMatchSummary.verify|verify} messages.
+             * @param message HistoricalMatchSummary message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IHistoricalMatchSummary, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified HistoricalMatchSummary message, length delimited. Does not implicitly {@link elo.v3.HistoricalMatchSummary.verify|verify} messages.
+             * @param message HistoricalMatchSummary message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IHistoricalMatchSummary, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a HistoricalMatchSummary message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns HistoricalMatchSummary
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.HistoricalMatchSummary;
+
+            /**
+             * Decodes a HistoricalMatchSummary message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns HistoricalMatchSummary
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.HistoricalMatchSummary;
+
+            /**
+             * Verifies a HistoricalMatchSummary message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a HistoricalMatchSummary message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns HistoricalMatchSummary
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.HistoricalMatchSummary;
+
+            /**
+             * Creates a plain object from a HistoricalMatchSummary message. Also converts values to other types if specified.
+             * @param message HistoricalMatchSummary
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.HistoricalMatchSummary, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this HistoricalMatchSummary to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for HistoricalMatchSummary
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
         /** Properties of a ClientAction. */
         interface IClientAction {
 
@@ -795,6 +1152,9 @@ export namespace elo {
 
             /** ClientAction emojiBurst */
             emojiBurst?: (elo.v3.ISpectatorEmojiBurst|null);
+
+            /** ClientAction connectionHandshake */
+            connectionHandshake?: (elo.v3.INetworkHandshake|null);
         }
 
         /** Represents a ClientAction. */
@@ -842,8 +1202,11 @@ export namespace elo {
             /** ClientAction emojiBurst. */
             public emojiBurst?: (elo.v3.ISpectatorEmojiBurst|null);
 
+            /** ClientAction connectionHandshake. */
+            public connectionHandshake?: (elo.v3.INetworkHandshake|null);
+
             /** ClientAction payload. */
-            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst");
+            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake");
 
             /**
              * Creates a new ClientAction instance using the specified properties.
@@ -970,6 +1333,9 @@ export namespace elo {
 
             /** ServerGameStateUpdate emojiBurst */
             emojiBurst?: (elo.v3.ISpectatorEmojiBurst|null);
+
+            /** ServerGameStateUpdate activeReconnectionToken */
+            activeReconnectionToken?: (string|null);
         }
 
         /** Represents a ServerGameStateUpdate. */
@@ -1025,6 +1391,9 @@ export namespace elo {
 
             /** ServerGameStateUpdate emojiBurst. */
             public emojiBurst?: (elo.v3.ISpectatorEmojiBurst|null);
+
+            /** ServerGameStateUpdate activeReconnectionToken. */
+            public activeReconnectionToken: string;
 
             /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.

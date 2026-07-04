@@ -73,7 +73,30 @@ message TournamentBracketUpdate {
 message SpectatorEmojiBurst {
   string room_id = 1;
   string emoji_type = 2;
-  int32 execution_coordinate_x = 3; // Coordinate for rendering floating visuals
+  int32 execution_coordinate_x = 3;
+}
+
+message NetworkHandshake {
+  string player_id = 1;
+  string session_token = 2;
+  string reconnection_token = 3;
+  int64 last_received_server_tick = 4;
+}
+
+message OperationTelemetry {
+  string operation_type = 1; // e.g., "DIVISION", "MULTIPLICATION", "ADD_SUB"
+  int32 total_presented = 2;
+  int32 total_correct = 3;
+  int64 average_solve_time_ms = 4;
+}
+
+message HistoricalMatchSummary {
+  string match_id = 1;
+  string opponent_username = 2;
+  bool is_victory = 3;
+  int32 elo_delta = 4;
+  int64 match_timestamp = 5;
+  repeated OperationTelemetry stats = 6;
 }
 
 message ClientAction {
@@ -93,6 +116,9 @@ message ClientAction {
     string join_tournament_player_id = 10;
     string spectate_room_id = 11;
     SpectatorEmojiBurst emoji_burst = 12;
+    
+    // Phase 4 Extensions
+    NetworkHandshake connection_handshake = 13;
   }
 }
 
@@ -127,4 +153,7 @@ message ServerGameStateUpdate {
   // Phase 3 Extensions
   TournamentBracketUpdate bracket_update = 14;
   SpectatorEmojiBurst emoji_burst = 15;
+  
+  // Phase 4 Extensions
+  string active_reconnection_token = 16;
 }

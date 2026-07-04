@@ -2099,6 +2099,1013 @@ export const elo = $root.elo = (() => {
             return SpectatorEmojiBurst;
         })();
 
+        v3.NetworkHandshake = (function() {
+
+            /**
+             * Properties of a NetworkHandshake.
+             * @memberof elo.v3
+             * @interface INetworkHandshake
+             * @property {string|null} [playerId] NetworkHandshake playerId
+             * @property {string|null} [sessionToken] NetworkHandshake sessionToken
+             * @property {string|null} [reconnectionToken] NetworkHandshake reconnectionToken
+             * @property {number|Long|null} [lastReceivedServerTick] NetworkHandshake lastReceivedServerTick
+             */
+
+            /**
+             * Constructs a new NetworkHandshake.
+             * @memberof elo.v3
+             * @classdesc Represents a NetworkHandshake.
+             * @implements INetworkHandshake
+             * @constructor
+             * @param {elo.v3.INetworkHandshake=} [properties] Properties to set
+             */
+            function NetworkHandshake(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * NetworkHandshake playerId.
+             * @member {string} playerId
+             * @memberof elo.v3.NetworkHandshake
+             * @instance
+             */
+            NetworkHandshake.prototype.playerId = "";
+
+            /**
+             * NetworkHandshake sessionToken.
+             * @member {string} sessionToken
+             * @memberof elo.v3.NetworkHandshake
+             * @instance
+             */
+            NetworkHandshake.prototype.sessionToken = "";
+
+            /**
+             * NetworkHandshake reconnectionToken.
+             * @member {string} reconnectionToken
+             * @memberof elo.v3.NetworkHandshake
+             * @instance
+             */
+            NetworkHandshake.prototype.reconnectionToken = "";
+
+            /**
+             * NetworkHandshake lastReceivedServerTick.
+             * @member {number|Long} lastReceivedServerTick
+             * @memberof elo.v3.NetworkHandshake
+             * @instance
+             */
+            NetworkHandshake.prototype.lastReceivedServerTick = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new NetworkHandshake instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {elo.v3.INetworkHandshake=} [properties] Properties to set
+             * @returns {elo.v3.NetworkHandshake} NetworkHandshake instance
+             */
+            NetworkHandshake.create = function create(properties) {
+                return new NetworkHandshake(properties);
+            };
+
+            /**
+             * Encodes the specified NetworkHandshake message. Does not implicitly {@link elo.v3.NetworkHandshake.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {elo.v3.INetworkHandshake} message NetworkHandshake message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            NetworkHandshake.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.playerId);
+                if (message.sessionToken != null && Object.hasOwnProperty.call(message, "sessionToken"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.sessionToken);
+                if (message.reconnectionToken != null && Object.hasOwnProperty.call(message, "reconnectionToken"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.reconnectionToken);
+                if (message.lastReceivedServerTick != null && Object.hasOwnProperty.call(message, "lastReceivedServerTick"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int64(message.lastReceivedServerTick);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified NetworkHandshake message, length delimited. Does not implicitly {@link elo.v3.NetworkHandshake.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {elo.v3.INetworkHandshake} message NetworkHandshake message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            NetworkHandshake.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a NetworkHandshake message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.NetworkHandshake} NetworkHandshake
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            NetworkHandshake.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.NetworkHandshake();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.playerId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.sessionToken = reader.string();
+                            break;
+                        }
+                    case 3: {
+                            message.reconnectionToken = reader.string();
+                            break;
+                        }
+                    case 4: {
+                            message.lastReceivedServerTick = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a NetworkHandshake message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.NetworkHandshake} NetworkHandshake
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            NetworkHandshake.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a NetworkHandshake message.
+             * @function verify
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            NetworkHandshake.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    if (!$util.isString(message.playerId))
+                        return "playerId: string expected";
+                if (message.sessionToken != null && Object.hasOwnProperty.call(message, "sessionToken"))
+                    if (!$util.isString(message.sessionToken))
+                        return "sessionToken: string expected";
+                if (message.reconnectionToken != null && Object.hasOwnProperty.call(message, "reconnectionToken"))
+                    if (!$util.isString(message.reconnectionToken))
+                        return "reconnectionToken: string expected";
+                if (message.lastReceivedServerTick != null && Object.hasOwnProperty.call(message, "lastReceivedServerTick"))
+                    if (!$util.isInteger(message.lastReceivedServerTick) && !(message.lastReceivedServerTick && $util.isInteger(message.lastReceivedServerTick.low) && $util.isInteger(message.lastReceivedServerTick.high)))
+                        return "lastReceivedServerTick: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates a NetworkHandshake message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.NetworkHandshake} NetworkHandshake
+             */
+            NetworkHandshake.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.NetworkHandshake)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.NetworkHandshake: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.NetworkHandshake();
+                if (object.playerId != null)
+                    message.playerId = String(object.playerId);
+                if (object.sessionToken != null)
+                    message.sessionToken = String(object.sessionToken);
+                if (object.reconnectionToken != null)
+                    message.reconnectionToken = String(object.reconnectionToken);
+                if (object.lastReceivedServerTick != null)
+                    if ($util.Long)
+                        message.lastReceivedServerTick = $util.Long.fromValue(object.lastReceivedServerTick, false);
+                    else if (typeof object.lastReceivedServerTick === "string")
+                        message.lastReceivedServerTick = parseInt(object.lastReceivedServerTick, 10);
+                    else if (typeof object.lastReceivedServerTick === "number")
+                        message.lastReceivedServerTick = object.lastReceivedServerTick;
+                    else if (typeof object.lastReceivedServerTick === "object")
+                        message.lastReceivedServerTick = new $util.LongBits(object.lastReceivedServerTick.low >>> 0, object.lastReceivedServerTick.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a NetworkHandshake message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {elo.v3.NetworkHandshake} message NetworkHandshake
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            NetworkHandshake.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.playerId = "";
+                    object.sessionToken = "";
+                    object.reconnectionToken = "";
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.lastReceivedServerTick = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.lastReceivedServerTick = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    object.playerId = message.playerId;
+                if (message.sessionToken != null && Object.hasOwnProperty.call(message, "sessionToken"))
+                    object.sessionToken = message.sessionToken;
+                if (message.reconnectionToken != null && Object.hasOwnProperty.call(message, "reconnectionToken"))
+                    object.reconnectionToken = message.reconnectionToken;
+                if (message.lastReceivedServerTick != null && Object.hasOwnProperty.call(message, "lastReceivedServerTick"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.lastReceivedServerTick = typeof message.lastReceivedServerTick === "number" ? BigInt(message.lastReceivedServerTick) : $util.Long.fromBits(message.lastReceivedServerTick.low >>> 0, message.lastReceivedServerTick.high >>> 0, false).toBigInt();
+                    else if (typeof message.lastReceivedServerTick === "number")
+                        object.lastReceivedServerTick = options.longs === String ? String(message.lastReceivedServerTick) : message.lastReceivedServerTick;
+                    else
+                        object.lastReceivedServerTick = options.longs === String ? $util.Long.prototype.toString.call(message.lastReceivedServerTick) : options.longs === Number ? new $util.LongBits(message.lastReceivedServerTick.low >>> 0, message.lastReceivedServerTick.high >>> 0).toNumber() : message.lastReceivedServerTick;
+                return object;
+            };
+
+            /**
+             * Converts this NetworkHandshake to JSON.
+             * @function toJSON
+             * @memberof elo.v3.NetworkHandshake
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            NetworkHandshake.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for NetworkHandshake
+             * @function getTypeUrl
+             * @memberof elo.v3.NetworkHandshake
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            NetworkHandshake.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.NetworkHandshake";
+            };
+
+            return NetworkHandshake;
+        })();
+
+        v3.OperationTelemetry = (function() {
+
+            /**
+             * Properties of an OperationTelemetry.
+             * @memberof elo.v3
+             * @interface IOperationTelemetry
+             * @property {string|null} [operationType] OperationTelemetry operationType
+             * @property {number|null} [totalPresented] OperationTelemetry totalPresented
+             * @property {number|null} [totalCorrect] OperationTelemetry totalCorrect
+             * @property {number|Long|null} [averageSolveTimeMs] OperationTelemetry averageSolveTimeMs
+             */
+
+            /**
+             * Constructs a new OperationTelemetry.
+             * @memberof elo.v3
+             * @classdesc Represents an OperationTelemetry.
+             * @implements IOperationTelemetry
+             * @constructor
+             * @param {elo.v3.IOperationTelemetry=} [properties] Properties to set
+             */
+            function OperationTelemetry(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * OperationTelemetry operationType.
+             * @member {string} operationType
+             * @memberof elo.v3.OperationTelemetry
+             * @instance
+             */
+            OperationTelemetry.prototype.operationType = "";
+
+            /**
+             * OperationTelemetry totalPresented.
+             * @member {number} totalPresented
+             * @memberof elo.v3.OperationTelemetry
+             * @instance
+             */
+            OperationTelemetry.prototype.totalPresented = 0;
+
+            /**
+             * OperationTelemetry totalCorrect.
+             * @member {number} totalCorrect
+             * @memberof elo.v3.OperationTelemetry
+             * @instance
+             */
+            OperationTelemetry.prototype.totalCorrect = 0;
+
+            /**
+             * OperationTelemetry averageSolveTimeMs.
+             * @member {number|Long} averageSolveTimeMs
+             * @memberof elo.v3.OperationTelemetry
+             * @instance
+             */
+            OperationTelemetry.prototype.averageSolveTimeMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new OperationTelemetry instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {elo.v3.IOperationTelemetry=} [properties] Properties to set
+             * @returns {elo.v3.OperationTelemetry} OperationTelemetry instance
+             */
+            OperationTelemetry.create = function create(properties) {
+                return new OperationTelemetry(properties);
+            };
+
+            /**
+             * Encodes the specified OperationTelemetry message. Does not implicitly {@link elo.v3.OperationTelemetry.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {elo.v3.IOperationTelemetry} message OperationTelemetry message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            OperationTelemetry.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.operationType != null && Object.hasOwnProperty.call(message, "operationType"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.operationType);
+                if (message.totalPresented != null && Object.hasOwnProperty.call(message, "totalPresented"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.totalPresented);
+                if (message.totalCorrect != null && Object.hasOwnProperty.call(message, "totalCorrect"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.totalCorrect);
+                if (message.averageSolveTimeMs != null && Object.hasOwnProperty.call(message, "averageSolveTimeMs"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int64(message.averageSolveTimeMs);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified OperationTelemetry message, length delimited. Does not implicitly {@link elo.v3.OperationTelemetry.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {elo.v3.IOperationTelemetry} message OperationTelemetry message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            OperationTelemetry.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes an OperationTelemetry message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.OperationTelemetry} OperationTelemetry
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            OperationTelemetry.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.OperationTelemetry();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.operationType = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.totalPresented = reader.int32();
+                            break;
+                        }
+                    case 3: {
+                            message.totalCorrect = reader.int32();
+                            break;
+                        }
+                    case 4: {
+                            message.averageSolveTimeMs = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes an OperationTelemetry message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.OperationTelemetry} OperationTelemetry
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            OperationTelemetry.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies an OperationTelemetry message.
+             * @function verify
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            OperationTelemetry.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.operationType != null && Object.hasOwnProperty.call(message, "operationType"))
+                    if (!$util.isString(message.operationType))
+                        return "operationType: string expected";
+                if (message.totalPresented != null && Object.hasOwnProperty.call(message, "totalPresented"))
+                    if (!$util.isInteger(message.totalPresented))
+                        return "totalPresented: integer expected";
+                if (message.totalCorrect != null && Object.hasOwnProperty.call(message, "totalCorrect"))
+                    if (!$util.isInteger(message.totalCorrect))
+                        return "totalCorrect: integer expected";
+                if (message.averageSolveTimeMs != null && Object.hasOwnProperty.call(message, "averageSolveTimeMs"))
+                    if (!$util.isInteger(message.averageSolveTimeMs) && !(message.averageSolveTimeMs && $util.isInteger(message.averageSolveTimeMs.low) && $util.isInteger(message.averageSolveTimeMs.high)))
+                        return "averageSolveTimeMs: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates an OperationTelemetry message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.OperationTelemetry} OperationTelemetry
+             */
+            OperationTelemetry.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.OperationTelemetry)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.OperationTelemetry: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.OperationTelemetry();
+                if (object.operationType != null)
+                    message.operationType = String(object.operationType);
+                if (object.totalPresented != null)
+                    message.totalPresented = object.totalPresented | 0;
+                if (object.totalCorrect != null)
+                    message.totalCorrect = object.totalCorrect | 0;
+                if (object.averageSolveTimeMs != null)
+                    if ($util.Long)
+                        message.averageSolveTimeMs = $util.Long.fromValue(object.averageSolveTimeMs, false);
+                    else if (typeof object.averageSolveTimeMs === "string")
+                        message.averageSolveTimeMs = parseInt(object.averageSolveTimeMs, 10);
+                    else if (typeof object.averageSolveTimeMs === "number")
+                        message.averageSolveTimeMs = object.averageSolveTimeMs;
+                    else if (typeof object.averageSolveTimeMs === "object")
+                        message.averageSolveTimeMs = new $util.LongBits(object.averageSolveTimeMs.low >>> 0, object.averageSolveTimeMs.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from an OperationTelemetry message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {elo.v3.OperationTelemetry} message OperationTelemetry
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            OperationTelemetry.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.operationType = "";
+                    object.totalPresented = 0;
+                    object.totalCorrect = 0;
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.averageSolveTimeMs = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.averageSolveTimeMs = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.operationType != null && Object.hasOwnProperty.call(message, "operationType"))
+                    object.operationType = message.operationType;
+                if (message.totalPresented != null && Object.hasOwnProperty.call(message, "totalPresented"))
+                    object.totalPresented = message.totalPresented;
+                if (message.totalCorrect != null && Object.hasOwnProperty.call(message, "totalCorrect"))
+                    object.totalCorrect = message.totalCorrect;
+                if (message.averageSolveTimeMs != null && Object.hasOwnProperty.call(message, "averageSolveTimeMs"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.averageSolveTimeMs = typeof message.averageSolveTimeMs === "number" ? BigInt(message.averageSolveTimeMs) : $util.Long.fromBits(message.averageSolveTimeMs.low >>> 0, message.averageSolveTimeMs.high >>> 0, false).toBigInt();
+                    else if (typeof message.averageSolveTimeMs === "number")
+                        object.averageSolveTimeMs = options.longs === String ? String(message.averageSolveTimeMs) : message.averageSolveTimeMs;
+                    else
+                        object.averageSolveTimeMs = options.longs === String ? $util.Long.prototype.toString.call(message.averageSolveTimeMs) : options.longs === Number ? new $util.LongBits(message.averageSolveTimeMs.low >>> 0, message.averageSolveTimeMs.high >>> 0).toNumber() : message.averageSolveTimeMs;
+                return object;
+            };
+
+            /**
+             * Converts this OperationTelemetry to JSON.
+             * @function toJSON
+             * @memberof elo.v3.OperationTelemetry
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            OperationTelemetry.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for OperationTelemetry
+             * @function getTypeUrl
+             * @memberof elo.v3.OperationTelemetry
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            OperationTelemetry.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.OperationTelemetry";
+            };
+
+            return OperationTelemetry;
+        })();
+
+        v3.HistoricalMatchSummary = (function() {
+
+            /**
+             * Properties of a HistoricalMatchSummary.
+             * @memberof elo.v3
+             * @interface IHistoricalMatchSummary
+             * @property {string|null} [matchId] HistoricalMatchSummary matchId
+             * @property {string|null} [opponentUsername] HistoricalMatchSummary opponentUsername
+             * @property {boolean|null} [isVictory] HistoricalMatchSummary isVictory
+             * @property {number|null} [eloDelta] HistoricalMatchSummary eloDelta
+             * @property {number|Long|null} [matchTimestamp] HistoricalMatchSummary matchTimestamp
+             * @property {Array.<elo.v3.IOperationTelemetry>|null} [stats] HistoricalMatchSummary stats
+             */
+
+            /**
+             * Constructs a new HistoricalMatchSummary.
+             * @memberof elo.v3
+             * @classdesc Represents a HistoricalMatchSummary.
+             * @implements IHistoricalMatchSummary
+             * @constructor
+             * @param {elo.v3.IHistoricalMatchSummary=} [properties] Properties to set
+             */
+            function HistoricalMatchSummary(properties) {
+                this.stats = [];
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * HistoricalMatchSummary matchId.
+             * @member {string} matchId
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @instance
+             */
+            HistoricalMatchSummary.prototype.matchId = "";
+
+            /**
+             * HistoricalMatchSummary opponentUsername.
+             * @member {string} opponentUsername
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @instance
+             */
+            HistoricalMatchSummary.prototype.opponentUsername = "";
+
+            /**
+             * HistoricalMatchSummary isVictory.
+             * @member {boolean} isVictory
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @instance
+             */
+            HistoricalMatchSummary.prototype.isVictory = false;
+
+            /**
+             * HistoricalMatchSummary eloDelta.
+             * @member {number} eloDelta
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @instance
+             */
+            HistoricalMatchSummary.prototype.eloDelta = 0;
+
+            /**
+             * HistoricalMatchSummary matchTimestamp.
+             * @member {number|Long} matchTimestamp
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @instance
+             */
+            HistoricalMatchSummary.prototype.matchTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * HistoricalMatchSummary stats.
+             * @member {Array.<elo.v3.IOperationTelemetry>} stats
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @instance
+             */
+            HistoricalMatchSummary.prototype.stats = $util.emptyArray;
+
+            /**
+             * Creates a new HistoricalMatchSummary instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {elo.v3.IHistoricalMatchSummary=} [properties] Properties to set
+             * @returns {elo.v3.HistoricalMatchSummary} HistoricalMatchSummary instance
+             */
+            HistoricalMatchSummary.create = function create(properties) {
+                return new HistoricalMatchSummary(properties);
+            };
+
+            /**
+             * Encodes the specified HistoricalMatchSummary message. Does not implicitly {@link elo.v3.HistoricalMatchSummary.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {elo.v3.IHistoricalMatchSummary} message HistoricalMatchSummary message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            HistoricalMatchSummary.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.matchId != null && Object.hasOwnProperty.call(message, "matchId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.matchId);
+                if (message.opponentUsername != null && Object.hasOwnProperty.call(message, "opponentUsername"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.opponentUsername);
+                if (message.isVictory != null && Object.hasOwnProperty.call(message, "isVictory"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).bool(message.isVictory);
+                if (message.eloDelta != null && Object.hasOwnProperty.call(message, "eloDelta"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int32(message.eloDelta);
+                if (message.matchTimestamp != null && Object.hasOwnProperty.call(message, "matchTimestamp"))
+                    writer.uint32(/* id 5, wireType 0 =*/40).int64(message.matchTimestamp);
+                if (message.stats != null && message.stats.length)
+                    for (let i = 0; i < message.stats.length; ++i)
+                        $root.elo.v3.OperationTelemetry.encode(message.stats[i], writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified HistoricalMatchSummary message, length delimited. Does not implicitly {@link elo.v3.HistoricalMatchSummary.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {elo.v3.IHistoricalMatchSummary} message HistoricalMatchSummary message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            HistoricalMatchSummary.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a HistoricalMatchSummary message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.HistoricalMatchSummary} HistoricalMatchSummary
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            HistoricalMatchSummary.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.HistoricalMatchSummary();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.matchId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.opponentUsername = reader.string();
+                            break;
+                        }
+                    case 3: {
+                            message.isVictory = reader.bool();
+                            break;
+                        }
+                    case 4: {
+                            message.eloDelta = reader.int32();
+                            break;
+                        }
+                    case 5: {
+                            message.matchTimestamp = reader.int64();
+                            break;
+                        }
+                    case 6: {
+                            if (!(message.stats && message.stats.length))
+                                message.stats = [];
+                            message.stats.push($root.elo.v3.OperationTelemetry.decode(reader, reader.uint32(), undefined, long + 1));
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a HistoricalMatchSummary message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.HistoricalMatchSummary} HistoricalMatchSummary
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            HistoricalMatchSummary.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a HistoricalMatchSummary message.
+             * @function verify
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            HistoricalMatchSummary.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.matchId != null && Object.hasOwnProperty.call(message, "matchId"))
+                    if (!$util.isString(message.matchId))
+                        return "matchId: string expected";
+                if (message.opponentUsername != null && Object.hasOwnProperty.call(message, "opponentUsername"))
+                    if (!$util.isString(message.opponentUsername))
+                        return "opponentUsername: string expected";
+                if (message.isVictory != null && Object.hasOwnProperty.call(message, "isVictory"))
+                    if (typeof message.isVictory !== "boolean")
+                        return "isVictory: boolean expected";
+                if (message.eloDelta != null && Object.hasOwnProperty.call(message, "eloDelta"))
+                    if (!$util.isInteger(message.eloDelta))
+                        return "eloDelta: integer expected";
+                if (message.matchTimestamp != null && Object.hasOwnProperty.call(message, "matchTimestamp"))
+                    if (!$util.isInteger(message.matchTimestamp) && !(message.matchTimestamp && $util.isInteger(message.matchTimestamp.low) && $util.isInteger(message.matchTimestamp.high)))
+                        return "matchTimestamp: integer|Long expected";
+                if (message.stats != null && Object.hasOwnProperty.call(message, "stats")) {
+                    if (!Array.isArray(message.stats))
+                        return "stats: array expected";
+                    for (let i = 0; i < message.stats.length; ++i) {
+                        let error = $root.elo.v3.OperationTelemetry.verify(message.stats[i], long + 1);
+                        if (error)
+                            return "stats." + error;
+                    }
+                }
+                return null;
+            };
+
+            /**
+             * Creates a HistoricalMatchSummary message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.HistoricalMatchSummary} HistoricalMatchSummary
+             */
+            HistoricalMatchSummary.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.HistoricalMatchSummary)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.HistoricalMatchSummary: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.HistoricalMatchSummary();
+                if (object.matchId != null)
+                    message.matchId = String(object.matchId);
+                if (object.opponentUsername != null)
+                    message.opponentUsername = String(object.opponentUsername);
+                if (object.isVictory != null)
+                    message.isVictory = Boolean(object.isVictory);
+                if (object.eloDelta != null)
+                    message.eloDelta = object.eloDelta | 0;
+                if (object.matchTimestamp != null)
+                    if ($util.Long)
+                        message.matchTimestamp = $util.Long.fromValue(object.matchTimestamp, false);
+                    else if (typeof object.matchTimestamp === "string")
+                        message.matchTimestamp = parseInt(object.matchTimestamp, 10);
+                    else if (typeof object.matchTimestamp === "number")
+                        message.matchTimestamp = object.matchTimestamp;
+                    else if (typeof object.matchTimestamp === "object")
+                        message.matchTimestamp = new $util.LongBits(object.matchTimestamp.low >>> 0, object.matchTimestamp.high >>> 0).toNumber();
+                if (object.stats) {
+                    if (!Array.isArray(object.stats))
+                        throw TypeError(".elo.v3.HistoricalMatchSummary.stats: array expected");
+                    message.stats = [];
+                    for (let i = 0; i < object.stats.length; ++i) {
+                        if (!$util.isObject(object.stats[i]))
+                            throw TypeError(".elo.v3.HistoricalMatchSummary.stats: object expected");
+                        message.stats[i] = $root.elo.v3.OperationTelemetry.fromObject(object.stats[i], long + 1);
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a HistoricalMatchSummary message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {elo.v3.HistoricalMatchSummary} message HistoricalMatchSummary
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            HistoricalMatchSummary.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.arrays || options.defaults)
+                    object.stats = [];
+                if (options.defaults) {
+                    object.matchId = "";
+                    object.opponentUsername = "";
+                    object.isVictory = false;
+                    object.eloDelta = 0;
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.matchTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.matchTimestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.matchId != null && Object.hasOwnProperty.call(message, "matchId"))
+                    object.matchId = message.matchId;
+                if (message.opponentUsername != null && Object.hasOwnProperty.call(message, "opponentUsername"))
+                    object.opponentUsername = message.opponentUsername;
+                if (message.isVictory != null && Object.hasOwnProperty.call(message, "isVictory"))
+                    object.isVictory = message.isVictory;
+                if (message.eloDelta != null && Object.hasOwnProperty.call(message, "eloDelta"))
+                    object.eloDelta = message.eloDelta;
+                if (message.matchTimestamp != null && Object.hasOwnProperty.call(message, "matchTimestamp"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.matchTimestamp = typeof message.matchTimestamp === "number" ? BigInt(message.matchTimestamp) : $util.Long.fromBits(message.matchTimestamp.low >>> 0, message.matchTimestamp.high >>> 0, false).toBigInt();
+                    else if (typeof message.matchTimestamp === "number")
+                        object.matchTimestamp = options.longs === String ? String(message.matchTimestamp) : message.matchTimestamp;
+                    else
+                        object.matchTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.matchTimestamp) : options.longs === Number ? new $util.LongBits(message.matchTimestamp.low >>> 0, message.matchTimestamp.high >>> 0).toNumber() : message.matchTimestamp;
+                if (message.stats && message.stats.length) {
+                    object.stats = [];
+                    for (let j = 0; j < message.stats.length; ++j)
+                        object.stats[j] = $root.elo.v3.OperationTelemetry.toObject(message.stats[j], options, q + 1);
+                }
+                return object;
+            };
+
+            /**
+             * Converts this HistoricalMatchSummary to JSON.
+             * @function toJSON
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            HistoricalMatchSummary.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for HistoricalMatchSummary
+             * @function getTypeUrl
+             * @memberof elo.v3.HistoricalMatchSummary
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            HistoricalMatchSummary.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.HistoricalMatchSummary";
+            };
+
+            return HistoricalMatchSummary;
+        })();
+
         v3.ClientAction = (function() {
 
             /**
@@ -2117,6 +3124,7 @@ export const elo = $root.elo = (() => {
              * @property {string|null} [joinTournamentPlayerId] ClientAction joinTournamentPlayerId
              * @property {string|null} [spectateRoomId] ClientAction spectateRoomId
              * @property {elo.v3.ISpectatorEmojiBurst|null} [emojiBurst] ClientAction emojiBurst
+             * @property {elo.v3.INetworkHandshake|null} [connectionHandshake] ClientAction connectionHandshake
              */
 
             /**
@@ -2230,17 +3238,25 @@ export const elo = $root.elo = (() => {
              */
             ClientAction.prototype.emojiBurst = null;
 
+            /**
+             * ClientAction connectionHandshake.
+             * @member {elo.v3.INetworkHandshake|null|undefined} connectionHandshake
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.connectionHandshake = null;
+
             // OneOf field names bound to virtual getters and setters
             let $oneOfFields;
 
             /**
              * ClientAction payload.
-             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|undefined} payload
+             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|undefined} payload
              * @memberof elo.v3.ClientAction
              * @instance
              */
             Object.defineProperty(ClientAction.prototype, "payload", {
-                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst"]),
+                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst", "connectionHandshake"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -2296,6 +3312,8 @@ export const elo = $root.elo = (() => {
                     writer.uint32(/* id 11, wireType 2 =*/90).string(message.spectateRoomId);
                 if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst"))
                     $root.elo.v3.SpectatorEmojiBurst.encode(message.emojiBurst, writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
+                if (message.connectionHandshake != null && Object.hasOwnProperty.call(message, "connectionHandshake"))
+                    $root.elo.v3.NetworkHandshake.encode(message.connectionHandshake, writer.uint32(/* id 13, wireType 2 =*/106).fork(), q + 1).ldelim();
                 return writer;
             };
 
@@ -2382,6 +3400,10 @@ export const elo = $root.elo = (() => {
                         }
                     case 12: {
                             message.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 13: {
+                            message.connectionHandshake = $root.elo.v3.NetworkHandshake.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     default:
@@ -2503,6 +3525,16 @@ export const elo = $root.elo = (() => {
                             return "emojiBurst." + error;
                     }
                 }
+                if (message.connectionHandshake != null && Object.hasOwnProperty.call(message, "connectionHandshake")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    {
+                        let error = $root.elo.v3.NetworkHandshake.verify(message.connectionHandshake, long + 1);
+                        if (error)
+                            return "connectionHandshake." + error;
+                    }
+                }
                 return null;
             };
 
@@ -2563,6 +3595,11 @@ export const elo = $root.elo = (() => {
                     if (!$util.isObject(object.emojiBurst))
                         throw TypeError(".elo.v3.ClientAction.emojiBurst: object expected");
                     message.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.fromObject(object.emojiBurst, long + 1);
+                }
+                if (object.connectionHandshake != null) {
+                    if (!$util.isObject(object.connectionHandshake))
+                        throw TypeError(".elo.v3.ClientAction.connectionHandshake: object expected");
+                    message.connectionHandshake = $root.elo.v3.NetworkHandshake.fromObject(object.connectionHandshake, long + 1);
                 }
                 return message;
             };
@@ -2649,6 +3686,11 @@ export const elo = $root.elo = (() => {
                     if (options.oneofs)
                         object.payload = "emojiBurst";
                 }
+                if (message.connectionHandshake != null && Object.hasOwnProperty.call(message, "connectionHandshake")) {
+                    object.connectionHandshake = $root.elo.v3.NetworkHandshake.toObject(message.connectionHandshake, options, q + 1);
+                    if (options.oneofs)
+                        object.payload = "connectionHandshake";
+                }
                 return object;
             };
 
@@ -2702,6 +3744,7 @@ export const elo = $root.elo = (() => {
              * @property {number|null} [playerTwoXpChange] ServerGameStateUpdate playerTwoXpChange
              * @property {elo.v3.ITournamentBracketUpdate|null} [bracketUpdate] ServerGameStateUpdate bracketUpdate
              * @property {elo.v3.ISpectatorEmojiBurst|null} [emojiBurst] ServerGameStateUpdate emojiBurst
+             * @property {string|null} [activeReconnectionToken] ServerGameStateUpdate activeReconnectionToken
              */
 
             /**
@@ -2840,6 +3883,14 @@ export const elo = $root.elo = (() => {
             ServerGameStateUpdate.prototype.emojiBurst = null;
 
             /**
+             * ServerGameStateUpdate activeReconnectionToken.
+             * @member {string} activeReconnectionToken
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.activeReconnectionToken = "";
+
+            /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.
              * @function create
              * @memberof elo.v3.ServerGameStateUpdate
@@ -2897,6 +3948,8 @@ export const elo = $root.elo = (() => {
                     $root.elo.v3.TournamentBracketUpdate.encode(message.bracketUpdate, writer.uint32(/* id 14, wireType 2 =*/114).fork(), q + 1).ldelim();
                 if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst"))
                     $root.elo.v3.SpectatorEmojiBurst.encode(message.emojiBurst, writer.uint32(/* id 15, wireType 2 =*/122).fork(), q + 1).ldelim();
+                if (message.activeReconnectionToken != null && Object.hasOwnProperty.call(message, "activeReconnectionToken"))
+                    writer.uint32(/* id 16, wireType 2 =*/130).string(message.activeReconnectionToken);
                 return writer;
             };
 
@@ -2995,6 +4048,10 @@ export const elo = $root.elo = (() => {
                         }
                     case 15: {
                             message.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 16: {
+                            message.activeReconnectionToken = reader.string();
                             break;
                         }
                     default:
@@ -3103,6 +4160,9 @@ export const elo = $root.elo = (() => {
                     if (error)
                         return "emojiBurst." + error;
                 }
+                if (message.activeReconnectionToken != null && Object.hasOwnProperty.call(message, "activeReconnectionToken"))
+                    if (!$util.isString(message.activeReconnectionToken))
+                        return "activeReconnectionToken: string expected";
                 return null;
             };
 
@@ -3210,6 +4270,8 @@ export const elo = $root.elo = (() => {
                         throw TypeError(".elo.v3.ServerGameStateUpdate.emojiBurst: object expected");
                     message.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.fromObject(object.emojiBurst, long + 1);
                 }
+                if (object.activeReconnectionToken != null)
+                    message.activeReconnectionToken = String(object.activeReconnectionToken);
                 return message;
             };
 
@@ -3246,6 +4308,7 @@ export const elo = $root.elo = (() => {
                     object.playerTwoXpChange = 0;
                     object.bracketUpdate = null;
                     object.emojiBurst = null;
+                    object.activeReconnectionToken = "";
                 }
                 if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
                     object.roomId = message.roomId;
@@ -3277,6 +4340,8 @@ export const elo = $root.elo = (() => {
                     object.bracketUpdate = $root.elo.v3.TournamentBracketUpdate.toObject(message.bracketUpdate, options, q + 1);
                 if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst"))
                     object.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.toObject(message.emojiBurst, options, q + 1);
+                if (message.activeReconnectionToken != null && Object.hasOwnProperty.call(message, "activeReconnectionToken"))
+                    object.activeReconnectionToken = message.activeReconnectionToken;
                 return object;
             };
 
