@@ -62,7 +62,28 @@ db.run(`
 `);
 db.run(`CREATE INDEX IF NOT EXISTS idx_telemetry_player ON match_telemetry (player_id)`);
 
-// Run Migrations dynamically for Phase 2 columns
+// Webhooks Table
+db.run(`
+  CREATE TABLE IF NOT EXISTS webhooks (
+    id TEXT PRIMARY KEY,
+    player_id TEXT NOT NULL,
+    target_url TEXT NOT NULL,
+    secret_token TEXT NOT NULL,
+    is_active INTEGER DEFAULT 1,
+    created_at INTEGER NOT NULL
+  )
+`);
+
+// Deletion Queue Table
+db.run(`
+  CREATE TABLE IF NOT EXISTS deletion_queue (
+    player_id TEXT PRIMARY KEY,
+    scheduled_for INTEGER NOT NULL,
+    created_at INTEGER NOT NULL
+  )
+`);
+
+// Run Migrations dynamically for Phase 2, 4 & 6 columns
 const addColumn = (col: string, defVal: string) => {
   try {
     db.run(`ALTER TABLE players ADD COLUMN ${col} ${defVal}`);
@@ -82,6 +103,8 @@ addColumn("unlocked_themes", "TEXT NOT NULL DEFAULT '[\"dark\"]'");
 addColumn("selected_theme_id", "TEXT NOT NULL DEFAULT 'dark'");
 addColumn("active_title", "TEXT NOT NULL DEFAULT ''");
 addColumn("peak_elo", "INTEGER NOT NULL DEFAULT 1000"); // Peak Elo tracking for season placement
+addColumn("privacy_consent_version", "TEXT DEFAULT ''");
+addColumn("privacy_consent_timestamp", "INTEGER DEFAULT 0");
 
 export interface Player {
   id: string;
@@ -99,6 +122,8 @@ export interface Player {
   selected_theme_id: string;
   active_title: string;
   peak_elo: number;
+  privacy_consent_version: string;
+  privacy_consent_timestamp: number;
 }
 
 export interface MatchRecord {
@@ -295,5 +320,69 @@ export const dbService = {
       $player_one_elo_change: match.player_one_elo_change,
       $player_two_elo_change: match.player_two_elo_change,
     });
+  },
+
+  scheduleAccountDeletion(playerId: string): void {
+    const scheduledTime = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days grace
+    const query = db.query(`
+      INSERT OR REPLACE INTO deletion_queue (player_id, scheduled_for, created_at)
+      VALUES ($playerId, $scheduled, $now)
+    `);
+    query.run({ $playerId: playerId, $scheduled: scheduledTime, $now: Date.now() });
+  },
+
+  cancelAccountDeletion(playerId: string): void {
+    const query = db.query("DELETE FROM deletion_queue WHERE player_id = $playerId");
+    query.run({ $playerId: playerId });
+  },
+
+  executeDueDeletions(): number {
+    const now = Date.now();
+    const query = db.query("SELECT player_id FROM deletion_queue WHERE scheduled_for <= $now");
+    const due = query.all({ $now: now }) as any[];
+
+    due.forEach(d => {
+      const playerId = d.player_id;
+      console.log(`[PRIVACY] Purging account logs dynamically for player: ${playerId}`);
+      db.transaction(() => {
+        db.run("DELETE FROM match_telemetry WHERE player_id = ?", [playerId]);
+        db.run("DELETE FROM matches WHERE player_one_id = ? OR player_two_id = ?", [playerId, playerId]);
+        db.run("DELETE FROM season_archives WHERE player_id = ?", [playerId]);
+        db.run("DELETE FROM webhooks WHERE player_id = ?", [playerId]);
+        db.run("DELETE FROM deletion_queue WHERE player_id = ?", [playerId]);
+        db.run("DELETE FROM players WHERE id = ?", [playerId]);
+      })();
+    });
+
+    return due.length;
+  },
+
+  registerWebhook(playerId: string, targetUrl: string, secret: string): void {
+    const id = `wh_${playerId}_${Date.now()}`;
+    const insert = db.query(`
+      INSERT OR REPLACE INTO webhooks (id, player_id, target_url, secret_token, created_at)
+      VALUES ($id, $playerId, $targetUrl, $secret, $now)
+    `);
+    insert.run({
+      $id: id,
+      $playerId: playerId,
+      $targetUrl: targetUrl,
+      $secret: secret,
+      $now: Date.now()
+    });
+  },
+
+  getWebhooks(playerId: string): any[] {
+    const query = db.query("SELECT * FROM webhooks WHERE player_id = $playerId AND is_active = 1");
+    return query.all({ $playerId: playerId }) as any[];
+  },
+
+  saveConsentLog(playerId: string, version: string): void {
+    const update = db.query(`
+      UPDATE players 
+      SET privacy_consent_version = $version, privacy_consent_timestamp = $now 
+      WHERE id = $id
+    `);
+    update.run({ $version: version, $now: Date.now(), $id: playerId });
   }
 };
