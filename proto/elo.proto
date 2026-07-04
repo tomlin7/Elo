@@ -29,6 +29,14 @@ enum MatchNodeStatus {
   STATUS_COMPLETED = 2;
 }
 
+enum RegionZone {
+  REGION_ZONE_UNSPECIFIED = 0;
+  REGION_ZONE_APAC_SOUTH = 1;
+  REGION_ZONE_EU_CENTRAL = 2;
+  REGION_ZONE_US_EAST = 3;
+  REGION_ZONE_ME_CENTRAL = 4;
+}
+
 message PlayerIdentity {
   string player_id = 1;
   string username = 2;
@@ -99,6 +107,28 @@ message HistoricalMatchSummary {
   repeated OperationTelemetry stats = 6;
 }
 
+message RegionalHandshakeOverride {
+  string room_id = 1;
+  RegionZone assigned_zone = 2;
+  string target_node_ip = 3;
+  int64 sync_timestamp = 4;
+}
+
+message GameSessionSnapshot {
+  string room_id = 1;
+  int32 current_tick = 2;
+  string question_stream_seed = 3;
+  
+  message PlayerStateBackup {
+    string player_id = 1;
+    int32 current_score = 2;
+    int32 current_streak = 3;
+  }
+  
+  PlayerStateBackup player_one = 4;
+  PlayerStateBackup player_two = 5;
+}
+
 message ClientAction {
   string room_id = 1;
   string player_id = 2;
@@ -112,13 +142,14 @@ message ClientAction {
     string join_private_room_code = 8;
     MatchSecurityLog security_log = 9;
     
-    // Phase 3 Extensions
+    // Phase 3 & 4 Extensions
     string join_tournament_player_id = 10;
     string spectate_room_id = 11;
     SpectatorEmojiBurst emoji_burst = 12;
-    
-    // Phase 4 Extensions
     NetworkHandshake connection_handshake = 13;
+    
+    // Phase 5 Extensions
+    RegionalHandshakeOverride regional_override = 14;
   }
 }
 
@@ -150,10 +181,12 @@ message ServerGameStateUpdate {
   int32 player_one_xp_change = 12;
   int32 player_two_xp_change = 13;
   
-  // Phase 3 Extensions
+  // Phase 3 & 4 Extensions
   TournamentBracketUpdate bracket_update = 14;
   SpectatorEmojiBurst emoji_burst = 15;
-  
-  // Phase 4 Extensions
   string active_reconnection_token = 16;
+  
+  // Phase 5 Extensions
+  RegionZone current_node_zone = 17;
+  RegionalHandshakeOverride standby_override = 18;
 }

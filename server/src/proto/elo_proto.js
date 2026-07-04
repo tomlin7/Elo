@@ -95,6 +95,26 @@ export const elo = $root.elo = (() => {
             return values;
         })();
 
+        /**
+         * RegionZone enum.
+         * @name elo.v3.RegionZone
+         * @enum {number}
+         * @property {number} REGION_ZONE_UNSPECIFIED=0 REGION_ZONE_UNSPECIFIED value
+         * @property {number} REGION_ZONE_APAC_SOUTH=1 REGION_ZONE_APAC_SOUTH value
+         * @property {number} REGION_ZONE_EU_CENTRAL=2 REGION_ZONE_EU_CENTRAL value
+         * @property {number} REGION_ZONE_US_EAST=3 REGION_ZONE_US_EAST value
+         * @property {number} REGION_ZONE_ME_CENTRAL=4 REGION_ZONE_ME_CENTRAL value
+         */
+        v3.RegionZone = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "REGION_ZONE_UNSPECIFIED"] = 0;
+            values[valuesById[1] = "REGION_ZONE_APAC_SOUTH"] = 1;
+            values[valuesById[2] = "REGION_ZONE_EU_CENTRAL"] = 2;
+            values[valuesById[3] = "REGION_ZONE_US_EAST"] = 3;
+            values[valuesById[4] = "REGION_ZONE_ME_CENTRAL"] = 4;
+            return values;
+        })();
+
         v3.PlayerIdentity = (function() {
 
             /**
@@ -3106,6 +3126,957 @@ export const elo = $root.elo = (() => {
             return HistoricalMatchSummary;
         })();
 
+        v3.RegionalHandshakeOverride = (function() {
+
+            /**
+             * Properties of a RegionalHandshakeOverride.
+             * @memberof elo.v3
+             * @interface IRegionalHandshakeOverride
+             * @property {string|null} [roomId] RegionalHandshakeOverride roomId
+             * @property {elo.v3.RegionZone|null} [assignedZone] RegionalHandshakeOverride assignedZone
+             * @property {string|null} [targetNodeIp] RegionalHandshakeOverride targetNodeIp
+             * @property {number|Long|null} [syncTimestamp] RegionalHandshakeOverride syncTimestamp
+             */
+
+            /**
+             * Constructs a new RegionalHandshakeOverride.
+             * @memberof elo.v3
+             * @classdesc Represents a RegionalHandshakeOverride.
+             * @implements IRegionalHandshakeOverride
+             * @constructor
+             * @param {elo.v3.IRegionalHandshakeOverride=} [properties] Properties to set
+             */
+            function RegionalHandshakeOverride(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * RegionalHandshakeOverride roomId.
+             * @member {string} roomId
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @instance
+             */
+            RegionalHandshakeOverride.prototype.roomId = "";
+
+            /**
+             * RegionalHandshakeOverride assignedZone.
+             * @member {elo.v3.RegionZone} assignedZone
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @instance
+             */
+            RegionalHandshakeOverride.prototype.assignedZone = 0;
+
+            /**
+             * RegionalHandshakeOverride targetNodeIp.
+             * @member {string} targetNodeIp
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @instance
+             */
+            RegionalHandshakeOverride.prototype.targetNodeIp = "";
+
+            /**
+             * RegionalHandshakeOverride syncTimestamp.
+             * @member {number|Long} syncTimestamp
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @instance
+             */
+            RegionalHandshakeOverride.prototype.syncTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new RegionalHandshakeOverride instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {elo.v3.IRegionalHandshakeOverride=} [properties] Properties to set
+             * @returns {elo.v3.RegionalHandshakeOverride} RegionalHandshakeOverride instance
+             */
+            RegionalHandshakeOverride.create = function create(properties) {
+                return new RegionalHandshakeOverride(properties);
+            };
+
+            /**
+             * Encodes the specified RegionalHandshakeOverride message. Does not implicitly {@link elo.v3.RegionalHandshakeOverride.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {elo.v3.IRegionalHandshakeOverride} message RegionalHandshakeOverride message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            RegionalHandshakeOverride.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.roomId);
+                if (message.assignedZone != null && Object.hasOwnProperty.call(message, "assignedZone"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.assignedZone);
+                if (message.targetNodeIp != null && Object.hasOwnProperty.call(message, "targetNodeIp"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.targetNodeIp);
+                if (message.syncTimestamp != null && Object.hasOwnProperty.call(message, "syncTimestamp"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int64(message.syncTimestamp);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified RegionalHandshakeOverride message, length delimited. Does not implicitly {@link elo.v3.RegionalHandshakeOverride.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {elo.v3.IRegionalHandshakeOverride} message RegionalHandshakeOverride message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            RegionalHandshakeOverride.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a RegionalHandshakeOverride message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.RegionalHandshakeOverride} RegionalHandshakeOverride
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            RegionalHandshakeOverride.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.RegionalHandshakeOverride();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.roomId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.assignedZone = reader.int32();
+                            break;
+                        }
+                    case 3: {
+                            message.targetNodeIp = reader.string();
+                            break;
+                        }
+                    case 4: {
+                            message.syncTimestamp = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a RegionalHandshakeOverride message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.RegionalHandshakeOverride} RegionalHandshakeOverride
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            RegionalHandshakeOverride.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a RegionalHandshakeOverride message.
+             * @function verify
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            RegionalHandshakeOverride.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    if (!$util.isString(message.roomId))
+                        return "roomId: string expected";
+                if (message.assignedZone != null && Object.hasOwnProperty.call(message, "assignedZone"))
+                    switch (message.assignedZone) {
+                    default:
+                        return "assignedZone: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        break;
+                    }
+                if (message.targetNodeIp != null && Object.hasOwnProperty.call(message, "targetNodeIp"))
+                    if (!$util.isString(message.targetNodeIp))
+                        return "targetNodeIp: string expected";
+                if (message.syncTimestamp != null && Object.hasOwnProperty.call(message, "syncTimestamp"))
+                    if (!$util.isInteger(message.syncTimestamp) && !(message.syncTimestamp && $util.isInteger(message.syncTimestamp.low) && $util.isInteger(message.syncTimestamp.high)))
+                        return "syncTimestamp: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates a RegionalHandshakeOverride message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.RegionalHandshakeOverride} RegionalHandshakeOverride
+             */
+            RegionalHandshakeOverride.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.RegionalHandshakeOverride)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.RegionalHandshakeOverride: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.RegionalHandshakeOverride();
+                if (object.roomId != null)
+                    message.roomId = String(object.roomId);
+                switch (object.assignedZone) {
+                default:
+                    if (typeof object.assignedZone === "number") {
+                        message.assignedZone = object.assignedZone;
+                        break;
+                    }
+                    break;
+                case "REGION_ZONE_UNSPECIFIED":
+                case 0:
+                    message.assignedZone = 0;
+                    break;
+                case "REGION_ZONE_APAC_SOUTH":
+                case 1:
+                    message.assignedZone = 1;
+                    break;
+                case "REGION_ZONE_EU_CENTRAL":
+                case 2:
+                    message.assignedZone = 2;
+                    break;
+                case "REGION_ZONE_US_EAST":
+                case 3:
+                    message.assignedZone = 3;
+                    break;
+                case "REGION_ZONE_ME_CENTRAL":
+                case 4:
+                    message.assignedZone = 4;
+                    break;
+                }
+                if (object.targetNodeIp != null)
+                    message.targetNodeIp = String(object.targetNodeIp);
+                if (object.syncTimestamp != null)
+                    if ($util.Long)
+                        message.syncTimestamp = $util.Long.fromValue(object.syncTimestamp, false);
+                    else if (typeof object.syncTimestamp === "string")
+                        message.syncTimestamp = parseInt(object.syncTimestamp, 10);
+                    else if (typeof object.syncTimestamp === "number")
+                        message.syncTimestamp = object.syncTimestamp;
+                    else if (typeof object.syncTimestamp === "object")
+                        message.syncTimestamp = new $util.LongBits(object.syncTimestamp.low >>> 0, object.syncTimestamp.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a RegionalHandshakeOverride message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {elo.v3.RegionalHandshakeOverride} message RegionalHandshakeOverride
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            RegionalHandshakeOverride.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.roomId = "";
+                    object.assignedZone = options.enums === String ? "REGION_ZONE_UNSPECIFIED" : 0;
+                    object.targetNodeIp = "";
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.syncTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.syncTimestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    object.roomId = message.roomId;
+                if (message.assignedZone != null && Object.hasOwnProperty.call(message, "assignedZone"))
+                    object.assignedZone = options.enums === String ? $root.elo.v3.RegionZone[message.assignedZone] === undefined ? message.assignedZone : $root.elo.v3.RegionZone[message.assignedZone] : message.assignedZone;
+                if (message.targetNodeIp != null && Object.hasOwnProperty.call(message, "targetNodeIp"))
+                    object.targetNodeIp = message.targetNodeIp;
+                if (message.syncTimestamp != null && Object.hasOwnProperty.call(message, "syncTimestamp"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.syncTimestamp = typeof message.syncTimestamp === "number" ? BigInt(message.syncTimestamp) : $util.Long.fromBits(message.syncTimestamp.low >>> 0, message.syncTimestamp.high >>> 0, false).toBigInt();
+                    else if (typeof message.syncTimestamp === "number")
+                        object.syncTimestamp = options.longs === String ? String(message.syncTimestamp) : message.syncTimestamp;
+                    else
+                        object.syncTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.syncTimestamp) : options.longs === Number ? new $util.LongBits(message.syncTimestamp.low >>> 0, message.syncTimestamp.high >>> 0).toNumber() : message.syncTimestamp;
+                return object;
+            };
+
+            /**
+             * Converts this RegionalHandshakeOverride to JSON.
+             * @function toJSON
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            RegionalHandshakeOverride.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for RegionalHandshakeOverride
+             * @function getTypeUrl
+             * @memberof elo.v3.RegionalHandshakeOverride
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            RegionalHandshakeOverride.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.RegionalHandshakeOverride";
+            };
+
+            return RegionalHandshakeOverride;
+        })();
+
+        v3.GameSessionSnapshot = (function() {
+
+            /**
+             * Properties of a GameSessionSnapshot.
+             * @memberof elo.v3
+             * @interface IGameSessionSnapshot
+             * @property {string|null} [roomId] GameSessionSnapshot roomId
+             * @property {number|null} [currentTick] GameSessionSnapshot currentTick
+             * @property {string|null} [questionStreamSeed] GameSessionSnapshot questionStreamSeed
+             * @property {elo.v3.GameSessionSnapshot.IPlayerStateBackup|null} [playerOne] GameSessionSnapshot playerOne
+             * @property {elo.v3.GameSessionSnapshot.IPlayerStateBackup|null} [playerTwo] GameSessionSnapshot playerTwo
+             */
+
+            /**
+             * Constructs a new GameSessionSnapshot.
+             * @memberof elo.v3
+             * @classdesc Represents a GameSessionSnapshot.
+             * @implements IGameSessionSnapshot
+             * @constructor
+             * @param {elo.v3.IGameSessionSnapshot=} [properties] Properties to set
+             */
+            function GameSessionSnapshot(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * GameSessionSnapshot roomId.
+             * @member {string} roomId
+             * @memberof elo.v3.GameSessionSnapshot
+             * @instance
+             */
+            GameSessionSnapshot.prototype.roomId = "";
+
+            /**
+             * GameSessionSnapshot currentTick.
+             * @member {number} currentTick
+             * @memberof elo.v3.GameSessionSnapshot
+             * @instance
+             */
+            GameSessionSnapshot.prototype.currentTick = 0;
+
+            /**
+             * GameSessionSnapshot questionStreamSeed.
+             * @member {string} questionStreamSeed
+             * @memberof elo.v3.GameSessionSnapshot
+             * @instance
+             */
+            GameSessionSnapshot.prototype.questionStreamSeed = "";
+
+            /**
+             * GameSessionSnapshot playerOne.
+             * @member {elo.v3.GameSessionSnapshot.IPlayerStateBackup|null|undefined} playerOne
+             * @memberof elo.v3.GameSessionSnapshot
+             * @instance
+             */
+            GameSessionSnapshot.prototype.playerOne = null;
+
+            /**
+             * GameSessionSnapshot playerTwo.
+             * @member {elo.v3.GameSessionSnapshot.IPlayerStateBackup|null|undefined} playerTwo
+             * @memberof elo.v3.GameSessionSnapshot
+             * @instance
+             */
+            GameSessionSnapshot.prototype.playerTwo = null;
+
+            /**
+             * Creates a new GameSessionSnapshot instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {elo.v3.IGameSessionSnapshot=} [properties] Properties to set
+             * @returns {elo.v3.GameSessionSnapshot} GameSessionSnapshot instance
+             */
+            GameSessionSnapshot.create = function create(properties) {
+                return new GameSessionSnapshot(properties);
+            };
+
+            /**
+             * Encodes the specified GameSessionSnapshot message. Does not implicitly {@link elo.v3.GameSessionSnapshot.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {elo.v3.IGameSessionSnapshot} message GameSessionSnapshot message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameSessionSnapshot.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.roomId);
+                if (message.currentTick != null && Object.hasOwnProperty.call(message, "currentTick"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.currentTick);
+                if (message.questionStreamSeed != null && Object.hasOwnProperty.call(message, "questionStreamSeed"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.questionStreamSeed);
+                if (message.playerOne != null && Object.hasOwnProperty.call(message, "playerOne"))
+                    $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.encode(message.playerOne, writer.uint32(/* id 4, wireType 2 =*/34).fork(), q + 1).ldelim();
+                if (message.playerTwo != null && Object.hasOwnProperty.call(message, "playerTwo"))
+                    $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.encode(message.playerTwo, writer.uint32(/* id 5, wireType 2 =*/42).fork(), q + 1).ldelim();
+                return writer;
+            };
+
+            /**
+             * Encodes the specified GameSessionSnapshot message, length delimited. Does not implicitly {@link elo.v3.GameSessionSnapshot.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {elo.v3.IGameSessionSnapshot} message GameSessionSnapshot message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            GameSessionSnapshot.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a GameSessionSnapshot message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.GameSessionSnapshot} GameSessionSnapshot
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameSessionSnapshot.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.GameSessionSnapshot();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.roomId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.currentTick = reader.int32();
+                            break;
+                        }
+                    case 3: {
+                            message.questionStreamSeed = reader.string();
+                            break;
+                        }
+                    case 4: {
+                            message.playerOne = $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 5: {
+                            message.playerTwo = $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a GameSessionSnapshot message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.GameSessionSnapshot} GameSessionSnapshot
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            GameSessionSnapshot.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a GameSessionSnapshot message.
+             * @function verify
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            GameSessionSnapshot.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    if (!$util.isString(message.roomId))
+                        return "roomId: string expected";
+                if (message.currentTick != null && Object.hasOwnProperty.call(message, "currentTick"))
+                    if (!$util.isInteger(message.currentTick))
+                        return "currentTick: integer expected";
+                if (message.questionStreamSeed != null && Object.hasOwnProperty.call(message, "questionStreamSeed"))
+                    if (!$util.isString(message.questionStreamSeed))
+                        return "questionStreamSeed: string expected";
+                if (message.playerOne != null && Object.hasOwnProperty.call(message, "playerOne")) {
+                    let error = $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.verify(message.playerOne, long + 1);
+                    if (error)
+                        return "playerOne." + error;
+                }
+                if (message.playerTwo != null && Object.hasOwnProperty.call(message, "playerTwo")) {
+                    let error = $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.verify(message.playerTwo, long + 1);
+                    if (error)
+                        return "playerTwo." + error;
+                }
+                return null;
+            };
+
+            /**
+             * Creates a GameSessionSnapshot message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.GameSessionSnapshot} GameSessionSnapshot
+             */
+            GameSessionSnapshot.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.GameSessionSnapshot)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.GameSessionSnapshot: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.GameSessionSnapshot();
+                if (object.roomId != null)
+                    message.roomId = String(object.roomId);
+                if (object.currentTick != null)
+                    message.currentTick = object.currentTick | 0;
+                if (object.questionStreamSeed != null)
+                    message.questionStreamSeed = String(object.questionStreamSeed);
+                if (object.playerOne != null) {
+                    if (!$util.isObject(object.playerOne))
+                        throw TypeError(".elo.v3.GameSessionSnapshot.playerOne: object expected");
+                    message.playerOne = $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.fromObject(object.playerOne, long + 1);
+                }
+                if (object.playerTwo != null) {
+                    if (!$util.isObject(object.playerTwo))
+                        throw TypeError(".elo.v3.GameSessionSnapshot.playerTwo: object expected");
+                    message.playerTwo = $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.fromObject(object.playerTwo, long + 1);
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a GameSessionSnapshot message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {elo.v3.GameSessionSnapshot} message GameSessionSnapshot
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            GameSessionSnapshot.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.roomId = "";
+                    object.currentTick = 0;
+                    object.questionStreamSeed = "";
+                    object.playerOne = null;
+                    object.playerTwo = null;
+                }
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    object.roomId = message.roomId;
+                if (message.currentTick != null && Object.hasOwnProperty.call(message, "currentTick"))
+                    object.currentTick = message.currentTick;
+                if (message.questionStreamSeed != null && Object.hasOwnProperty.call(message, "questionStreamSeed"))
+                    object.questionStreamSeed = message.questionStreamSeed;
+                if (message.playerOne != null && Object.hasOwnProperty.call(message, "playerOne"))
+                    object.playerOne = $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.toObject(message.playerOne, options, q + 1);
+                if (message.playerTwo != null && Object.hasOwnProperty.call(message, "playerTwo"))
+                    object.playerTwo = $root.elo.v3.GameSessionSnapshot.PlayerStateBackup.toObject(message.playerTwo, options, q + 1);
+                return object;
+            };
+
+            /**
+             * Converts this GameSessionSnapshot to JSON.
+             * @function toJSON
+             * @memberof elo.v3.GameSessionSnapshot
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            GameSessionSnapshot.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for GameSessionSnapshot
+             * @function getTypeUrl
+             * @memberof elo.v3.GameSessionSnapshot
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            GameSessionSnapshot.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.GameSessionSnapshot";
+            };
+
+            GameSessionSnapshot.PlayerStateBackup = (function() {
+
+                /**
+                 * Properties of a PlayerStateBackup.
+                 * @memberof elo.v3.GameSessionSnapshot
+                 * @interface IPlayerStateBackup
+                 * @property {string|null} [playerId] PlayerStateBackup playerId
+                 * @property {number|null} [currentScore] PlayerStateBackup currentScore
+                 * @property {number|null} [currentStreak] PlayerStateBackup currentStreak
+                 */
+
+                /**
+                 * Constructs a new PlayerStateBackup.
+                 * @memberof elo.v3.GameSessionSnapshot
+                 * @classdesc Represents a PlayerStateBackup.
+                 * @implements IPlayerStateBackup
+                 * @constructor
+                 * @param {elo.v3.GameSessionSnapshot.IPlayerStateBackup=} [properties] Properties to set
+                 */
+                function PlayerStateBackup(properties) {
+                    if (properties)
+                        for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                            if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                                this[keys[i]] = properties[keys[i]];
+                }
+
+                /**
+                 * PlayerStateBackup playerId.
+                 * @member {string} playerId
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @instance
+                 */
+                PlayerStateBackup.prototype.playerId = "";
+
+                /**
+                 * PlayerStateBackup currentScore.
+                 * @member {number} currentScore
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @instance
+                 */
+                PlayerStateBackup.prototype.currentScore = 0;
+
+                /**
+                 * PlayerStateBackup currentStreak.
+                 * @member {number} currentStreak
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @instance
+                 */
+                PlayerStateBackup.prototype.currentStreak = 0;
+
+                /**
+                 * Creates a new PlayerStateBackup instance using the specified properties.
+                 * @function create
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {elo.v3.GameSessionSnapshot.IPlayerStateBackup=} [properties] Properties to set
+                 * @returns {elo.v3.GameSessionSnapshot.PlayerStateBackup} PlayerStateBackup instance
+                 */
+                PlayerStateBackup.create = function create(properties) {
+                    return new PlayerStateBackup(properties);
+                };
+
+                /**
+                 * Encodes the specified PlayerStateBackup message. Does not implicitly {@link elo.v3.GameSessionSnapshot.PlayerStateBackup.verify|verify} messages.
+                 * @function encode
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {elo.v3.GameSessionSnapshot.IPlayerStateBackup} message PlayerStateBackup message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                PlayerStateBackup.encode = function encode(message, writer, q) {
+                    if (!writer)
+                        writer = $Writer.create();
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                        writer.uint32(/* id 1, wireType 2 =*/10).string(message.playerId);
+                    if (message.currentScore != null && Object.hasOwnProperty.call(message, "currentScore"))
+                        writer.uint32(/* id 2, wireType 0 =*/16).int32(message.currentScore);
+                    if (message.currentStreak != null && Object.hasOwnProperty.call(message, "currentStreak"))
+                        writer.uint32(/* id 3, wireType 0 =*/24).int32(message.currentStreak);
+                    return writer;
+                };
+
+                /**
+                 * Encodes the specified PlayerStateBackup message, length delimited. Does not implicitly {@link elo.v3.GameSessionSnapshot.PlayerStateBackup.verify|verify} messages.
+                 * @function encodeDelimited
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {elo.v3.GameSessionSnapshot.IPlayerStateBackup} message PlayerStateBackup message or plain object to encode
+                 * @param {$protobuf.Writer} [writer] Writer to encode to
+                 * @returns {$protobuf.Writer} Writer
+                 */
+                PlayerStateBackup.encodeDelimited = function encodeDelimited(message, writer) {
+                    return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+                };
+
+                /**
+                 * Decodes a PlayerStateBackup message from the specified reader or buffer.
+                 * @function decode
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @param {number} [length] Message length if known beforehand
+                 * @returns {elo.v3.GameSessionSnapshot.PlayerStateBackup} PlayerStateBackup
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                PlayerStateBackup.decode = function decode(reader, length, error, long) {
+                    if (!(reader instanceof $Reader))
+                        reader = $Reader.create(reader);
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $Reader.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.GameSessionSnapshot.PlayerStateBackup();
+                    while (reader.pos < end) {
+                        let tag = reader.uint32();
+                        if (tag === error)
+                            break;
+                        switch (tag >>> 3) {
+                        case 1: {
+                                message.playerId = reader.string();
+                                break;
+                            }
+                        case 2: {
+                                message.currentScore = reader.int32();
+                                break;
+                            }
+                        case 3: {
+                                message.currentStreak = reader.int32();
+                                break;
+                            }
+                        default:
+                            reader.skipType(tag & 7, long);
+                            break;
+                        }
+                    }
+                    return message;
+                };
+
+                /**
+                 * Decodes a PlayerStateBackup message from the specified reader or buffer, length delimited.
+                 * @function decodeDelimited
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+                 * @returns {elo.v3.GameSessionSnapshot.PlayerStateBackup} PlayerStateBackup
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                PlayerStateBackup.decodeDelimited = function decodeDelimited(reader) {
+                    if (!(reader instanceof $Reader))
+                        reader = new $Reader(reader);
+                    return this.decode(reader, reader.uint32());
+                };
+
+                /**
+                 * Verifies a PlayerStateBackup message.
+                 * @function verify
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {Object.<string,*>} message Plain object to verify
+                 * @returns {string|null} `null` if valid, otherwise the reason why it is not
+                 */
+                PlayerStateBackup.verify = function verify(message, long) {
+                    if (typeof message !== "object" || message === null)
+                        return "object expected";
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        return "maximum nesting depth exceeded";
+                    if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                        if (!$util.isString(message.playerId))
+                            return "playerId: string expected";
+                    if (message.currentScore != null && Object.hasOwnProperty.call(message, "currentScore"))
+                        if (!$util.isInteger(message.currentScore))
+                            return "currentScore: integer expected";
+                    if (message.currentStreak != null && Object.hasOwnProperty.call(message, "currentStreak"))
+                        if (!$util.isInteger(message.currentStreak))
+                            return "currentStreak: integer expected";
+                    return null;
+                };
+
+                /**
+                 * Creates a PlayerStateBackup message from a plain object. Also converts values to their respective internal types.
+                 * @function fromObject
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {Object.<string,*>} object Plain object
+                 * @returns {elo.v3.GameSessionSnapshot.PlayerStateBackup} PlayerStateBackup
+                 */
+                PlayerStateBackup.fromObject = function fromObject(object, long) {
+                    if (object instanceof $root.elo.v3.GameSessionSnapshot.PlayerStateBackup)
+                        return object;
+                    if (!$util.isObject(object))
+                        throw TypeError(".elo.v3.GameSessionSnapshot.PlayerStateBackup: object expected");
+                    if (long === undefined)
+                        long = 0;
+                    if (long > $util.recursionLimit)
+                        throw Error("maximum nesting depth exceeded");
+                    let message = new $root.elo.v3.GameSessionSnapshot.PlayerStateBackup();
+                    if (object.playerId != null)
+                        message.playerId = String(object.playerId);
+                    if (object.currentScore != null)
+                        message.currentScore = object.currentScore | 0;
+                    if (object.currentStreak != null)
+                        message.currentStreak = object.currentStreak | 0;
+                    return message;
+                };
+
+                /**
+                 * Creates a plain object from a PlayerStateBackup message. Also converts values to other types if specified.
+                 * @function toObject
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {elo.v3.GameSessionSnapshot.PlayerStateBackup} message PlayerStateBackup
+                 * @param {$protobuf.IConversionOptions} [options] Conversion options
+                 * @returns {Object.<string,*>} Plain object
+                 */
+                PlayerStateBackup.toObject = function toObject(message, options, q) {
+                    if (!options)
+                        options = {};
+                    if (q === undefined)
+                        q = 0;
+                    if (q > $util.recursionLimit)
+                        throw Error("max depth exceeded");
+                    let object = {};
+                    if (options.defaults) {
+                        object.playerId = "";
+                        object.currentScore = 0;
+                        object.currentStreak = 0;
+                    }
+                    if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                        object.playerId = message.playerId;
+                    if (message.currentScore != null && Object.hasOwnProperty.call(message, "currentScore"))
+                        object.currentScore = message.currentScore;
+                    if (message.currentStreak != null && Object.hasOwnProperty.call(message, "currentStreak"))
+                        object.currentStreak = message.currentStreak;
+                    return object;
+                };
+
+                /**
+                 * Converts this PlayerStateBackup to JSON.
+                 * @function toJSON
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @instance
+                 * @returns {Object.<string,*>} JSON object
+                 */
+                PlayerStateBackup.prototype.toJSON = function toJSON() {
+                    return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+                };
+
+                /**
+                 * Gets the default type url for PlayerStateBackup
+                 * @function getTypeUrl
+                 * @memberof elo.v3.GameSessionSnapshot.PlayerStateBackup
+                 * @static
+                 * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns {string} The default type url
+                 */
+                PlayerStateBackup.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                    if (typeUrlPrefix === undefined) {
+                        typeUrlPrefix = "type.googleapis.com";
+                    }
+                    return typeUrlPrefix + "/elo.v3.GameSessionSnapshot.PlayerStateBackup";
+                };
+
+                return PlayerStateBackup;
+            })();
+
+            return GameSessionSnapshot;
+        })();
+
         v3.ClientAction = (function() {
 
             /**
@@ -3125,6 +4096,7 @@ export const elo = $root.elo = (() => {
              * @property {string|null} [spectateRoomId] ClientAction spectateRoomId
              * @property {elo.v3.ISpectatorEmojiBurst|null} [emojiBurst] ClientAction emojiBurst
              * @property {elo.v3.INetworkHandshake|null} [connectionHandshake] ClientAction connectionHandshake
+             * @property {elo.v3.IRegionalHandshakeOverride|null} [regionalOverride] ClientAction regionalOverride
              */
 
             /**
@@ -3246,17 +4218,25 @@ export const elo = $root.elo = (() => {
              */
             ClientAction.prototype.connectionHandshake = null;
 
+            /**
+             * ClientAction regionalOverride.
+             * @member {elo.v3.IRegionalHandshakeOverride|null|undefined} regionalOverride
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.regionalOverride = null;
+
             // OneOf field names bound to virtual getters and setters
             let $oneOfFields;
 
             /**
              * ClientAction payload.
-             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|undefined} payload
+             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride"|undefined} payload
              * @memberof elo.v3.ClientAction
              * @instance
              */
             Object.defineProperty(ClientAction.prototype, "payload", {
-                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst", "connectionHandshake"]),
+                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst", "connectionHandshake", "regionalOverride"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -3314,6 +4294,8 @@ export const elo = $root.elo = (() => {
                     $root.elo.v3.SpectatorEmojiBurst.encode(message.emojiBurst, writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
                 if (message.connectionHandshake != null && Object.hasOwnProperty.call(message, "connectionHandshake"))
                     $root.elo.v3.NetworkHandshake.encode(message.connectionHandshake, writer.uint32(/* id 13, wireType 2 =*/106).fork(), q + 1).ldelim();
+                if (message.regionalOverride != null && Object.hasOwnProperty.call(message, "regionalOverride"))
+                    $root.elo.v3.RegionalHandshakeOverride.encode(message.regionalOverride, writer.uint32(/* id 14, wireType 2 =*/114).fork(), q + 1).ldelim();
                 return writer;
             };
 
@@ -3404,6 +4386,10 @@ export const elo = $root.elo = (() => {
                         }
                     case 13: {
                             message.connectionHandshake = $root.elo.v3.NetworkHandshake.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 14: {
+                            message.regionalOverride = $root.elo.v3.RegionalHandshakeOverride.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     default:
@@ -3535,6 +4521,16 @@ export const elo = $root.elo = (() => {
                             return "connectionHandshake." + error;
                     }
                 }
+                if (message.regionalOverride != null && Object.hasOwnProperty.call(message, "regionalOverride")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    {
+                        let error = $root.elo.v3.RegionalHandshakeOverride.verify(message.regionalOverride, long + 1);
+                        if (error)
+                            return "regionalOverride." + error;
+                    }
+                }
                 return null;
             };
 
@@ -3600,6 +4596,11 @@ export const elo = $root.elo = (() => {
                     if (!$util.isObject(object.connectionHandshake))
                         throw TypeError(".elo.v3.ClientAction.connectionHandshake: object expected");
                     message.connectionHandshake = $root.elo.v3.NetworkHandshake.fromObject(object.connectionHandshake, long + 1);
+                }
+                if (object.regionalOverride != null) {
+                    if (!$util.isObject(object.regionalOverride))
+                        throw TypeError(".elo.v3.ClientAction.regionalOverride: object expected");
+                    message.regionalOverride = $root.elo.v3.RegionalHandshakeOverride.fromObject(object.regionalOverride, long + 1);
                 }
                 return message;
             };
@@ -3691,6 +4692,11 @@ export const elo = $root.elo = (() => {
                     if (options.oneofs)
                         object.payload = "connectionHandshake";
                 }
+                if (message.regionalOverride != null && Object.hasOwnProperty.call(message, "regionalOverride")) {
+                    object.regionalOverride = $root.elo.v3.RegionalHandshakeOverride.toObject(message.regionalOverride, options, q + 1);
+                    if (options.oneofs)
+                        object.payload = "regionalOverride";
+                }
                 return object;
             };
 
@@ -3745,6 +4751,8 @@ export const elo = $root.elo = (() => {
              * @property {elo.v3.ITournamentBracketUpdate|null} [bracketUpdate] ServerGameStateUpdate bracketUpdate
              * @property {elo.v3.ISpectatorEmojiBurst|null} [emojiBurst] ServerGameStateUpdate emojiBurst
              * @property {string|null} [activeReconnectionToken] ServerGameStateUpdate activeReconnectionToken
+             * @property {elo.v3.RegionZone|null} [currentNodeZone] ServerGameStateUpdate currentNodeZone
+             * @property {elo.v3.IRegionalHandshakeOverride|null} [standbyOverride] ServerGameStateUpdate standbyOverride
              */
 
             /**
@@ -3891,6 +4899,22 @@ export const elo = $root.elo = (() => {
             ServerGameStateUpdate.prototype.activeReconnectionToken = "";
 
             /**
+             * ServerGameStateUpdate currentNodeZone.
+             * @member {elo.v3.RegionZone} currentNodeZone
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.currentNodeZone = 0;
+
+            /**
+             * ServerGameStateUpdate standbyOverride.
+             * @member {elo.v3.IRegionalHandshakeOverride|null|undefined} standbyOverride
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.standbyOverride = null;
+
+            /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.
              * @function create
              * @memberof elo.v3.ServerGameStateUpdate
@@ -3950,6 +4974,10 @@ export const elo = $root.elo = (() => {
                     $root.elo.v3.SpectatorEmojiBurst.encode(message.emojiBurst, writer.uint32(/* id 15, wireType 2 =*/122).fork(), q + 1).ldelim();
                 if (message.activeReconnectionToken != null && Object.hasOwnProperty.call(message, "activeReconnectionToken"))
                     writer.uint32(/* id 16, wireType 2 =*/130).string(message.activeReconnectionToken);
+                if (message.currentNodeZone != null && Object.hasOwnProperty.call(message, "currentNodeZone"))
+                    writer.uint32(/* id 17, wireType 0 =*/136).int32(message.currentNodeZone);
+                if (message.standbyOverride != null && Object.hasOwnProperty.call(message, "standbyOverride"))
+                    $root.elo.v3.RegionalHandshakeOverride.encode(message.standbyOverride, writer.uint32(/* id 18, wireType 2 =*/146).fork(), q + 1).ldelim();
                 return writer;
             };
 
@@ -4052,6 +5080,14 @@ export const elo = $root.elo = (() => {
                         }
                     case 16: {
                             message.activeReconnectionToken = reader.string();
+                            break;
+                        }
+                    case 17: {
+                            message.currentNodeZone = reader.int32();
+                            break;
+                        }
+                    case 18: {
+                            message.standbyOverride = $root.elo.v3.RegionalHandshakeOverride.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     default:
@@ -4163,6 +5199,22 @@ export const elo = $root.elo = (() => {
                 if (message.activeReconnectionToken != null && Object.hasOwnProperty.call(message, "activeReconnectionToken"))
                     if (!$util.isString(message.activeReconnectionToken))
                         return "activeReconnectionToken: string expected";
+                if (message.currentNodeZone != null && Object.hasOwnProperty.call(message, "currentNodeZone"))
+                    switch (message.currentNodeZone) {
+                    default:
+                        return "currentNodeZone: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        break;
+                    }
+                if (message.standbyOverride != null && Object.hasOwnProperty.call(message, "standbyOverride")) {
+                    let error = $root.elo.v3.RegionalHandshakeOverride.verify(message.standbyOverride, long + 1);
+                    if (error)
+                        return "standbyOverride." + error;
+                }
                 return null;
             };
 
@@ -4272,6 +5324,39 @@ export const elo = $root.elo = (() => {
                 }
                 if (object.activeReconnectionToken != null)
                     message.activeReconnectionToken = String(object.activeReconnectionToken);
+                switch (object.currentNodeZone) {
+                default:
+                    if (typeof object.currentNodeZone === "number") {
+                        message.currentNodeZone = object.currentNodeZone;
+                        break;
+                    }
+                    break;
+                case "REGION_ZONE_UNSPECIFIED":
+                case 0:
+                    message.currentNodeZone = 0;
+                    break;
+                case "REGION_ZONE_APAC_SOUTH":
+                case 1:
+                    message.currentNodeZone = 1;
+                    break;
+                case "REGION_ZONE_EU_CENTRAL":
+                case 2:
+                    message.currentNodeZone = 2;
+                    break;
+                case "REGION_ZONE_US_EAST":
+                case 3:
+                    message.currentNodeZone = 3;
+                    break;
+                case "REGION_ZONE_ME_CENTRAL":
+                case 4:
+                    message.currentNodeZone = 4;
+                    break;
+                }
+                if (object.standbyOverride != null) {
+                    if (!$util.isObject(object.standbyOverride))
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.standbyOverride: object expected");
+                    message.standbyOverride = $root.elo.v3.RegionalHandshakeOverride.fromObject(object.standbyOverride, long + 1);
+                }
                 return message;
             };
 
@@ -4309,6 +5394,8 @@ export const elo = $root.elo = (() => {
                     object.bracketUpdate = null;
                     object.emojiBurst = null;
                     object.activeReconnectionToken = "";
+                    object.currentNodeZone = options.enums === String ? "REGION_ZONE_UNSPECIFIED" : 0;
+                    object.standbyOverride = null;
                 }
                 if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
                     object.roomId = message.roomId;
@@ -4342,6 +5429,10 @@ export const elo = $root.elo = (() => {
                     object.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.toObject(message.emojiBurst, options, q + 1);
                 if (message.activeReconnectionToken != null && Object.hasOwnProperty.call(message, "activeReconnectionToken"))
                     object.activeReconnectionToken = message.activeReconnectionToken;
+                if (message.currentNodeZone != null && Object.hasOwnProperty.call(message, "currentNodeZone"))
+                    object.currentNodeZone = options.enums === String ? $root.elo.v3.RegionZone[message.currentNodeZone] === undefined ? message.currentNodeZone : $root.elo.v3.RegionZone[message.currentNodeZone] : message.currentNodeZone;
+                if (message.standbyOverride != null && Object.hasOwnProperty.call(message, "standbyOverride"))
+                    object.standbyOverride = $root.elo.v3.RegionalHandshakeOverride.toObject(message.standbyOverride, options, q + 1);
                 return object;
             };
 

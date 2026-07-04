@@ -37,6 +37,15 @@ export namespace elo {
             STATUS_COMPLETED = 2
         }
 
+        /** RegionZone enum. */
+        enum RegionZone {
+            REGION_ZONE_UNSPECIFIED = 0,
+            REGION_ZONE_APAC_SOUTH = 1,
+            REGION_ZONE_EU_CENTRAL = 2,
+            REGION_ZONE_US_EAST = 3,
+            REGION_ZONE_ME_CENTRAL = 4
+        }
+
         /** Properties of a PlayerIdentity. */
         interface IPlayerIdentity {
 
@@ -1114,6 +1123,354 @@ export namespace elo {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
+        /** Properties of a RegionalHandshakeOverride. */
+        interface IRegionalHandshakeOverride {
+
+            /** RegionalHandshakeOverride roomId */
+            roomId?: (string|null);
+
+            /** RegionalHandshakeOverride assignedZone */
+            assignedZone?: (elo.v3.RegionZone|null);
+
+            /** RegionalHandshakeOverride targetNodeIp */
+            targetNodeIp?: (string|null);
+
+            /** RegionalHandshakeOverride syncTimestamp */
+            syncTimestamp?: (number|Long|null);
+        }
+
+        /** Represents a RegionalHandshakeOverride. */
+        class RegionalHandshakeOverride implements IRegionalHandshakeOverride {
+
+            /**
+             * Constructs a new RegionalHandshakeOverride.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IRegionalHandshakeOverride);
+
+            /** RegionalHandshakeOverride roomId. */
+            public roomId: string;
+
+            /** RegionalHandshakeOverride assignedZone. */
+            public assignedZone: elo.v3.RegionZone;
+
+            /** RegionalHandshakeOverride targetNodeIp. */
+            public targetNodeIp: string;
+
+            /** RegionalHandshakeOverride syncTimestamp. */
+            public syncTimestamp: (number|Long);
+
+            /**
+             * Creates a new RegionalHandshakeOverride instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns RegionalHandshakeOverride instance
+             */
+            public static create(properties?: elo.v3.IRegionalHandshakeOverride): elo.v3.RegionalHandshakeOverride;
+
+            /**
+             * Encodes the specified RegionalHandshakeOverride message. Does not implicitly {@link elo.v3.RegionalHandshakeOverride.verify|verify} messages.
+             * @param message RegionalHandshakeOverride message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IRegionalHandshakeOverride, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified RegionalHandshakeOverride message, length delimited. Does not implicitly {@link elo.v3.RegionalHandshakeOverride.verify|verify} messages.
+             * @param message RegionalHandshakeOverride message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IRegionalHandshakeOverride, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a RegionalHandshakeOverride message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns RegionalHandshakeOverride
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.RegionalHandshakeOverride;
+
+            /**
+             * Decodes a RegionalHandshakeOverride message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns RegionalHandshakeOverride
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.RegionalHandshakeOverride;
+
+            /**
+             * Verifies a RegionalHandshakeOverride message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a RegionalHandshakeOverride message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns RegionalHandshakeOverride
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.RegionalHandshakeOverride;
+
+            /**
+             * Creates a plain object from a RegionalHandshakeOverride message. Also converts values to other types if specified.
+             * @param message RegionalHandshakeOverride
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.RegionalHandshakeOverride, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this RegionalHandshakeOverride to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for RegionalHandshakeOverride
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a GameSessionSnapshot. */
+        interface IGameSessionSnapshot {
+
+            /** GameSessionSnapshot roomId */
+            roomId?: (string|null);
+
+            /** GameSessionSnapshot currentTick */
+            currentTick?: (number|null);
+
+            /** GameSessionSnapshot questionStreamSeed */
+            questionStreamSeed?: (string|null);
+
+            /** GameSessionSnapshot playerOne */
+            playerOne?: (elo.v3.GameSessionSnapshot.IPlayerStateBackup|null);
+
+            /** GameSessionSnapshot playerTwo */
+            playerTwo?: (elo.v3.GameSessionSnapshot.IPlayerStateBackup|null);
+        }
+
+        /** Represents a GameSessionSnapshot. */
+        class GameSessionSnapshot implements IGameSessionSnapshot {
+
+            /**
+             * Constructs a new GameSessionSnapshot.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IGameSessionSnapshot);
+
+            /** GameSessionSnapshot roomId. */
+            public roomId: string;
+
+            /** GameSessionSnapshot currentTick. */
+            public currentTick: number;
+
+            /** GameSessionSnapshot questionStreamSeed. */
+            public questionStreamSeed: string;
+
+            /** GameSessionSnapshot playerOne. */
+            public playerOne?: (elo.v3.GameSessionSnapshot.IPlayerStateBackup|null);
+
+            /** GameSessionSnapshot playerTwo. */
+            public playerTwo?: (elo.v3.GameSessionSnapshot.IPlayerStateBackup|null);
+
+            /**
+             * Creates a new GameSessionSnapshot instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns GameSessionSnapshot instance
+             */
+            public static create(properties?: elo.v3.IGameSessionSnapshot): elo.v3.GameSessionSnapshot;
+
+            /**
+             * Encodes the specified GameSessionSnapshot message. Does not implicitly {@link elo.v3.GameSessionSnapshot.verify|verify} messages.
+             * @param message GameSessionSnapshot message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IGameSessionSnapshot, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified GameSessionSnapshot message, length delimited. Does not implicitly {@link elo.v3.GameSessionSnapshot.verify|verify} messages.
+             * @param message GameSessionSnapshot message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IGameSessionSnapshot, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a GameSessionSnapshot message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns GameSessionSnapshot
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.GameSessionSnapshot;
+
+            /**
+             * Decodes a GameSessionSnapshot message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns GameSessionSnapshot
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.GameSessionSnapshot;
+
+            /**
+             * Verifies a GameSessionSnapshot message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a GameSessionSnapshot message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns GameSessionSnapshot
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.GameSessionSnapshot;
+
+            /**
+             * Creates a plain object from a GameSessionSnapshot message. Also converts values to other types if specified.
+             * @param message GameSessionSnapshot
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.GameSessionSnapshot, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this GameSessionSnapshot to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for GameSessionSnapshot
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        namespace GameSessionSnapshot {
+
+            /** Properties of a PlayerStateBackup. */
+            interface IPlayerStateBackup {
+
+                /** PlayerStateBackup playerId */
+                playerId?: (string|null);
+
+                /** PlayerStateBackup currentScore */
+                currentScore?: (number|null);
+
+                /** PlayerStateBackup currentStreak */
+                currentStreak?: (number|null);
+            }
+
+            /** Represents a PlayerStateBackup. */
+            class PlayerStateBackup implements IPlayerStateBackup {
+
+                /**
+                 * Constructs a new PlayerStateBackup.
+                 * @param [properties] Properties to set
+                 */
+                constructor(properties?: elo.v3.GameSessionSnapshot.IPlayerStateBackup);
+
+                /** PlayerStateBackup playerId. */
+                public playerId: string;
+
+                /** PlayerStateBackup currentScore. */
+                public currentScore: number;
+
+                /** PlayerStateBackup currentStreak. */
+                public currentStreak: number;
+
+                /**
+                 * Creates a new PlayerStateBackup instance using the specified properties.
+                 * @param [properties] Properties to set
+                 * @returns PlayerStateBackup instance
+                 */
+                public static create(properties?: elo.v3.GameSessionSnapshot.IPlayerStateBackup): elo.v3.GameSessionSnapshot.PlayerStateBackup;
+
+                /**
+                 * Encodes the specified PlayerStateBackup message. Does not implicitly {@link elo.v3.GameSessionSnapshot.PlayerStateBackup.verify|verify} messages.
+                 * @param message PlayerStateBackup message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encode(message: elo.v3.GameSessionSnapshot.IPlayerStateBackup, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Encodes the specified PlayerStateBackup message, length delimited. Does not implicitly {@link elo.v3.GameSessionSnapshot.PlayerStateBackup.verify|verify} messages.
+                 * @param message PlayerStateBackup message or plain object to encode
+                 * @param [writer] Writer to encode to
+                 * @returns Writer
+                 */
+                public static encodeDelimited(message: elo.v3.GameSessionSnapshot.IPlayerStateBackup, writer?: $protobuf.Writer): $protobuf.Writer;
+
+                /**
+                 * Decodes a PlayerStateBackup message from the specified reader or buffer.
+                 * @param reader Reader or buffer to decode from
+                 * @param [length] Message length if known beforehand
+                 * @returns PlayerStateBackup
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.GameSessionSnapshot.PlayerStateBackup;
+
+                /**
+                 * Decodes a PlayerStateBackup message from the specified reader or buffer, length delimited.
+                 * @param reader Reader or buffer to decode from
+                 * @returns PlayerStateBackup
+                 * @throws {Error} If the payload is not a reader or valid buffer
+                 * @throws {$protobuf.util.ProtocolError} If required fields are missing
+                 */
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.GameSessionSnapshot.PlayerStateBackup;
+
+                /**
+                 * Verifies a PlayerStateBackup message.
+                 * @param message Plain object to verify
+                 * @returns `null` if valid, otherwise the reason why it is not
+                 */
+                public static verify(message: { [k: string]: any }): (string|null);
+
+                /**
+                 * Creates a PlayerStateBackup message from a plain object. Also converts values to their respective internal types.
+                 * @param object Plain object
+                 * @returns PlayerStateBackup
+                 */
+                public static fromObject(object: { [k: string]: any }): elo.v3.GameSessionSnapshot.PlayerStateBackup;
+
+                /**
+                 * Creates a plain object from a PlayerStateBackup message. Also converts values to other types if specified.
+                 * @param message PlayerStateBackup
+                 * @param [options] Conversion options
+                 * @returns Plain object
+                 */
+                public static toObject(message: elo.v3.GameSessionSnapshot.PlayerStateBackup, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+                /**
+                 * Converts this PlayerStateBackup to JSON.
+                 * @returns JSON object
+                 */
+                public toJSON(): { [k: string]: any };
+
+                /**
+                 * Gets the default type url for PlayerStateBackup
+                 * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+                 * @returns The default type url
+                 */
+                public static getTypeUrl(typeUrlPrefix?: string): string;
+            }
+        }
+
         /** Properties of a ClientAction. */
         interface IClientAction {
 
@@ -1155,6 +1512,9 @@ export namespace elo {
 
             /** ClientAction connectionHandshake */
             connectionHandshake?: (elo.v3.INetworkHandshake|null);
+
+            /** ClientAction regionalOverride */
+            regionalOverride?: (elo.v3.IRegionalHandshakeOverride|null);
         }
 
         /** Represents a ClientAction. */
@@ -1205,8 +1565,11 @@ export namespace elo {
             /** ClientAction connectionHandshake. */
             public connectionHandshake?: (elo.v3.INetworkHandshake|null);
 
+            /** ClientAction regionalOverride. */
+            public regionalOverride?: (elo.v3.IRegionalHandshakeOverride|null);
+
             /** ClientAction payload. */
-            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake");
+            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride");
 
             /**
              * Creates a new ClientAction instance using the specified properties.
@@ -1336,6 +1699,12 @@ export namespace elo {
 
             /** ServerGameStateUpdate activeReconnectionToken */
             activeReconnectionToken?: (string|null);
+
+            /** ServerGameStateUpdate currentNodeZone */
+            currentNodeZone?: (elo.v3.RegionZone|null);
+
+            /** ServerGameStateUpdate standbyOverride */
+            standbyOverride?: (elo.v3.IRegionalHandshakeOverride|null);
         }
 
         /** Represents a ServerGameStateUpdate. */
@@ -1394,6 +1763,12 @@ export namespace elo {
 
             /** ServerGameStateUpdate activeReconnectionToken. */
             public activeReconnectionToken: string;
+
+            /** ServerGameStateUpdate currentNodeZone. */
+            public currentNodeZone: elo.v3.RegionZone;
+
+            /** ServerGameStateUpdate standbyOverride. */
+            public standbyOverride?: (elo.v3.IRegionalHandshakeOverride|null);
 
             /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.
