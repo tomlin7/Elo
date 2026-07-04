@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package elo.v2;
+
+enum MatchState {
+  MATCH_STATE_UNSPECIFIED = 0;
+  MATCH_STATE_COUNTDOWN = 1;
+  MATCH_STATE_ACTIVE = 2;
+  MATCH_STATE_PAUSED_DISCONNECT = 3;
+  MATCH_STATE_FINISHED = 4;
+}
+
+enum RoomType {
+  ROOM_TYPE_RANKED = 0;
+  ROOM_TYPE_PRIVATE = 1;
+}
+
+message PlayerIdentity {
+  string player_id = 1;
+  string username = 2;
+  int32 elo_rating = 3;
+  string selected_theme_id = 4;
+  string active_title = 5;
+  int32 level = 6;
+  int32 xp = 7;
+}
+
+message CreateCustomRoomRequest {
+  string host_player_id = 1;
+  bool allow_division = 2;
+  bool allow_multiplication = 3;
+  int32 custom_duration_seconds = 4;
+}
+
+message MatchSecurityLog {
+  string action_sequence_id = 1;
+  int64 keystroke_delta_ms = 2; // Time difference between consecutive character typed inputs
+  string input_value = 3;
+}
+
+message ClientAction {
+  string room_id = 1;
+  string player_id = 2;
+  int64 timestamp = 3;
+  
+  oneof payload {
+    string current_input = 4; // Current keystroke stream (ghost text)
+    string submitted_answer = 5; // Final answer submission
+    string join_queue_player_id = 6; // Client requests to join queue
+    CreateCustomRoomRequest create_custom_room = 7; // Request to create a custom room
+    string join_private_room_code = 8; // Request to join a private room by code
+    MatchSecurityLog security_log = 9; // Client telemetry report
+  }
+}
+
+message ServerGameStateUpdate {
+  string room_id = 1;
+  MatchState state = 2;
+  int32 time_remaining_seconds = 3;
+  RoomType room_type = 4;
+  string private_room_code = 5;
+  
+  message PlayerProgress {
+    string player_id = 1;
+    string username = 2;
+    int32 current_score = 3;
+    int32 current_streak = 4;
+    string ghost_input = 5; // What the opponent is currently typing
+    int32 elo = 6;
+    string active_title = 7;
+    int32 level = 8;
+  }
+  
+  PlayerProgress player_one = 6;
+  PlayerProgress player_two = 7;
+  
+  string next_question_text = 8; // Labeled arithmetic question string (e.g. "14 * 3 - 7")
+  string winner_id = 9;
+  int32 player_one_elo_change = 10;
+  int32 player_two_elo_change = 11;
+  int32 player_one_xp_change = 12;
+  int32 player_two_xp_change = 13;
+}
