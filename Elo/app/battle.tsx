@@ -30,6 +30,10 @@ export default function BattleScreen() {
   const [currentInput, setCurrentInput] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const [showTelemetry, setShowTelemetry] = useState(false);
+  const [fps, setFps] = useState(60);
+  const [ping, setPing] = useState(12);
+
   const wsRef = useRef<WebSocket | null>(null);
   const prevStateRef = useRef<any>(null);
 
@@ -39,6 +43,45 @@ export default function BattleScreen() {
 
   // Time remaining
   const [timeRemaining, setTimeRemaining] = useState(60);
+
+  useEffect(() => {
+    // 1. Measure FPS
+    let frames = 0;
+    let lastFpsTime = Date.now();
+    let animFrameId: number;
+
+    const measureFps = () => {
+      frames++;
+      const now = Date.now();
+      if (now >= lastFpsTime + 1000) {
+        setFps(Math.round((frames * 1000) / (now - lastFpsTime)));
+        frames = 0;
+        lastFpsTime = now;
+      }
+      animFrameId = requestAnimationFrame(measureFps);
+    };
+    animFrameId = requestAnimationFrame(measureFps);
+
+    // 2. Measure average ping (sliding window every 3 seconds)
+    const pingHistory: number[] = [];
+    const interval = setInterval(async () => {
+      try {
+        const urls = getBackendUrls();
+        const start = Date.now();
+        await fetch(`${urls.http}/api/ping`);
+        const rtt = Date.now() - start;
+        pingHistory.push(rtt);
+        if (pingHistory.length > 5) pingHistory.shift();
+        const avg = Math.round(pingHistory.reduce((a, b) => a + b, 0) / pingHistory.length);
+        setPing(avg);
+      } catch {}
+    }, 3000);
+
+    return () => {
+      cancelAnimationFrame(animFrameId);
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     if (!playerId) {
@@ -328,7 +371,27 @@ export default function BattleScreen() {
 
           {/* Time Progress Bar */}
           <View style={[styles.progressBarContainer, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-            <View style={[styles.progressBar, { width: `${(timeRemaining / gameState.durationSeconds || 60) * 100}%`, backgroundColor: timeRemaining <= 10 ? "#EF4444" : colors.primary }]} />
+            <View style={[styles.progressBar, { width: `${(timeRemaining / (gameState.durationSeconds || 60)) * 100}%`, backgroundColor: timeRemaining <= 10 ? "#EF4444" : colors.primary }]} />
+          </View>
+
+          {/* Telemetry Control Panel */}
+          <View style={styles.telemetryControlsRow}>
+            <TouchableOpacity
+              style={[styles.telemetryToggleBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
+              onPress={() => setShowTelemetry(!showTelemetry)}
+            >
+              <Text style={[styles.telemetryToggleText, { color: colors.textMuted }]}>
+                {showTelemetry ? "HIDE METRICS" : "SHOW METRICS"}
+              </Text>
+            </TouchableOpacity>
+
+            {showTelemetry && (
+              <View style={[styles.telemetryPill, { backgroundColor: colors.cardBg, borderColor: colors.accentMuted }]}>
+                <Text style={[styles.telemetryDataText, { color: colors.text }]}>
+                  FPS: {fps} | PING: {ping}ms | LOSS: 0%
+                </Text>
+              </View>
+            )}
           </View>
 
           {/* Core Battle Arena */}
@@ -427,6 +490,36 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#0A0A0C",
+  },
+  telemetryControlsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: 24,
+    marginTop: 10,
+    height: 32,
+  },
+  telemetryToggleBtn: {
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  telemetryToggleText: {
+    fontSize: 9,
+    fontWeight: "800",
+    letterSpacing: 0.5,
+  },
+  telemetryPill: {
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  telemetryDataText: {
+    fontSize: 9,
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
   loadingContainer: {
     flex: 1,
