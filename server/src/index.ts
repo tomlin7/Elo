@@ -54,6 +54,61 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
       });
     }
 
+    if (url.pathname === "/api/config" && req.method === "GET") {
+      return new Response(JSON.stringify({
+        tournamentEnabled: true,
+        antiCheatIntervalMs: 120,
+        maintenanceBanner: ""
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    if (url.pathname === "/api/profile/delete" && req.method === "POST") {
+      return req.json()
+        .then((body: any) => {
+          const { playerId } = body;
+          if (!playerId) {
+            return new Response("Missing parameters", { status: 400, headers: corsHeaders });
+          }
+          dbService.scheduleAccountDeletion(playerId);
+          return new Response(JSON.stringify({ success: true, message: "Deletion scheduled. 7 days grace window open." }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        })
+        .catch(err => new Response(err.message, { status: 500, headers: corsHeaders }));
+    }
+
+    if (url.pathname === "/api/profile/consent" && req.method === "POST") {
+      return req.json()
+        .then((body: any) => {
+          const { playerId, version } = body;
+          if (!playerId || !version) {
+            return new Response("Missing parameters", { status: 400, headers: corsHeaders });
+          }
+          dbService.saveConsentLog(playerId, version);
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        })
+        .catch(err => new Response(err.message, { status: 500, headers: corsHeaders }));
+    }
+
+    if (url.pathname === "/api/developer/webhook" && req.method === "POST") {
+      return req.json()
+        .then((body: any) => {
+          const { playerId, targetUrl, secret } = body;
+          if (!playerId || !targetUrl || !secret) {
+            return new Response("Missing parameters", { status: 400, headers: corsHeaders });
+          }
+          dbService.registerWebhook(playerId, targetUrl, secret);
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        })
+        .catch(err => new Response(err.message, { status: 500, headers: corsHeaders }));
+    }
+
     if (url.pathname === "/api/auth/guest" && req.method === "POST") {
       return req.json()
         .then((body: any) => {

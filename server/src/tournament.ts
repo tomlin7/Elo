@@ -2,6 +2,7 @@ import { elo } from "./proto/elo_proto.js";
 import { GameManager, GamePlayer, GameRoom } from "./game.ts";
 import { dbService } from "./db.ts";
 import { NotificationService } from "./notification.ts";
+import { WebhookDispatcher } from "./webhook.ts";
 
 const MatchNodeStatus = elo.v3.MatchNodeStatus;
 const TournamentRound = elo.v3.TournamentRound;
@@ -202,6 +203,13 @@ export class Tournament {
       // Save stats to db (central commits on edge completion)
       if (finalNode.winnerId) {
         dbService.updatePlayerProgression(finalNode.winnerId, 300, 1, 500); // 500 Credits, 300 XP
+        
+        // Dispatch tournament completion developer webhook event
+        WebhookDispatcher.dispatch(finalNode.winnerId, "tournament.completed", {
+          tournamentId: this.id,
+          winnerId: finalNode.winnerId,
+          nodes: this.nodes
+        });
       }
 
       this.players.forEach(p => {
