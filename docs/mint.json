@@ -1,36 +1,57 @@
 {
-  "$schema": "https://mintlify.com/schema.json",
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
   "name": "Elo",
-  "logo": {
-    "light": "assets/logo.png",
-    "dark": "assets/logo.png"
-  },
   "colors": {
     "primary": "#6366F1",
     "light": "#818CF8",
     "dark": "#4F46E5"
   },
-  "navigation": [
-    {
-      "group": "Getting Started",
-      "pages": [
-        "introduction",
-        "getting-started"
-      ]
-    },
-    {
-      "group": "Architecture & Engine",
-      "pages": [
-        "architecture",
-        "tournaments"
-      ]
-    },
-    {
-      "group": "Protocol Specifications",
-      "pages": [
-        "api-reference/rest-endpoints",
-        "api-reference/websocket-protocol"
-      ]
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "pages": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "introduction",
+          "getting-started"
+        ]
+      },
+      {
+        "group": "Architecture & Engine",
+        "pages": [
+          "architecture",
+          "tournaments"
+        ]
+      },
+      {
+        "group": "Protocol Specifications",
+        "pages": [
+          "api-reference/rest-endpoints",
+          "api-reference/websocket-protocol"
+        ]
+      }
+    ]
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "contextual": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/tomlin7/Elo"
     }
-  ]
+  }
 }
