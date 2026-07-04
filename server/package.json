@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "start": "bun src/index.ts",
+    "test": "bun test",
     "build-proto": "pbjs -t static-module -w es6 -o src/proto/elo_proto.js ../proto/elo.proto && pbts -o src/proto/elo_proto.d.ts src/proto/elo_proto.js"
   },
   "dependencies": {
