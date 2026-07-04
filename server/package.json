@@ -1,0 +1,18 @@
+{
+  "name": "elo-server",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun src/index.ts",
+    "build-proto": "pbjs -t static-module -w es6 -o src/proto/elo_proto.js ../proto/elo.proto && pbts -o src/proto/elo_proto.d.ts src/proto/elo_proto.js"
+  },
+  "dependencies": {
+    "protobufjs": "^7.3.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "protobufjs-cli": "^1.1.2"
+  }
+}
