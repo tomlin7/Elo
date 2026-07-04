@@ -16,7 +16,7 @@ Elo is a hyper-performant, real-time 1v1 mental math competitive mobile applicat
 cd server
 bun install
 bun run build-proto
-bun run dev
+bun run start:dev
 ```
 
 ### 2. Launch the Mobile Client

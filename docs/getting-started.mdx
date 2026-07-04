@@ -22,8 +22,11 @@ bun install
 # Compile the Protobuf v3 schemas
 bun run build-proto
 
-# Start the local development server (runs on port 8080)
-bun run dev
+# Start the local development server in watch mode
+bun run start:dev
+
+# Or run the production instance
+bun run start:prod
 ```
 
 The server automatically instantiates the SQLite file (`elo.db`) in the root and runs dynamic schemas migrations.
