@@ -1,9 +1,9 @@
 import { elo } from "./proto/elo_proto.js";
 import { dbService, Player } from "./db.ts";
 
-const MatchState = elo.v2.MatchState;
-const RoomType = elo.v2.RoomType;
-const ServerGameStateUpdate = elo.v2.ServerGameStateUpdate;
+const MatchState = elo.v3.MatchState;
+const RoomType = elo.v3.RoomType;
+const ServerGameStateUpdate = elo.v3.ServerGameStateUpdate;
 
 export interface GamePlayer {
   id: string;
