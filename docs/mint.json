@@ -11,15 +11,16 @@
   "navigation": {
     "pages": [
       {
-        "group": "Getting Started",
+        "group": "Player Guide",
         "pages": [
           "introduction",
-          "getting-started"
+          "user-guide"
         ]
       },
       {
-        "group": "Architecture & Engine",
+        "group": "Developer Portal",
         "pages": [
+          "getting-started",
           "architecture",
           "tournaments"
         ]
