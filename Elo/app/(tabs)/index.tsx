@@ -257,6 +257,14 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            style={[styles.duelButton, { backgroundColor: colors.accent, marginBottom: 12 }]}
+            onPress={() => router.push("/tournament-lobby")}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.duelButtonText}>ENTER BLITZ TOURNAMENT</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
             onPress={handlePrivateMatch}
             activeOpacity={0.85}
