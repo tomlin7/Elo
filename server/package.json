@@ -4,9 +4,10 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "dev": "bun --watch src/index.ts",
-    "start": "bun src/index.ts",
+    "start:dev": "bun --watch src/index.ts",
+    "start:prod": "bun src/index.ts",
     "test": "bun test",
+    "test:coverage": "bun test --coverage",
     "build-proto": "pbjs -t static-module -w es6 -o src/proto/elo_proto.js ../proto/elo.proto && pbts -o src/proto/elo_proto.d.ts src/proto/elo_proto.js"
   },
   "dependencies": {
