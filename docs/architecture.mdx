@@ -1,0 +1,36 @@
+---
+title: "Architecture & Data Engine"
+description: "A deep dive into Elo's data engine, connection resiliency, and SQLite storage design."
+---
+
+## Ephemeral & Persistent Database Layout
+
+Elo balances low-write overhead and sub-10ms query execution through a sharded storage approach:
+- **aggregated summaries**: Saved to SQLite (`matches`, `match_telemetry`, `season_archives` tables).
+- **real-time coordinates**: Keystrokes, timing arrays, and emoji coordinates are processed ephemerally in-memory and discarded post-match.
+
+### SQLite Schema B-Tree Indexes
+To ensure instantaneous lookups for profiles and historical feeds, we enforce composite indexes on matches:
+```sql
+CREATE INDEX IF NOT EXISTS idx_matches_p1_date ON matches (player_one_id, played_at);
+CREATE INDEX IF NOT EXISTS idx_matches_p2_date ON matches (player_two_id, played_at);
+```
+
+---
+
+## Connection Resilience & WS Heartbeats
+
+Elo implements an automated connection resumption routine to protect player matches from network drops:
+- **Ping-Pong Heartbeats**: The WebSocket connection enforces a 5-second ping/pong validation cycle.
+- **Reconnection Tokens**: At room initialization, the server generates unique tokens (`recon_p1_...` and `recon_p2_...`) and sends them in client update packages.
+- **Snapshot Recovery Handshake**: If connection drops for under 10 seconds, the client attempts auto-reconnection by sending a `NetworkHandshake` client action containing the token. The server maps it back to the paused game room, restores the socket handle, and broadcasts a catch-up snapshot.
+
+---
+
+## Ranked Season Rollover Engine
+
+Ranked Seasons operate on a 30-day cyclic lifecycle:
+- At the end of the month, a rollover routine compiles standings and archives players' peak ratings into `season_archives`.
+- **Soft Reset rating compression formula**: Applied to players above the ELO 1200 mean to prevent rating inflation:
+
+$$\text{Elo}_{\text{New}} = 1200 + \left( \frac{\text{Elo}_{\text{Current}} - 1200}{2} \right)$$

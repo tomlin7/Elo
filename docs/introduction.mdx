@@ -1,0 +1,30 @@
+---
+title: "Introduction"
+description: "Welcome to Elo — the high-stakes 1v1 mental math competitive arena."
+---
+
+<img
+  className="block dark:hidden"
+  src="images/hero.png"
+  alt="Elo Light Hero Banner"
+/>
+<img
+  className="hidden dark:block"
+  src="images/hero.png"
+  alt="Elo Dark Hero Banner"
+/>
+
+## What is Elo?
+
+Elo is a high-fidelity, hyper-performant mobile application designed to turn mental math into a high-stakes, competitive e-sport. Built using React Native (Expo Router) for the client and Bun (SQLite + WebSockets) for the real-time server, the platform delivers:
+- **Low-Latency Game Loop**: Synchronized matchmaking, countdown states, and active game arenas.
+- **8-Player Knockout Tournaments**: Automated single-elimination brackets from Quarterfinals down to the Finals.
+- **Progression Systems**: Streaks, XP-level upgrades, titles, and shop cosmetics.
+- **Analytics & History**: Diagnostic performance dashboards with SVG solve-time curves.
+
+## Technical Architecture
+
+Elo uses a strict end-to-end type contract using **Protocol Buffers (v3)**. Both REST APIs and WebSocket payload streams serialize data instantly over the wire to guarantee sub-40ms latency thresholds.
+
+- **Frontend**: React Native, Tailwind/Zustand theme layers, Expo Router Stack, MMKV Storage, and React Native Reanimated.
+- **Backend**: Bun JS Runtime, SQLite database engine, state managers, and custom socket adapters.

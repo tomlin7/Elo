@@ -1,0 +1,48 @@
+---
+title: "Getting Started"
+description: "Configure your local environment and spin up the Elo client and server instances."
+---
+
+## Prerequisites
+
+Ensure you have the following installed on your machine:
+- **Bun**: The JavaScript runtime and package manager used across our repositories.
+- **Expo Go** / **Android Studio**: To compile and run the React Native client package.
+
+---
+
+## Backend Installation
+
+Navigate to the `server/` workspace directory and run the initialization commands:
+
+```bash
+# Install dependencies
+bun install
+
+# Compile the Protobuf v3 schemas
+bun run build-proto
+
+# Start the local development server (runs on port 8080)
+bun run dev
+```
+
+The server automatically instantiates the SQLite file (`elo.db`) in the root and runs dynamic schemas migrations.
+
+---
+
+## Client Installation
+
+Navigate to the `Elo/` React Native workspace and setup:
+
+```bash
+# Install package dependencies
+bun install
+
+# Compile client-side Protobuf bindings
+bun run build-proto
+
+# Start the Expo Go bundler
+bun run dev
+```
+
+Scan the QR code printed by Expo on your Android device to load the React Native bundle using **Expo Go**.

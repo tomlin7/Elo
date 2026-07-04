@@ -1,0 +1,36 @@
+{
+  "$schema": "https://mintlify.com/schema.json",
+  "name": "Elo",
+  "logo": {
+    "light": "assets/logo.png",
+    "dark": "assets/logo.png"
+  },
+  "colors": {
+    "primary": "#6366F1",
+    "light": "#818CF8",
+    "dark": "#4F46E5"
+  },
+  "navigation": [
+    {
+      "group": "Getting Started",
+      "pages": [
+        "introduction",
+        "getting-started"
+      ]
+    },
+    {
+      "group": "Architecture & Engine",
+      "pages": [
+        "architecture",
+        "tournaments"
+      ]
+    },
+    {
+      "group": "Protocol Specifications",
+      "pages": [
+        "api-reference/rest-endpoints",
+        "api-reference/websocket-protocol"
+      ]
+    }
+  ]
+}

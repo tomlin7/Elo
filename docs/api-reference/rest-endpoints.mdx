@@ -1,0 +1,96 @@
+---
+title: "REST API Endpoints"
+description: "Documentation of the Elo backend REST interfaces."
+---
+
+All endpoints support JSON payload types and return standard CORS access headers.
+
+---
+
+### Authenticate Guest User
+Creates or retrieves a guest profile.
+
+* **URL**: `/api/auth/guest`
+* **Method**: `POST`
+* **Body Parameters**:
+  ```json
+  {
+    "username": "MathWizard"
+  }
+  ```
+* **Success Response (200)**:
+  ```json
+  {
+    "id": "player_8f32a...",
+    "username": "MathWizard",
+    "elo": 1000,
+    "credits": 0,
+    "level": 1,
+    "xp": 0
+  }
+  ```
+
+---
+
+### Retrieve Match History Feed
+Fetch the player's last 50 matches and aggregated telemetry stats.
+
+* **URL**: `/api/profile/history`
+* **Method**: `GET`
+* **Query Parameters**:
+  * `playerId` (string)
+* **Success Response (200)**:
+  ```json
+  {
+    "history": [
+      {
+        "matchId": "room_17832...",
+        "opponentUsername": "ChallengerBot",
+        "isVictory": true,
+        "eloDelta": 16,
+        "matchTimestamp": 1783201254000,
+        "stats": [
+          {
+            "operationType": "MULTIPLICATION",
+            "totalPresented": 8,
+            "totalCorrect": 7,
+            "averageSolveTimeMs": 1150
+          }
+        ]
+      }
+    ]
+  }
+  ```
+
+---
+
+### Retrieve Historical Season Placements
+Fetch archives of prior ranked placements and tiers.
+
+* **URL**: `/api/profile/archives`
+* **Method**: `GET`
+* **Query Parameters**:
+  * `playerId` (string)
+* **Success Response (200)**:
+  ```json
+  {
+    "archives": [
+      {
+        "season_number": 1,
+        "tier": "Diamond",
+        "peak_elo": 1820,
+        "final_elo": 1740,
+        "archived_at": "2026-06-30 23:59:59"
+      }
+    ]
+  }
+  ```
+
+---
+
+### Ping Latency Check
+High-speed endpoint returning a fast ping response.
+
+* **URL**: `/api/ping`
+* **Method**: `GET`
+* **Success Response (200)**: `pong`

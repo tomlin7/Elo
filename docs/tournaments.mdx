@@ -1,0 +1,43 @@
+---
+title: "Knockout Tournaments"
+description: "How Elo coordinates live single-elimination tournament brackets and interactive spectators."
+---
+
+## 8-Player Single-Elimination Tournament Brackets
+
+The server matches 8 players of similar rating ranges into a Blitz Tournament. Upon matchmaking completion, the system generates a single-elimination tournament tree containing:
+- **4 Quarterfinals Nodes** (`Q1` to `Q4`)
+- **2 Semifinals Nodes** (`S1`, `S2`)
+- **1 Finals Node** (`F1`)
+
+```
+   Quarterfinals          Semifinals             Finals
+┌──────────────┐
+│  Player 1    │───┐
+├──────────────┤   │   ┌──────────────┐
+│  Player 2    │   ├───│  Winner Q1   │───┐
+└──────────────┘   │   ├──────────────┤   │
+                   │   │  Winner Q2   │   │   ┌──────────────┐
+                   │   └──────────────┘   ├───│  Winner S1   │
+                   │                          ├──────────────┤
+                   │                          │  Winner S2   │
+                   │                          └──────────────┘
+┌──────────────┐   │                          ▲
+│  Player 3    │───┘                          │
+├──────────────┤                              │
+│  Player 4    │──────────────────────────────┘
+└──────────────┘
+```
+
+### Bracket Advancement Synchronization
+1. Each match runs in parallel on a 60-second timer.
+2. Players completing their match early are transitioned to the **Tournament Lobby View**, showing progress bars of other parallel matches.
+3. Once a round concludes, the engine provisions a new `RoomID` and sends a 5-second countdown to the advancing candidates.
+
+---
+
+## Live Spectating Hub & Reactions
+
+Eliminated players or dashboard navigators can tap any active node in the tournament to spectate.
+- **Dual-Stream Tracking**: Spectators receive a side-by-side feed detailing both competitors' active questions, current scores, and ghost typing input streams.
+- **Floating Emoji Expressions**: Spectators can broadcast floating emojis (🔥, 🤯, ⚡). These triggers send coordinates to the room socket, rendering floating canvas animations on all viewers' screens.

@@ -1,0 +1,80 @@
+---
+title: "WebSocket Protocol"
+description: "Binary type contract specifications over the WebSockets (/ws) channel."
+---
+
+The WebSocket gateway coordinates matchmaking pools, active match countdowns, solving input streams, and spectator emoji coordination. All messages are serialized using the `elo.v3` Protobuf protocol definition.
+
+---
+
+## Client Actions (`ClientAction` payload)
+
+Clients transmit messages to the server using the `ClientAction` type. The payload defines which command is running:
+
+```protobuf
+message ClientAction {
+  string room_id = 1;
+  string player_id = 2;
+  int64 timestamp = 3;
+  
+  oneof payload {
+    string current_input = 4;
+    string submitted_answer = 5;
+    string join_queue_player_id = 6;
+    CreateCustomRoomRequest create_custom_room = 7;
+    string join_private_room_code = 8;
+    MatchSecurityLog security_log = 9;
+    
+    // Phase 3 & 4 Extensions
+    string join_tournament_player_id = 10;
+    string spectate_room_id = 11;
+    SpectatorEmojiBurst emoji_burst = 12;
+    NetworkHandshake connection_handshake = 13;
+  }
+}
+```
+
+---
+
+## Server Updates (`ServerGameStateUpdate` payload)
+
+The server broadcasts match states to connected players and spectating hubs.
+
+```protobuf
+message ServerGameStateUpdate {
+  string room_id = 1;
+  MatchState state = 2;
+  int32 time_remaining_seconds = 3;
+  RoomType room_type = 4;
+  string private_room_code = 5;
+  
+  message PlayerProgress {
+    string player_id = 1;
+    string username = 2;
+    int32 current_score = 3;
+    int32 current_streak = 4;
+    string ghost_input = 5;
+    int32 elo = 6;
+    string active_title = 7;
+    int32 level = 8;
+  }
+  
+  PlayerProgress player_one = 6;
+  PlayerProgress player_two = 7;
+  
+  string next_question_text = 8;
+  string winner_id = 9;
+  int32 player_one_elo_change = 10;
+  int32 player_two_elo_change = 11;
+  
+  // Phase 3 & 4 Extensions
+  TournamentBracketUpdate bracket_update = 14;
+  SpectatorEmojiBurst emoji_burst = 15;
+  string active_reconnection_token = 16;
+}
+```
+
+---
+
+## Asynchronous Heartbeats
+To prevent socket termination due to corporate firewall policies or mobile device power management limits, clients must send a raw `"ping"` keep-alive string on the WebSocket connection every 5 seconds. The server replies with a raw `"pong"` string.
