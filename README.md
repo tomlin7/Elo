@@ -7,7 +7,7 @@ Elo is a hyper-performant, real-time 1v1 mental math competitive mobile applicat
 *   `Elo/`: React Native client application built using Expo Router.
 *   `server/`: High-performance Bun backend server utilizing SQLite and WebSockets.
 *   `proto/`: Type contracts defined via Protocol Buffers (v3).
-*   `docs/`: Extensive documentation configured for [Mintlify](https://mintlify.com).
+*   `docs/`: Extensive documentation ([read docs here](https://elo.mintlify.site))
 
 ## Quick Start
 
@@ -29,4 +29,4 @@ bun run dev
 
 ## Documentation
 
-For full architecture details, WebSocket schemas, REST API specs, and bracket engine details, check out the [Mintlify Documentation Site](./docs/introduction.mdx).
+For full architecture details, WebSocket schemas, REST API specs, and bracket engine details, check out the [Mintlify Documentation Site](https://elo.mintlify.site).
