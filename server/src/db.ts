@@ -131,6 +131,44 @@ db.run(`
   )
 `);
 
+// Global Battle Pass Seasonal Tracks Directory
+db.run(`
+  CREATE TABLE IF NOT EXISTS battle_pass_seasons (
+    id TEXT PRIMARY KEY,
+    season_number INTEGER NOT NULL UNIQUE,
+    title TEXT NOT NULL,
+    start_timestamp INTEGER NOT NULL,
+    end_timestamp INTEGER NOT NULL
+  )
+`);
+
+// User Combat Pass Tier Progression Ledger
+db.run(`
+  CREATE TABLE IF NOT EXISTS user_combat_pass (
+    player_id TEXT NOT NULL,
+    season_id TEXT NOT NULL,
+    current_stars INTEGER DEFAULT 0,
+    current_tier INTEGER DEFAULT 1,
+    is_premium_unlocked INTEGER DEFAULT 0,
+    claimed_tiers_mask TEXT NOT NULL,
+    PRIMARY KEY(player_id, season_id)
+  )
+`);
+
+// Active User Daily Objectives Tracker
+db.run(`
+  CREATE TABLE IF NOT EXISTS user_daily_challenges (
+    id TEXT PRIMARY KEY,
+    player_id TEXT NOT NULL,
+    challenge_type TEXT NOT NULL,
+    target_value INTEGER NOT NULL,
+    current_value INTEGER DEFAULT 0,
+    is_completed INTEGER DEFAULT 0,
+    reward_stars INTEGER NOT NULL,
+    expires_timestamp INTEGER NOT NULL
+  )
+`);
+
 // Run Migrations dynamically for Phase 2, 4 & 6 columns
 const addColumn = (col: string, defVal: string) => {
   try {
@@ -472,6 +510,116 @@ export const dbService = {
   getActiveTemplates(): any[] {
     const query = db.query("SELECT * FROM problem_templates WHERE is_active = 1");
     return query.all() as any[];
+  },
+
+  initializeBattlePassSeason(seasonId: string, seasonNum: number, title: string): void {
+    const query = db.query(`
+      INSERT OR REPLACE INTO battle_pass_seasons (id, season_number, title, start_timestamp, end_timestamp)
+      VALUES ($id, $num, $title, $start, $end)
+    `);
+    query.run({
+      $id: seasonId,
+      $num: seasonNum,
+      $title: title,
+      $start: Date.now() - 24 * 60 * 60 * 1000,
+      $end: Date.now() + 30 * 24 * 60 * 60 * 1000
+    });
+  },
+
+  getUserCombatPass(playerId: string, seasonId: string): any {
+    const query = db.query("SELECT * FROM user_combat_pass WHERE player_id = $playerId AND season_id = $seasonId");
+    let record = query.get({ $playerId: playerId, $seasonId: seasonId }) as any;
+    if (!record) {
+      const insert = db.query(`
+        INSERT INTO user_combat_pass (player_id, season_id, current_stars, current_tier, is_premium_unlocked, claimed_tiers_mask)
+        VALUES ($playerId, $seasonId, 0, 1, 0, '')
+      `);
+      insert.run({ $playerId: playerId, $seasonId: seasonId });
+      record = { player_id: playerId, season_id: seasonId, current_stars: 0, current_tier: 1, is_premium_unlocked: 0, claimed_tiers_mask: "" };
+    }
+    return record;
+  },
+
+  incrementCombatStars(playerId: string, seasonId: string, stars: number): void {
+    const pass = this.getUserCombatPass(playerId, seasonId);
+    const newStars = (pass.current_stars || 0) + stars;
+    // 10 stars per tier up
+    const newTier = Math.min(50, Math.floor(newStars / 10) + 1);
+
+    const update = db.query(`
+      UPDATE user_combat_pass 
+      SET current_stars = $stars, current_tier = $tier 
+      WHERE player_id = $playerId AND season_id = $seasonId
+    `);
+    update.run({ $stars: newStars, $tier: newTier, $playerId: playerId, $seasonId: seasonId });
+  },
+
+  claimBattlePassTier(playerId: string, seasonId: string, tier: number): void {
+    const pass = this.getUserCombatPass(playerId, seasonId);
+    let mask = pass.claimed_tiers_mask || "";
+    const claimedList = mask.split(",").filter(Boolean);
+    if (!claimedList.includes(tier.toString())) {
+      claimedList.push(tier.toString());
+      mask = claimedList.join(",");
+      const update = db.query(`
+        UPDATE user_combat_pass 
+        SET claimed_tiers_mask = $mask 
+        WHERE player_id = $playerId AND season_id = $seasonId
+      `);
+      update.run({ $mask: mask, $playerId: playerId, $seasonId: seasonId });
+    }
+  },
+
+  generateDailyObjectives(playerId: string): void {
+    db.run("DELETE FROM user_daily_challenges WHERE player_id = ?", [playerId]);
+    const expires = Date.now() + 24 * 60 * 60 * 1000;
+
+    const challenges = [
+      { id: `ch1_${playerId}`, type: "SPEED_STREAK", target: 5, stars: 4 },
+      { id: `ch2_${playerId}`, type: "ENDURANCE_STREAK", target: 10, stars: 5 },
+      { id: `ch3_${playerId}`, type: "WIN_COUNT", target: 3, stars: 6 }
+    ];
+
+    challenges.forEach(ch => {
+      const query = db.query(`
+        INSERT INTO user_daily_challenges (id, player_id, challenge_type, target_value, current_value, is_completed, reward_stars, expires_timestamp)
+        VALUES ($id, $playerId, $type, $target, 0, 0, $stars, $expires)
+      `);
+      query.run({
+        $id: ch.id,
+        $playerId: playerId,
+        $type: ch.type,
+        $target: ch.target,
+        $stars: ch.stars,
+        $expires: expires
+      });
+    });
+  },
+
+  incrementChallengeProgress(playerId: string, challengeType: string, amount: number): void {
+    const query = db.query("SELECT * FROM user_daily_challenges WHERE player_id = $playerId AND challenge_type = $type");
+    const ch = query.get({ $playerId: playerId, $type: challengeType }) as any;
+    if (ch && ch.is_completed === 0) {
+      const newVal = Math.min(ch.target_value, ch.current_value + amount);
+      const isCompleted = newVal >= ch.target_value ? 1 : 0;
+
+      const update = db.query(`
+        UPDATE user_daily_challenges 
+        SET current_value = $val, is_completed = $completed 
+        WHERE id = $id
+      `);
+      update.run({ $val: newVal, $completed: isCompleted, $id: ch.id });
+
+      // If completed, add battle pass Combat Stars
+      if (isCompleted) {
+        this.incrementCombatStars(playerId, "season_1", ch.reward_stars);
+      }
+    }
+  },
+
+  getUserChallenges(playerId: string): any[] {
+    const query = db.query("SELECT * FROM user_daily_challenges WHERE player_id = $playerId");
+    return query.all({ $playerId: playerId }) as any[];
   }
 };
 
