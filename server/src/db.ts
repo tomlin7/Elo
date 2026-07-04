@@ -30,6 +30,38 @@ db.run(`
   )
 `);
 
+// Composite B-Tree Indexes on Matches Table
+db.run(`CREATE INDEX IF NOT EXISTS idx_matches_p1_date ON matches (player_one_id, played_at)`);
+db.run(`CREATE INDEX IF NOT EXISTS idx_matches_p2_date ON matches (player_two_id, played_at)`);
+
+// Season Placement Archive Table
+db.run(`
+  CREATE TABLE IF NOT EXISTS season_archives (
+    id TEXT PRIMARY KEY,
+    player_id TEXT NOT NULL,
+    season_number INTEGER NOT NULL,
+    tier TEXT NOT NULL,
+    peak_elo INTEGER NOT NULL,
+    final_elo INTEGER NOT NULL,
+    archived_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
+db.run(`CREATE INDEX IF NOT EXISTS idx_season_player ON season_archives (player_id)`);
+
+// Aggregated Match Telemetry Table
+db.run(`
+  CREATE TABLE IF NOT EXISTS match_telemetry (
+    match_id TEXT NOT NULL,
+    player_id TEXT NOT NULL,
+    operation_type TEXT NOT NULL,
+    total_presented INTEGER NOT NULL,
+    total_correct INTEGER NOT NULL,
+    average_solve_time_ms INTEGER NOT NULL,
+    PRIMARY KEY (match_id, player_id, operation_type)
+  )
+`);
+db.run(`CREATE INDEX IF NOT EXISTS idx_telemetry_player ON match_telemetry (player_id)`);
+
 // Run Migrations dynamically for Phase 2 columns
 const addColumn = (col: string, defVal: string) => {
   try {
@@ -49,6 +81,7 @@ addColumn("completed_today_count", "INTEGER NOT NULL DEFAULT 0");
 addColumn("unlocked_themes", "TEXT NOT NULL DEFAULT '[\"dark\"]'");
 addColumn("selected_theme_id", "TEXT NOT NULL DEFAULT 'dark'");
 addColumn("active_title", "TEXT NOT NULL DEFAULT ''");
+addColumn("peak_elo", "INTEGER NOT NULL DEFAULT 1000"); // Peak Elo tracking for season placement
 
 export interface Player {
   id: string;
@@ -62,9 +95,10 @@ export interface Player {
   daily_streak: number;
   last_played_date: string | null;
   completed_today_count: number;
-  unlocked_themes: string; // JSON string array
+  unlocked_themes: string;
   selected_theme_id: string;
   active_title: string;
+  peak_elo: number;
 }
 
 export interface MatchRecord {
@@ -152,6 +186,90 @@ export const dbService = {
       return true;
     }
     return false;
+  },
+
+  updatePlayerElo(id: string, newElo: number): void {
+    const update = db.query("UPDATE players SET elo = $elo, peak_elo = MAX(peak_elo, $elo) WHERE id = $id");
+    update.run({ $elo: newElo, $id: id });
+  },
+
+  saveMatchTelemetry(matchId: string, playerId: string, telemetry: any[]): void {
+    const insert = db.query(`
+      INSERT INTO match_telemetry (match_id, player_id, operation_type, total_presented, total_correct, average_solve_time_ms)
+      VALUES ($matchId, $playerId, $opType, $totalPresented, $totalCorrect, $avgSolveTime)
+    `);
+    telemetry.forEach(t => {
+      insert.run({
+        $matchId: matchId,
+        $playerId: playerId,
+        $opType: t.operationType,
+        $totalPresented: t.totalPresented,
+        $totalCorrect: t.totalCorrect,
+        $avgSolveTime: t.averageSolveTimeMs
+      });
+    });
+  },
+
+  getPlayerMatchHistory(playerId: string, limit = 50): any[] {
+    const query = db.query(`
+      SELECT 
+        m.id as match_id,
+        CASE WHEN m.player_one_id = $playerId THEN p2.username ELSE p1.username END as opponent_username,
+        CASE WHEN m.winner_id = $playerId THEN 1 ELSE 0 END as is_victory,
+        CASE WHEN m.player_one_id = $playerId THEN m.player_one_elo_change ELSE m.player_two_elo_change END as elo_delta,
+        strftime('%s', m.played_at) * 1000 as match_timestamp
+      FROM matches m
+      JOIN players p1 ON m.player_one_id = p1.id
+      JOIN players p2 ON m.player_two_id = p2.id
+      WHERE m.player_one_id = $playerId OR m.player_two_id = $playerId
+      ORDER BY m.played_at DESC
+      LIMIT $limit
+    `);
+    const matchesList = query.all({ $playerId: playerId }) as any[];
+
+    const telQuery = db.query(`
+      SELECT operation_type, total_presented, total_correct, average_solve_time_ms
+      FROM match_telemetry
+      WHERE match_id = $matchId AND player_id = $playerId
+    `);
+
+    return matchesList.map(m => {
+      const stats = telQuery.all({ $matchId: m.match_id, $playerId: playerId }) as any[];
+      return {
+        matchId: m.match_id,
+        opponentUsername: m.opponent_username,
+        isVictory: m.is_victory === 1,
+        eloDelta: m.elo_delta,
+        matchTimestamp: m.match_timestamp,
+        stats: stats.map(s => ({
+          operationType: s.operation_type,
+          totalPresented: s.total_presented,
+          totalCorrect: s.total_correct,
+          averageSolveTimeMs: s.average_solve_time_ms
+        }))
+      };
+    });
+  },
+
+  archiveSeason(playerId: string, seasonNum: number, tier: string, peakElo: number, finalElo: number): void {
+    const id = `archive_${seasonNum}_${playerId}_${Date.now()}`;
+    const insert = db.query(`
+      INSERT INTO season_archives (id, player_id, season_number, tier, peak_elo, final_elo)
+      VALUES ($id, $playerId, $seasonNum, $tier, $peakElo, $finalElo)
+    `);
+    insert.run({
+      $id: id,
+      $playerId: playerId,
+      $seasonNum: seasonNum,
+      $tier: tier,
+      $peakElo: peakElo,
+      $finalElo: finalElo
+    });
+  },
+
+  getPlayerSeasonArchive(playerId: string): any[] {
+    const query = db.query("SELECT * FROM season_archives WHERE player_id = $playerId ORDER BY season_number DESC");
+    return query.all({ $playerId: playerId }) as any[];
   },
 
   getLeaderboard(limit = 50): Player[] {
