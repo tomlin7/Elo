@@ -25,12 +25,21 @@ export interface GamePlayer {
   currentQuestionStartTime?: number;
 }
 
+import { GPC } from "./gpc.ts";
+
 interface Question {
   text: string;
   answer: string;
 }
 
 function generateQuestion(allowDivision = false, allowMultiplication = true): Question {
+  // 25% probability of generating complex GPC content (Epic 2)
+  if (Math.random() < 0.25) {
+    const modes = ["MATRIX_DETERMINANT", "MODULAR_CONGRUENCE"];
+    const mode = modes[Math.floor(Math.random() * modes.length)];
+    return GPC.generateQuestion(mode);
+  }
+
   const ops: string[] = ["+", "-"];
   if (allowMultiplication) ops.push("*");
   if (allowDivision) ops.push("/");
