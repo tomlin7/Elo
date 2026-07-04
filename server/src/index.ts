@@ -126,6 +126,34 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
         });
     }
 
+    if (url.pathname === "/api/profile/history" && req.method === "GET") {
+      const playerId = url.searchParams.get("playerId");
+      if (!playerId) {
+        return new Response(JSON.stringify({ error: "Missing playerId" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+      const history = dbService.getPlayerMatchHistory(playerId);
+      return new Response(JSON.stringify({ history }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    if (url.pathname === "/api/profile/archives" && req.method === "GET") {
+      const playerId = url.searchParams.get("playerId");
+      if (!playerId) {
+        return new Response(JSON.stringify({ error: "Missing playerId" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+      const archives = dbService.getPlayerSeasonArchive(playerId);
+      return new Response(JSON.stringify({ archives }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
     if (url.pathname === "/api/shop/select-theme" && req.method === "POST") {
       return req.json()
         .then((body: any) => {
