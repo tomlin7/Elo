@@ -16,18 +16,18 @@ export const elo = $root.elo = (() => {
      */
     const elo = {};
 
-    elo.v2 = (function() {
+    elo.v3 = (function() {
 
         /**
-         * Namespace v2.
+         * Namespace v3.
          * @memberof elo
          * @namespace
          */
-        const v2 = {};
+        const v3 = {};
 
         /**
          * MatchState enum.
-         * @name elo.v2.MatchState
+         * @name elo.v3.MatchState
          * @enum {number}
          * @property {number} MATCH_STATE_UNSPECIFIED=0 MATCH_STATE_UNSPECIFIED value
          * @property {number} MATCH_STATE_COUNTDOWN=1 MATCH_STATE_COUNTDOWN value
@@ -35,7 +35,7 @@ export const elo = $root.elo = (() => {
          * @property {number} MATCH_STATE_PAUSED_DISCONNECT=3 MATCH_STATE_PAUSED_DISCONNECT value
          * @property {number} MATCH_STATE_FINISHED=4 MATCH_STATE_FINISHED value
          */
-        v2.MatchState = (function() {
+        v3.MatchState = (function() {
             const valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "MATCH_STATE_UNSPECIFIED"] = 0;
             values[valuesById[1] = "MATCH_STATE_COUNTDOWN"] = 1;
@@ -47,23 +47,59 @@ export const elo = $root.elo = (() => {
 
         /**
          * RoomType enum.
-         * @name elo.v2.RoomType
+         * @name elo.v3.RoomType
          * @enum {number}
          * @property {number} ROOM_TYPE_RANKED=0 ROOM_TYPE_RANKED value
          * @property {number} ROOM_TYPE_PRIVATE=1 ROOM_TYPE_PRIVATE value
+         * @property {number} ROOM_TYPE_TOURNAMENT=2 ROOM_TYPE_TOURNAMENT value
          */
-        v2.RoomType = (function() {
+        v3.RoomType = (function() {
             const valuesById = {}, values = Object.create(valuesById);
             values[valuesById[0] = "ROOM_TYPE_RANKED"] = 0;
             values[valuesById[1] = "ROOM_TYPE_PRIVATE"] = 1;
+            values[valuesById[2] = "ROOM_TYPE_TOURNAMENT"] = 2;
             return values;
         })();
 
-        v2.PlayerIdentity = (function() {
+        /**
+         * TournamentRound enum.
+         * @name elo.v3.TournamentRound
+         * @enum {number}
+         * @property {number} ROUND_UNSPECIFIED=0 ROUND_UNSPECIFIED value
+         * @property {number} ROUND_QUARTERFINALS=1 ROUND_QUARTERFINALS value
+         * @property {number} ROUND_SEMIFINALS=2 ROUND_SEMIFINALS value
+         * @property {number} ROUND_FINALS=3 ROUND_FINALS value
+         */
+        v3.TournamentRound = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ROUND_UNSPECIFIED"] = 0;
+            values[valuesById[1] = "ROUND_QUARTERFINALS"] = 1;
+            values[valuesById[2] = "ROUND_SEMIFINALS"] = 2;
+            values[valuesById[3] = "ROUND_FINALS"] = 3;
+            return values;
+        })();
+
+        /**
+         * MatchNodeStatus enum.
+         * @name elo.v3.MatchNodeStatus
+         * @enum {number}
+         * @property {number} STATUS_PENDING=0 STATUS_PENDING value
+         * @property {number} STATUS_IN_PROGRESS=1 STATUS_IN_PROGRESS value
+         * @property {number} STATUS_COMPLETED=2 STATUS_COMPLETED value
+         */
+        v3.MatchNodeStatus = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "STATUS_PENDING"] = 0;
+            values[valuesById[1] = "STATUS_IN_PROGRESS"] = 1;
+            values[valuesById[2] = "STATUS_COMPLETED"] = 2;
+            return values;
+        })();
+
+        v3.PlayerIdentity = (function() {
 
             /**
              * Properties of a PlayerIdentity.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @interface IPlayerIdentity
              * @property {string|null} [playerId] PlayerIdentity playerId
              * @property {string|null} [username] PlayerIdentity username
@@ -76,11 +112,11 @@ export const elo = $root.elo = (() => {
 
             /**
              * Constructs a new PlayerIdentity.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @classdesc Represents a PlayerIdentity.
              * @implements IPlayerIdentity
              * @constructor
-             * @param {elo.v2.IPlayerIdentity=} [properties] Properties to set
+             * @param {elo.v3.IPlayerIdentity=} [properties] Properties to set
              */
             function PlayerIdentity(properties) {
                 if (properties)
@@ -92,7 +128,7 @@ export const elo = $root.elo = (() => {
             /**
              * PlayerIdentity playerId.
              * @member {string} playerId
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @instance
              */
             PlayerIdentity.prototype.playerId = "";
@@ -100,7 +136,7 @@ export const elo = $root.elo = (() => {
             /**
              * PlayerIdentity username.
              * @member {string} username
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @instance
              */
             PlayerIdentity.prototype.username = "";
@@ -108,7 +144,7 @@ export const elo = $root.elo = (() => {
             /**
              * PlayerIdentity eloRating.
              * @member {number} eloRating
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @instance
              */
             PlayerIdentity.prototype.eloRating = 0;
@@ -116,7 +152,7 @@ export const elo = $root.elo = (() => {
             /**
              * PlayerIdentity selectedThemeId.
              * @member {string} selectedThemeId
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @instance
              */
             PlayerIdentity.prototype.selectedThemeId = "";
@@ -124,7 +160,7 @@ export const elo = $root.elo = (() => {
             /**
              * PlayerIdentity activeTitle.
              * @member {string} activeTitle
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @instance
              */
             PlayerIdentity.prototype.activeTitle = "";
@@ -132,7 +168,7 @@ export const elo = $root.elo = (() => {
             /**
              * PlayerIdentity level.
              * @member {number} level
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @instance
              */
             PlayerIdentity.prototype.level = 0;
@@ -140,7 +176,7 @@ export const elo = $root.elo = (() => {
             /**
              * PlayerIdentity xp.
              * @member {number} xp
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @instance
              */
             PlayerIdentity.prototype.xp = 0;
@@ -148,21 +184,21 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a new PlayerIdentity instance using the specified properties.
              * @function create
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
-             * @param {elo.v2.IPlayerIdentity=} [properties] Properties to set
-             * @returns {elo.v2.PlayerIdentity} PlayerIdentity instance
+             * @param {elo.v3.IPlayerIdentity=} [properties] Properties to set
+             * @returns {elo.v3.PlayerIdentity} PlayerIdentity instance
              */
             PlayerIdentity.create = function create(properties) {
                 return new PlayerIdentity(properties);
             };
 
             /**
-             * Encodes the specified PlayerIdentity message. Does not implicitly {@link elo.v2.PlayerIdentity.verify|verify} messages.
+             * Encodes the specified PlayerIdentity message. Does not implicitly {@link elo.v3.PlayerIdentity.verify|verify} messages.
              * @function encode
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
-             * @param {elo.v2.IPlayerIdentity} message PlayerIdentity message or plain object to encode
+             * @param {elo.v3.IPlayerIdentity} message PlayerIdentity message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -191,11 +227,11 @@ export const elo = $root.elo = (() => {
             };
 
             /**
-             * Encodes the specified PlayerIdentity message, length delimited. Does not implicitly {@link elo.v2.PlayerIdentity.verify|verify} messages.
+             * Encodes the specified PlayerIdentity message, length delimited. Does not implicitly {@link elo.v3.PlayerIdentity.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
-             * @param {elo.v2.IPlayerIdentity} message PlayerIdentity message or plain object to encode
+             * @param {elo.v3.IPlayerIdentity} message PlayerIdentity message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -206,11 +242,11 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a PlayerIdentity message from the specified reader or buffer.
              * @function decode
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {elo.v2.PlayerIdentity} PlayerIdentity
+             * @returns {elo.v3.PlayerIdentity} PlayerIdentity
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -221,7 +257,7 @@ export const elo = $root.elo = (() => {
                     long = 0;
                 if (long > $Reader.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v2.PlayerIdentity();
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.PlayerIdentity();
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     if (tag === error)
@@ -266,10 +302,10 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a PlayerIdentity message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {elo.v2.PlayerIdentity} PlayerIdentity
+             * @returns {elo.v3.PlayerIdentity} PlayerIdentity
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -282,7 +318,7 @@ export const elo = $root.elo = (() => {
             /**
              * Verifies a PlayerIdentity message.
              * @function verify
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -321,21 +357,21 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a PlayerIdentity message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {elo.v2.PlayerIdentity} PlayerIdentity
+             * @returns {elo.v3.PlayerIdentity} PlayerIdentity
              */
             PlayerIdentity.fromObject = function fromObject(object, long) {
-                if (object instanceof $root.elo.v2.PlayerIdentity)
+                if (object instanceof $root.elo.v3.PlayerIdentity)
                     return object;
                 if (!$util.isObject(object))
-                    throw TypeError(".elo.v2.PlayerIdentity: object expected");
+                    throw TypeError(".elo.v3.PlayerIdentity: object expected");
                 if (long === undefined)
                     long = 0;
                 if (long > $util.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let message = new $root.elo.v2.PlayerIdentity();
+                let message = new $root.elo.v3.PlayerIdentity();
                 if (object.playerId != null)
                     message.playerId = String(object.playerId);
                 if (object.username != null)
@@ -356,9 +392,9 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a plain object from a PlayerIdentity message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
-             * @param {elo.v2.PlayerIdentity} message PlayerIdentity
+             * @param {elo.v3.PlayerIdentity} message PlayerIdentity
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
@@ -399,7 +435,7 @@ export const elo = $root.elo = (() => {
             /**
              * Converts this PlayerIdentity to JSON.
              * @function toJSON
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
@@ -410,7 +446,7 @@ export const elo = $root.elo = (() => {
             /**
              * Gets the default type url for PlayerIdentity
              * @function getTypeUrl
-             * @memberof elo.v2.PlayerIdentity
+             * @memberof elo.v3.PlayerIdentity
              * @static
              * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns {string} The default type url
@@ -419,17 +455,17 @@ export const elo = $root.elo = (() => {
                 if (typeUrlPrefix === undefined) {
                     typeUrlPrefix = "type.googleapis.com";
                 }
-                return typeUrlPrefix + "/elo.v2.PlayerIdentity";
+                return typeUrlPrefix + "/elo.v3.PlayerIdentity";
             };
 
             return PlayerIdentity;
         })();
 
-        v2.CreateCustomRoomRequest = (function() {
+        v3.CreateCustomRoomRequest = (function() {
 
             /**
              * Properties of a CreateCustomRoomRequest.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @interface ICreateCustomRoomRequest
              * @property {string|null} [hostPlayerId] CreateCustomRoomRequest hostPlayerId
              * @property {boolean|null} [allowDivision] CreateCustomRoomRequest allowDivision
@@ -439,11 +475,11 @@ export const elo = $root.elo = (() => {
 
             /**
              * Constructs a new CreateCustomRoomRequest.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @classdesc Represents a CreateCustomRoomRequest.
              * @implements ICreateCustomRoomRequest
              * @constructor
-             * @param {elo.v2.ICreateCustomRoomRequest=} [properties] Properties to set
+             * @param {elo.v3.ICreateCustomRoomRequest=} [properties] Properties to set
              */
             function CreateCustomRoomRequest(properties) {
                 if (properties)
@@ -455,7 +491,7 @@ export const elo = $root.elo = (() => {
             /**
              * CreateCustomRoomRequest hostPlayerId.
              * @member {string} hostPlayerId
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @instance
              */
             CreateCustomRoomRequest.prototype.hostPlayerId = "";
@@ -463,7 +499,7 @@ export const elo = $root.elo = (() => {
             /**
              * CreateCustomRoomRequest allowDivision.
              * @member {boolean} allowDivision
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @instance
              */
             CreateCustomRoomRequest.prototype.allowDivision = false;
@@ -471,7 +507,7 @@ export const elo = $root.elo = (() => {
             /**
              * CreateCustomRoomRequest allowMultiplication.
              * @member {boolean} allowMultiplication
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @instance
              */
             CreateCustomRoomRequest.prototype.allowMultiplication = false;
@@ -479,7 +515,7 @@ export const elo = $root.elo = (() => {
             /**
              * CreateCustomRoomRequest customDurationSeconds.
              * @member {number} customDurationSeconds
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @instance
              */
             CreateCustomRoomRequest.prototype.customDurationSeconds = 0;
@@ -487,21 +523,21 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a new CreateCustomRoomRequest instance using the specified properties.
              * @function create
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
-             * @param {elo.v2.ICreateCustomRoomRequest=} [properties] Properties to set
-             * @returns {elo.v2.CreateCustomRoomRequest} CreateCustomRoomRequest instance
+             * @param {elo.v3.ICreateCustomRoomRequest=} [properties] Properties to set
+             * @returns {elo.v3.CreateCustomRoomRequest} CreateCustomRoomRequest instance
              */
             CreateCustomRoomRequest.create = function create(properties) {
                 return new CreateCustomRoomRequest(properties);
             };
 
             /**
-             * Encodes the specified CreateCustomRoomRequest message. Does not implicitly {@link elo.v2.CreateCustomRoomRequest.verify|verify} messages.
+             * Encodes the specified CreateCustomRoomRequest message. Does not implicitly {@link elo.v3.CreateCustomRoomRequest.verify|verify} messages.
              * @function encode
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
-             * @param {elo.v2.ICreateCustomRoomRequest} message CreateCustomRoomRequest message or plain object to encode
+             * @param {elo.v3.ICreateCustomRoomRequest} message CreateCustomRoomRequest message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -524,11 +560,11 @@ export const elo = $root.elo = (() => {
             };
 
             /**
-             * Encodes the specified CreateCustomRoomRequest message, length delimited. Does not implicitly {@link elo.v2.CreateCustomRoomRequest.verify|verify} messages.
+             * Encodes the specified CreateCustomRoomRequest message, length delimited. Does not implicitly {@link elo.v3.CreateCustomRoomRequest.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
-             * @param {elo.v2.ICreateCustomRoomRequest} message CreateCustomRoomRequest message or plain object to encode
+             * @param {elo.v3.ICreateCustomRoomRequest} message CreateCustomRoomRequest message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -539,11 +575,11 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a CreateCustomRoomRequest message from the specified reader or buffer.
              * @function decode
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {elo.v2.CreateCustomRoomRequest} CreateCustomRoomRequest
+             * @returns {elo.v3.CreateCustomRoomRequest} CreateCustomRoomRequest
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -554,7 +590,7 @@ export const elo = $root.elo = (() => {
                     long = 0;
                 if (long > $Reader.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v2.CreateCustomRoomRequest();
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.CreateCustomRoomRequest();
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     if (tag === error)
@@ -587,10 +623,10 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a CreateCustomRoomRequest message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {elo.v2.CreateCustomRoomRequest} CreateCustomRoomRequest
+             * @returns {elo.v3.CreateCustomRoomRequest} CreateCustomRoomRequest
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -603,7 +639,7 @@ export const elo = $root.elo = (() => {
             /**
              * Verifies a CreateCustomRoomRequest message.
              * @function verify
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -633,21 +669,21 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a CreateCustomRoomRequest message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {elo.v2.CreateCustomRoomRequest} CreateCustomRoomRequest
+             * @returns {elo.v3.CreateCustomRoomRequest} CreateCustomRoomRequest
              */
             CreateCustomRoomRequest.fromObject = function fromObject(object, long) {
-                if (object instanceof $root.elo.v2.CreateCustomRoomRequest)
+                if (object instanceof $root.elo.v3.CreateCustomRoomRequest)
                     return object;
                 if (!$util.isObject(object))
-                    throw TypeError(".elo.v2.CreateCustomRoomRequest: object expected");
+                    throw TypeError(".elo.v3.CreateCustomRoomRequest: object expected");
                 if (long === undefined)
                     long = 0;
                 if (long > $util.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let message = new $root.elo.v2.CreateCustomRoomRequest();
+                let message = new $root.elo.v3.CreateCustomRoomRequest();
                 if (object.hostPlayerId != null)
                     message.hostPlayerId = String(object.hostPlayerId);
                 if (object.allowDivision != null)
@@ -662,9 +698,9 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a plain object from a CreateCustomRoomRequest message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
-             * @param {elo.v2.CreateCustomRoomRequest} message CreateCustomRoomRequest
+             * @param {elo.v3.CreateCustomRoomRequest} message CreateCustomRoomRequest
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
@@ -696,7 +732,7 @@ export const elo = $root.elo = (() => {
             /**
              * Converts this CreateCustomRoomRequest to JSON.
              * @function toJSON
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
@@ -707,7 +743,7 @@ export const elo = $root.elo = (() => {
             /**
              * Gets the default type url for CreateCustomRoomRequest
              * @function getTypeUrl
-             * @memberof elo.v2.CreateCustomRoomRequest
+             * @memberof elo.v3.CreateCustomRoomRequest
              * @static
              * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns {string} The default type url
@@ -716,17 +752,17 @@ export const elo = $root.elo = (() => {
                 if (typeUrlPrefix === undefined) {
                     typeUrlPrefix = "type.googleapis.com";
                 }
-                return typeUrlPrefix + "/elo.v2.CreateCustomRoomRequest";
+                return typeUrlPrefix + "/elo.v3.CreateCustomRoomRequest";
             };
 
             return CreateCustomRoomRequest;
         })();
 
-        v2.MatchSecurityLog = (function() {
+        v3.MatchSecurityLog = (function() {
 
             /**
              * Properties of a MatchSecurityLog.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @interface IMatchSecurityLog
              * @property {string|null} [actionSequenceId] MatchSecurityLog actionSequenceId
              * @property {number|Long|null} [keystrokeDeltaMs] MatchSecurityLog keystrokeDeltaMs
@@ -735,11 +771,11 @@ export const elo = $root.elo = (() => {
 
             /**
              * Constructs a new MatchSecurityLog.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @classdesc Represents a MatchSecurityLog.
              * @implements IMatchSecurityLog
              * @constructor
-             * @param {elo.v2.IMatchSecurityLog=} [properties] Properties to set
+             * @param {elo.v3.IMatchSecurityLog=} [properties] Properties to set
              */
             function MatchSecurityLog(properties) {
                 if (properties)
@@ -751,7 +787,7 @@ export const elo = $root.elo = (() => {
             /**
              * MatchSecurityLog actionSequenceId.
              * @member {string} actionSequenceId
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @instance
              */
             MatchSecurityLog.prototype.actionSequenceId = "";
@@ -759,7 +795,7 @@ export const elo = $root.elo = (() => {
             /**
              * MatchSecurityLog keystrokeDeltaMs.
              * @member {number|Long} keystrokeDeltaMs
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @instance
              */
             MatchSecurityLog.prototype.keystrokeDeltaMs = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
@@ -767,7 +803,7 @@ export const elo = $root.elo = (() => {
             /**
              * MatchSecurityLog inputValue.
              * @member {string} inputValue
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @instance
              */
             MatchSecurityLog.prototype.inputValue = "";
@@ -775,21 +811,21 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a new MatchSecurityLog instance using the specified properties.
              * @function create
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
-             * @param {elo.v2.IMatchSecurityLog=} [properties] Properties to set
-             * @returns {elo.v2.MatchSecurityLog} MatchSecurityLog instance
+             * @param {elo.v3.IMatchSecurityLog=} [properties] Properties to set
+             * @returns {elo.v3.MatchSecurityLog} MatchSecurityLog instance
              */
             MatchSecurityLog.create = function create(properties) {
                 return new MatchSecurityLog(properties);
             };
 
             /**
-             * Encodes the specified MatchSecurityLog message. Does not implicitly {@link elo.v2.MatchSecurityLog.verify|verify} messages.
+             * Encodes the specified MatchSecurityLog message. Does not implicitly {@link elo.v3.MatchSecurityLog.verify|verify} messages.
              * @function encode
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
-             * @param {elo.v2.IMatchSecurityLog} message MatchSecurityLog message or plain object to encode
+             * @param {elo.v3.IMatchSecurityLog} message MatchSecurityLog message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -810,11 +846,11 @@ export const elo = $root.elo = (() => {
             };
 
             /**
-             * Encodes the specified MatchSecurityLog message, length delimited. Does not implicitly {@link elo.v2.MatchSecurityLog.verify|verify} messages.
+             * Encodes the specified MatchSecurityLog message, length delimited. Does not implicitly {@link elo.v3.MatchSecurityLog.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
-             * @param {elo.v2.IMatchSecurityLog} message MatchSecurityLog message or plain object to encode
+             * @param {elo.v3.IMatchSecurityLog} message MatchSecurityLog message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -825,11 +861,11 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a MatchSecurityLog message from the specified reader or buffer.
              * @function decode
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {elo.v2.MatchSecurityLog} MatchSecurityLog
+             * @returns {elo.v3.MatchSecurityLog} MatchSecurityLog
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -840,7 +876,7 @@ export const elo = $root.elo = (() => {
                     long = 0;
                 if (long > $Reader.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v2.MatchSecurityLog();
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.MatchSecurityLog();
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     if (tag === error)
@@ -869,10 +905,10 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a MatchSecurityLog message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {elo.v2.MatchSecurityLog} MatchSecurityLog
+             * @returns {elo.v3.MatchSecurityLog} MatchSecurityLog
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -885,7 +921,7 @@ export const elo = $root.elo = (() => {
             /**
              * Verifies a MatchSecurityLog message.
              * @function verify
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -912,21 +948,21 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a MatchSecurityLog message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {elo.v2.MatchSecurityLog} MatchSecurityLog
+             * @returns {elo.v3.MatchSecurityLog} MatchSecurityLog
              */
             MatchSecurityLog.fromObject = function fromObject(object, long) {
-                if (object instanceof $root.elo.v2.MatchSecurityLog)
+                if (object instanceof $root.elo.v3.MatchSecurityLog)
                     return object;
                 if (!$util.isObject(object))
-                    throw TypeError(".elo.v2.MatchSecurityLog: object expected");
+                    throw TypeError(".elo.v3.MatchSecurityLog: object expected");
                 if (long === undefined)
                     long = 0;
                 if (long > $util.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let message = new $root.elo.v2.MatchSecurityLog();
+                let message = new $root.elo.v3.MatchSecurityLog();
                 if (object.actionSequenceId != null)
                     message.actionSequenceId = String(object.actionSequenceId);
                 if (object.keystrokeDeltaMs != null)
@@ -946,9 +982,9 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a plain object from a MatchSecurityLog message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
-             * @param {elo.v2.MatchSecurityLog} message MatchSecurityLog
+             * @param {elo.v3.MatchSecurityLog} message MatchSecurityLog
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
@@ -986,7 +1022,7 @@ export const elo = $root.elo = (() => {
             /**
              * Converts this MatchSecurityLog to JSON.
              * @function toJSON
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
@@ -997,7 +1033,7 @@ export const elo = $root.elo = (() => {
             /**
              * Gets the default type url for MatchSecurityLog
              * @function getTypeUrl
-             * @memberof elo.v2.MatchSecurityLog
+             * @memberof elo.v3.MatchSecurityLog
              * @static
              * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns {string} The default type url
@@ -1006,17 +1042,1068 @@ export const elo = $root.elo = (() => {
                 if (typeUrlPrefix === undefined) {
                     typeUrlPrefix = "type.googleapis.com";
                 }
-                return typeUrlPrefix + "/elo.v2.MatchSecurityLog";
+                return typeUrlPrefix + "/elo.v3.MatchSecurityLog";
             };
 
             return MatchSecurityLog;
         })();
 
-        v2.ClientAction = (function() {
+        v3.TournamentNode = (function() {
+
+            /**
+             * Properties of a TournamentNode.
+             * @memberof elo.v3
+             * @interface ITournamentNode
+             * @property {string|null} [nodeId] TournamentNode nodeId
+             * @property {elo.v3.TournamentRound|null} [roundTier] TournamentNode roundTier
+             * @property {elo.v3.MatchNodeStatus|null} [status] TournamentNode status
+             * @property {string|null} [playerOneId] TournamentNode playerOneId
+             * @property {string|null} [playerTwoId] TournamentNode playerTwoId
+             * @property {string|null} [winnerId] TournamentNode winnerId
+             * @property {string|null} [activeRoomId] TournamentNode activeRoomId
+             * @property {string|null} [playerOneUsername] TournamentNode playerOneUsername
+             * @property {string|null} [playerTwoUsername] TournamentNode playerTwoUsername
+             */
+
+            /**
+             * Constructs a new TournamentNode.
+             * @memberof elo.v3
+             * @classdesc Represents a TournamentNode.
+             * @implements ITournamentNode
+             * @constructor
+             * @param {elo.v3.ITournamentNode=} [properties] Properties to set
+             */
+            function TournamentNode(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * TournamentNode nodeId.
+             * @member {string} nodeId
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.nodeId = "";
+
+            /**
+             * TournamentNode roundTier.
+             * @member {elo.v3.TournamentRound} roundTier
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.roundTier = 0;
+
+            /**
+             * TournamentNode status.
+             * @member {elo.v3.MatchNodeStatus} status
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.status = 0;
+
+            /**
+             * TournamentNode playerOneId.
+             * @member {string} playerOneId
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.playerOneId = "";
+
+            /**
+             * TournamentNode playerTwoId.
+             * @member {string} playerTwoId
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.playerTwoId = "";
+
+            /**
+             * TournamentNode winnerId.
+             * @member {string} winnerId
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.winnerId = "";
+
+            /**
+             * TournamentNode activeRoomId.
+             * @member {string} activeRoomId
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.activeRoomId = "";
+
+            /**
+             * TournamentNode playerOneUsername.
+             * @member {string} playerOneUsername
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.playerOneUsername = "";
+
+            /**
+             * TournamentNode playerTwoUsername.
+             * @member {string} playerTwoUsername
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             */
+            TournamentNode.prototype.playerTwoUsername = "";
+
+            /**
+             * Creates a new TournamentNode instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {elo.v3.ITournamentNode=} [properties] Properties to set
+             * @returns {elo.v3.TournamentNode} TournamentNode instance
+             */
+            TournamentNode.create = function create(properties) {
+                return new TournamentNode(properties);
+            };
+
+            /**
+             * Encodes the specified TournamentNode message. Does not implicitly {@link elo.v3.TournamentNode.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {elo.v3.ITournamentNode} message TournamentNode message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            TournamentNode.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.nodeId != null && Object.hasOwnProperty.call(message, "nodeId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.nodeId);
+                if (message.roundTier != null && Object.hasOwnProperty.call(message, "roundTier"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.roundTier);
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.status);
+                if (message.playerOneId != null && Object.hasOwnProperty.call(message, "playerOneId"))
+                    writer.uint32(/* id 4, wireType 2 =*/34).string(message.playerOneId);
+                if (message.playerTwoId != null && Object.hasOwnProperty.call(message, "playerTwoId"))
+                    writer.uint32(/* id 5, wireType 2 =*/42).string(message.playerTwoId);
+                if (message.winnerId != null && Object.hasOwnProperty.call(message, "winnerId"))
+                    writer.uint32(/* id 6, wireType 2 =*/50).string(message.winnerId);
+                if (message.activeRoomId != null && Object.hasOwnProperty.call(message, "activeRoomId"))
+                    writer.uint32(/* id 7, wireType 2 =*/58).string(message.activeRoomId);
+                if (message.playerOneUsername != null && Object.hasOwnProperty.call(message, "playerOneUsername"))
+                    writer.uint32(/* id 8, wireType 2 =*/66).string(message.playerOneUsername);
+                if (message.playerTwoUsername != null && Object.hasOwnProperty.call(message, "playerTwoUsername"))
+                    writer.uint32(/* id 9, wireType 2 =*/74).string(message.playerTwoUsername);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified TournamentNode message, length delimited. Does not implicitly {@link elo.v3.TournamentNode.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {elo.v3.ITournamentNode} message TournamentNode message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            TournamentNode.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a TournamentNode message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.TournamentNode} TournamentNode
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            TournamentNode.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.TournamentNode();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.nodeId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.roundTier = reader.int32();
+                            break;
+                        }
+                    case 3: {
+                            message.status = reader.int32();
+                            break;
+                        }
+                    case 4: {
+                            message.playerOneId = reader.string();
+                            break;
+                        }
+                    case 5: {
+                            message.playerTwoId = reader.string();
+                            break;
+                        }
+                    case 6: {
+                            message.winnerId = reader.string();
+                            break;
+                        }
+                    case 7: {
+                            message.activeRoomId = reader.string();
+                            break;
+                        }
+                    case 8: {
+                            message.playerOneUsername = reader.string();
+                            break;
+                        }
+                    case 9: {
+                            message.playerTwoUsername = reader.string();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a TournamentNode message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.TournamentNode} TournamentNode
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            TournamentNode.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a TournamentNode message.
+             * @function verify
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            TournamentNode.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.nodeId != null && Object.hasOwnProperty.call(message, "nodeId"))
+                    if (!$util.isString(message.nodeId))
+                        return "nodeId: string expected";
+                if (message.roundTier != null && Object.hasOwnProperty.call(message, "roundTier"))
+                    switch (message.roundTier) {
+                    default:
+                        return "roundTier: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                        break;
+                    }
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    switch (message.status) {
+                    default:
+                        return "status: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                    }
+                if (message.playerOneId != null && Object.hasOwnProperty.call(message, "playerOneId"))
+                    if (!$util.isString(message.playerOneId))
+                        return "playerOneId: string expected";
+                if (message.playerTwoId != null && Object.hasOwnProperty.call(message, "playerTwoId"))
+                    if (!$util.isString(message.playerTwoId))
+                        return "playerTwoId: string expected";
+                if (message.winnerId != null && Object.hasOwnProperty.call(message, "winnerId"))
+                    if (!$util.isString(message.winnerId))
+                        return "winnerId: string expected";
+                if (message.activeRoomId != null && Object.hasOwnProperty.call(message, "activeRoomId"))
+                    if (!$util.isString(message.activeRoomId))
+                        return "activeRoomId: string expected";
+                if (message.playerOneUsername != null && Object.hasOwnProperty.call(message, "playerOneUsername"))
+                    if (!$util.isString(message.playerOneUsername))
+                        return "playerOneUsername: string expected";
+                if (message.playerTwoUsername != null && Object.hasOwnProperty.call(message, "playerTwoUsername"))
+                    if (!$util.isString(message.playerTwoUsername))
+                        return "playerTwoUsername: string expected";
+                return null;
+            };
+
+            /**
+             * Creates a TournamentNode message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.TournamentNode} TournamentNode
+             */
+            TournamentNode.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.TournamentNode)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.TournamentNode: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.TournamentNode();
+                if (object.nodeId != null)
+                    message.nodeId = String(object.nodeId);
+                switch (object.roundTier) {
+                default:
+                    if (typeof object.roundTier === "number") {
+                        message.roundTier = object.roundTier;
+                        break;
+                    }
+                    break;
+                case "ROUND_UNSPECIFIED":
+                case 0:
+                    message.roundTier = 0;
+                    break;
+                case "ROUND_QUARTERFINALS":
+                case 1:
+                    message.roundTier = 1;
+                    break;
+                case "ROUND_SEMIFINALS":
+                case 2:
+                    message.roundTier = 2;
+                    break;
+                case "ROUND_FINALS":
+                case 3:
+                    message.roundTier = 3;
+                    break;
+                }
+                switch (object.status) {
+                default:
+                    if (typeof object.status === "number") {
+                        message.status = object.status;
+                        break;
+                    }
+                    break;
+                case "STATUS_PENDING":
+                case 0:
+                    message.status = 0;
+                    break;
+                case "STATUS_IN_PROGRESS":
+                case 1:
+                    message.status = 1;
+                    break;
+                case "STATUS_COMPLETED":
+                case 2:
+                    message.status = 2;
+                    break;
+                }
+                if (object.playerOneId != null)
+                    message.playerOneId = String(object.playerOneId);
+                if (object.playerTwoId != null)
+                    message.playerTwoId = String(object.playerTwoId);
+                if (object.winnerId != null)
+                    message.winnerId = String(object.winnerId);
+                if (object.activeRoomId != null)
+                    message.activeRoomId = String(object.activeRoomId);
+                if (object.playerOneUsername != null)
+                    message.playerOneUsername = String(object.playerOneUsername);
+                if (object.playerTwoUsername != null)
+                    message.playerTwoUsername = String(object.playerTwoUsername);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a TournamentNode message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {elo.v3.TournamentNode} message TournamentNode
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            TournamentNode.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.nodeId = "";
+                    object.roundTier = options.enums === String ? "ROUND_UNSPECIFIED" : 0;
+                    object.status = options.enums === String ? "STATUS_PENDING" : 0;
+                    object.playerOneId = "";
+                    object.playerTwoId = "";
+                    object.winnerId = "";
+                    object.activeRoomId = "";
+                    object.playerOneUsername = "";
+                    object.playerTwoUsername = "";
+                }
+                if (message.nodeId != null && Object.hasOwnProperty.call(message, "nodeId"))
+                    object.nodeId = message.nodeId;
+                if (message.roundTier != null && Object.hasOwnProperty.call(message, "roundTier"))
+                    object.roundTier = options.enums === String ? $root.elo.v3.TournamentRound[message.roundTier] === undefined ? message.roundTier : $root.elo.v3.TournamentRound[message.roundTier] : message.roundTier;
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    object.status = options.enums === String ? $root.elo.v3.MatchNodeStatus[message.status] === undefined ? message.status : $root.elo.v3.MatchNodeStatus[message.status] : message.status;
+                if (message.playerOneId != null && Object.hasOwnProperty.call(message, "playerOneId"))
+                    object.playerOneId = message.playerOneId;
+                if (message.playerTwoId != null && Object.hasOwnProperty.call(message, "playerTwoId"))
+                    object.playerTwoId = message.playerTwoId;
+                if (message.winnerId != null && Object.hasOwnProperty.call(message, "winnerId"))
+                    object.winnerId = message.winnerId;
+                if (message.activeRoomId != null && Object.hasOwnProperty.call(message, "activeRoomId"))
+                    object.activeRoomId = message.activeRoomId;
+                if (message.playerOneUsername != null && Object.hasOwnProperty.call(message, "playerOneUsername"))
+                    object.playerOneUsername = message.playerOneUsername;
+                if (message.playerTwoUsername != null && Object.hasOwnProperty.call(message, "playerTwoUsername"))
+                    object.playerTwoUsername = message.playerTwoUsername;
+                return object;
+            };
+
+            /**
+             * Converts this TournamentNode to JSON.
+             * @function toJSON
+             * @memberof elo.v3.TournamentNode
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            TournamentNode.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for TournamentNode
+             * @function getTypeUrl
+             * @memberof elo.v3.TournamentNode
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            TournamentNode.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.TournamentNode";
+            };
+
+            return TournamentNode;
+        })();
+
+        v3.TournamentBracketUpdate = (function() {
+
+            /**
+             * Properties of a TournamentBracketUpdate.
+             * @memberof elo.v3
+             * @interface ITournamentBracketUpdate
+             * @property {string|null} [tournamentId] TournamentBracketUpdate tournamentId
+             * @property {Array.<elo.v3.ITournamentNode>|null} [bracketNodes] TournamentBracketUpdate bracketNodes
+             * @property {number|Long|null} [nextRoundGlobalStartTime] TournamentBracketUpdate nextRoundGlobalStartTime
+             */
+
+            /**
+             * Constructs a new TournamentBracketUpdate.
+             * @memberof elo.v3
+             * @classdesc Represents a TournamentBracketUpdate.
+             * @implements ITournamentBracketUpdate
+             * @constructor
+             * @param {elo.v3.ITournamentBracketUpdate=} [properties] Properties to set
+             */
+            function TournamentBracketUpdate(properties) {
+                this.bracketNodes = [];
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * TournamentBracketUpdate tournamentId.
+             * @member {string} tournamentId
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @instance
+             */
+            TournamentBracketUpdate.prototype.tournamentId = "";
+
+            /**
+             * TournamentBracketUpdate bracketNodes.
+             * @member {Array.<elo.v3.ITournamentNode>} bracketNodes
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @instance
+             */
+            TournamentBracketUpdate.prototype.bracketNodes = $util.emptyArray;
+
+            /**
+             * TournamentBracketUpdate nextRoundGlobalStartTime.
+             * @member {number|Long} nextRoundGlobalStartTime
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @instance
+             */
+            TournamentBracketUpdate.prototype.nextRoundGlobalStartTime = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new TournamentBracketUpdate instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {elo.v3.ITournamentBracketUpdate=} [properties] Properties to set
+             * @returns {elo.v3.TournamentBracketUpdate} TournamentBracketUpdate instance
+             */
+            TournamentBracketUpdate.create = function create(properties) {
+                return new TournamentBracketUpdate(properties);
+            };
+
+            /**
+             * Encodes the specified TournamentBracketUpdate message. Does not implicitly {@link elo.v3.TournamentBracketUpdate.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {elo.v3.ITournamentBracketUpdate} message TournamentBracketUpdate message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            TournamentBracketUpdate.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.tournamentId != null && Object.hasOwnProperty.call(message, "tournamentId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.tournamentId);
+                if (message.bracketNodes != null && message.bracketNodes.length)
+                    for (let i = 0; i < message.bracketNodes.length; ++i)
+                        $root.elo.v3.TournamentNode.encode(message.bracketNodes[i], writer.uint32(/* id 2, wireType 2 =*/18).fork(), q + 1).ldelim();
+                if (message.nextRoundGlobalStartTime != null && Object.hasOwnProperty.call(message, "nextRoundGlobalStartTime"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int64(message.nextRoundGlobalStartTime);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified TournamentBracketUpdate message, length delimited. Does not implicitly {@link elo.v3.TournamentBracketUpdate.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {elo.v3.ITournamentBracketUpdate} message TournamentBracketUpdate message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            TournamentBracketUpdate.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a TournamentBracketUpdate message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.TournamentBracketUpdate} TournamentBracketUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            TournamentBracketUpdate.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.TournamentBracketUpdate();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.tournamentId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            if (!(message.bracketNodes && message.bracketNodes.length))
+                                message.bracketNodes = [];
+                            message.bracketNodes.push($root.elo.v3.TournamentNode.decode(reader, reader.uint32(), undefined, long + 1));
+                            break;
+                        }
+                    case 3: {
+                            message.nextRoundGlobalStartTime = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a TournamentBracketUpdate message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.TournamentBracketUpdate} TournamentBracketUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            TournamentBracketUpdate.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a TournamentBracketUpdate message.
+             * @function verify
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            TournamentBracketUpdate.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.tournamentId != null && Object.hasOwnProperty.call(message, "tournamentId"))
+                    if (!$util.isString(message.tournamentId))
+                        return "tournamentId: string expected";
+                if (message.bracketNodes != null && Object.hasOwnProperty.call(message, "bracketNodes")) {
+                    if (!Array.isArray(message.bracketNodes))
+                        return "bracketNodes: array expected";
+                    for (let i = 0; i < message.bracketNodes.length; ++i) {
+                        let error = $root.elo.v3.TournamentNode.verify(message.bracketNodes[i], long + 1);
+                        if (error)
+                            return "bracketNodes." + error;
+                    }
+                }
+                if (message.nextRoundGlobalStartTime != null && Object.hasOwnProperty.call(message, "nextRoundGlobalStartTime"))
+                    if (!$util.isInteger(message.nextRoundGlobalStartTime) && !(message.nextRoundGlobalStartTime && $util.isInteger(message.nextRoundGlobalStartTime.low) && $util.isInteger(message.nextRoundGlobalStartTime.high)))
+                        return "nextRoundGlobalStartTime: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates a TournamentBracketUpdate message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.TournamentBracketUpdate} TournamentBracketUpdate
+             */
+            TournamentBracketUpdate.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.TournamentBracketUpdate)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.TournamentBracketUpdate: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.TournamentBracketUpdate();
+                if (object.tournamentId != null)
+                    message.tournamentId = String(object.tournamentId);
+                if (object.bracketNodes) {
+                    if (!Array.isArray(object.bracketNodes))
+                        throw TypeError(".elo.v3.TournamentBracketUpdate.bracketNodes: array expected");
+                    message.bracketNodes = [];
+                    for (let i = 0; i < object.bracketNodes.length; ++i) {
+                        if (!$util.isObject(object.bracketNodes[i]))
+                            throw TypeError(".elo.v3.TournamentBracketUpdate.bracketNodes: object expected");
+                        message.bracketNodes[i] = $root.elo.v3.TournamentNode.fromObject(object.bracketNodes[i], long + 1);
+                    }
+                }
+                if (object.nextRoundGlobalStartTime != null)
+                    if ($util.Long)
+                        message.nextRoundGlobalStartTime = $util.Long.fromValue(object.nextRoundGlobalStartTime, false);
+                    else if (typeof object.nextRoundGlobalStartTime === "string")
+                        message.nextRoundGlobalStartTime = parseInt(object.nextRoundGlobalStartTime, 10);
+                    else if (typeof object.nextRoundGlobalStartTime === "number")
+                        message.nextRoundGlobalStartTime = object.nextRoundGlobalStartTime;
+                    else if (typeof object.nextRoundGlobalStartTime === "object")
+                        message.nextRoundGlobalStartTime = new $util.LongBits(object.nextRoundGlobalStartTime.low >>> 0, object.nextRoundGlobalStartTime.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a TournamentBracketUpdate message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {elo.v3.TournamentBracketUpdate} message TournamentBracketUpdate
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            TournamentBracketUpdate.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.arrays || options.defaults)
+                    object.bracketNodes = [];
+                if (options.defaults) {
+                    object.tournamentId = "";
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.nextRoundGlobalStartTime = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.nextRoundGlobalStartTime = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.tournamentId != null && Object.hasOwnProperty.call(message, "tournamentId"))
+                    object.tournamentId = message.tournamentId;
+                if (message.bracketNodes && message.bracketNodes.length) {
+                    object.bracketNodes = [];
+                    for (let j = 0; j < message.bracketNodes.length; ++j)
+                        object.bracketNodes[j] = $root.elo.v3.TournamentNode.toObject(message.bracketNodes[j], options, q + 1);
+                }
+                if (message.nextRoundGlobalStartTime != null && Object.hasOwnProperty.call(message, "nextRoundGlobalStartTime"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.nextRoundGlobalStartTime = typeof message.nextRoundGlobalStartTime === "number" ? BigInt(message.nextRoundGlobalStartTime) : $util.Long.fromBits(message.nextRoundGlobalStartTime.low >>> 0, message.nextRoundGlobalStartTime.high >>> 0, false).toBigInt();
+                    else if (typeof message.nextRoundGlobalStartTime === "number")
+                        object.nextRoundGlobalStartTime = options.longs === String ? String(message.nextRoundGlobalStartTime) : message.nextRoundGlobalStartTime;
+                    else
+                        object.nextRoundGlobalStartTime = options.longs === String ? $util.Long.prototype.toString.call(message.nextRoundGlobalStartTime) : options.longs === Number ? new $util.LongBits(message.nextRoundGlobalStartTime.low >>> 0, message.nextRoundGlobalStartTime.high >>> 0).toNumber() : message.nextRoundGlobalStartTime;
+                return object;
+            };
+
+            /**
+             * Converts this TournamentBracketUpdate to JSON.
+             * @function toJSON
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            TournamentBracketUpdate.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for TournamentBracketUpdate
+             * @function getTypeUrl
+             * @memberof elo.v3.TournamentBracketUpdate
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            TournamentBracketUpdate.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.TournamentBracketUpdate";
+            };
+
+            return TournamentBracketUpdate;
+        })();
+
+        v3.SpectatorEmojiBurst = (function() {
+
+            /**
+             * Properties of a SpectatorEmojiBurst.
+             * @memberof elo.v3
+             * @interface ISpectatorEmojiBurst
+             * @property {string|null} [roomId] SpectatorEmojiBurst roomId
+             * @property {string|null} [emojiType] SpectatorEmojiBurst emojiType
+             * @property {number|null} [executionCoordinateX] SpectatorEmojiBurst executionCoordinateX
+             */
+
+            /**
+             * Constructs a new SpectatorEmojiBurst.
+             * @memberof elo.v3
+             * @classdesc Represents a SpectatorEmojiBurst.
+             * @implements ISpectatorEmojiBurst
+             * @constructor
+             * @param {elo.v3.ISpectatorEmojiBurst=} [properties] Properties to set
+             */
+            function SpectatorEmojiBurst(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * SpectatorEmojiBurst roomId.
+             * @member {string} roomId
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @instance
+             */
+            SpectatorEmojiBurst.prototype.roomId = "";
+
+            /**
+             * SpectatorEmojiBurst emojiType.
+             * @member {string} emojiType
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @instance
+             */
+            SpectatorEmojiBurst.prototype.emojiType = "";
+
+            /**
+             * SpectatorEmojiBurst executionCoordinateX.
+             * @member {number} executionCoordinateX
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @instance
+             */
+            SpectatorEmojiBurst.prototype.executionCoordinateX = 0;
+
+            /**
+             * Creates a new SpectatorEmojiBurst instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {elo.v3.ISpectatorEmojiBurst=} [properties] Properties to set
+             * @returns {elo.v3.SpectatorEmojiBurst} SpectatorEmojiBurst instance
+             */
+            SpectatorEmojiBurst.create = function create(properties) {
+                return new SpectatorEmojiBurst(properties);
+            };
+
+            /**
+             * Encodes the specified SpectatorEmojiBurst message. Does not implicitly {@link elo.v3.SpectatorEmojiBurst.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {elo.v3.ISpectatorEmojiBurst} message SpectatorEmojiBurst message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SpectatorEmojiBurst.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.roomId);
+                if (message.emojiType != null && Object.hasOwnProperty.call(message, "emojiType"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.emojiType);
+                if (message.executionCoordinateX != null && Object.hasOwnProperty.call(message, "executionCoordinateX"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.executionCoordinateX);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified SpectatorEmojiBurst message, length delimited. Does not implicitly {@link elo.v3.SpectatorEmojiBurst.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {elo.v3.ISpectatorEmojiBurst} message SpectatorEmojiBurst message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SpectatorEmojiBurst.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a SpectatorEmojiBurst message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.SpectatorEmojiBurst} SpectatorEmojiBurst
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SpectatorEmojiBurst.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.SpectatorEmojiBurst();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.roomId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.emojiType = reader.string();
+                            break;
+                        }
+                    case 3: {
+                            message.executionCoordinateX = reader.int32();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a SpectatorEmojiBurst message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.SpectatorEmojiBurst} SpectatorEmojiBurst
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SpectatorEmojiBurst.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a SpectatorEmojiBurst message.
+             * @function verify
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            SpectatorEmojiBurst.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    if (!$util.isString(message.roomId))
+                        return "roomId: string expected";
+                if (message.emojiType != null && Object.hasOwnProperty.call(message, "emojiType"))
+                    if (!$util.isString(message.emojiType))
+                        return "emojiType: string expected";
+                if (message.executionCoordinateX != null && Object.hasOwnProperty.call(message, "executionCoordinateX"))
+                    if (!$util.isInteger(message.executionCoordinateX))
+                        return "executionCoordinateX: integer expected";
+                return null;
+            };
+
+            /**
+             * Creates a SpectatorEmojiBurst message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.SpectatorEmojiBurst} SpectatorEmojiBurst
+             */
+            SpectatorEmojiBurst.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.SpectatorEmojiBurst)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.SpectatorEmojiBurst: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.SpectatorEmojiBurst();
+                if (object.roomId != null)
+                    message.roomId = String(object.roomId);
+                if (object.emojiType != null)
+                    message.emojiType = String(object.emojiType);
+                if (object.executionCoordinateX != null)
+                    message.executionCoordinateX = object.executionCoordinateX | 0;
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a SpectatorEmojiBurst message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {elo.v3.SpectatorEmojiBurst} message SpectatorEmojiBurst
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            SpectatorEmojiBurst.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.roomId = "";
+                    object.emojiType = "";
+                    object.executionCoordinateX = 0;
+                }
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    object.roomId = message.roomId;
+                if (message.emojiType != null && Object.hasOwnProperty.call(message, "emojiType"))
+                    object.emojiType = message.emojiType;
+                if (message.executionCoordinateX != null && Object.hasOwnProperty.call(message, "executionCoordinateX"))
+                    object.executionCoordinateX = message.executionCoordinateX;
+                return object;
+            };
+
+            /**
+             * Converts this SpectatorEmojiBurst to JSON.
+             * @function toJSON
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            SpectatorEmojiBurst.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for SpectatorEmojiBurst
+             * @function getTypeUrl
+             * @memberof elo.v3.SpectatorEmojiBurst
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            SpectatorEmojiBurst.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.SpectatorEmojiBurst";
+            };
+
+            return SpectatorEmojiBurst;
+        })();
+
+        v3.ClientAction = (function() {
 
             /**
              * Properties of a ClientAction.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @interface IClientAction
              * @property {string|null} [roomId] ClientAction roomId
              * @property {string|null} [playerId] ClientAction playerId
@@ -1024,18 +2111,21 @@ export const elo = $root.elo = (() => {
              * @property {string|null} [currentInput] ClientAction currentInput
              * @property {string|null} [submittedAnswer] ClientAction submittedAnswer
              * @property {string|null} [joinQueuePlayerId] ClientAction joinQueuePlayerId
-             * @property {elo.v2.ICreateCustomRoomRequest|null} [createCustomRoom] ClientAction createCustomRoom
+             * @property {elo.v3.ICreateCustomRoomRequest|null} [createCustomRoom] ClientAction createCustomRoom
              * @property {string|null} [joinPrivateRoomCode] ClientAction joinPrivateRoomCode
-             * @property {elo.v2.IMatchSecurityLog|null} [securityLog] ClientAction securityLog
+             * @property {elo.v3.IMatchSecurityLog|null} [securityLog] ClientAction securityLog
+             * @property {string|null} [joinTournamentPlayerId] ClientAction joinTournamentPlayerId
+             * @property {string|null} [spectateRoomId] ClientAction spectateRoomId
+             * @property {elo.v3.ISpectatorEmojiBurst|null} [emojiBurst] ClientAction emojiBurst
              */
 
             /**
              * Constructs a new ClientAction.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @classdesc Represents a ClientAction.
              * @implements IClientAction
              * @constructor
-             * @param {elo.v2.IClientAction=} [properties] Properties to set
+             * @param {elo.v3.IClientAction=} [properties] Properties to set
              */
             function ClientAction(properties) {
                 if (properties)
@@ -1047,7 +2137,7 @@ export const elo = $root.elo = (() => {
             /**
              * ClientAction roomId.
              * @member {string} roomId
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.roomId = "";
@@ -1055,7 +2145,7 @@ export const elo = $root.elo = (() => {
             /**
              * ClientAction playerId.
              * @member {string} playerId
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.playerId = "";
@@ -1063,7 +2153,7 @@ export const elo = $root.elo = (() => {
             /**
              * ClientAction timestamp.
              * @member {number|Long} timestamp
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
@@ -1071,7 +2161,7 @@ export const elo = $root.elo = (() => {
             /**
              * ClientAction currentInput.
              * @member {string|null|undefined} currentInput
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.currentInput = null;
@@ -1079,7 +2169,7 @@ export const elo = $root.elo = (() => {
             /**
              * ClientAction submittedAnswer.
              * @member {string|null|undefined} submittedAnswer
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.submittedAnswer = null;
@@ -1087,15 +2177,15 @@ export const elo = $root.elo = (() => {
             /**
              * ClientAction joinQueuePlayerId.
              * @member {string|null|undefined} joinQueuePlayerId
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.joinQueuePlayerId = null;
 
             /**
              * ClientAction createCustomRoom.
-             * @member {elo.v2.ICreateCustomRoomRequest|null|undefined} createCustomRoom
-             * @memberof elo.v2.ClientAction
+             * @member {elo.v3.ICreateCustomRoomRequest|null|undefined} createCustomRoom
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.createCustomRoom = null;
@@ -1103,51 +2193,75 @@ export const elo = $root.elo = (() => {
             /**
              * ClientAction joinPrivateRoomCode.
              * @member {string|null|undefined} joinPrivateRoomCode
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.joinPrivateRoomCode = null;
 
             /**
              * ClientAction securityLog.
-             * @member {elo.v2.IMatchSecurityLog|null|undefined} securityLog
-             * @memberof elo.v2.ClientAction
+             * @member {elo.v3.IMatchSecurityLog|null|undefined} securityLog
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             ClientAction.prototype.securityLog = null;
+
+            /**
+             * ClientAction joinTournamentPlayerId.
+             * @member {string|null|undefined} joinTournamentPlayerId
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.joinTournamentPlayerId = null;
+
+            /**
+             * ClientAction spectateRoomId.
+             * @member {string|null|undefined} spectateRoomId
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.spectateRoomId = null;
+
+            /**
+             * ClientAction emojiBurst.
+             * @member {elo.v3.ISpectatorEmojiBurst|null|undefined} emojiBurst
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.emojiBurst = null;
 
             // OneOf field names bound to virtual getters and setters
             let $oneOfFields;
 
             /**
              * ClientAction payload.
-             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|undefined} payload
-             * @memberof elo.v2.ClientAction
+             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|undefined} payload
+             * @memberof elo.v3.ClientAction
              * @instance
              */
             Object.defineProperty(ClientAction.prototype, "payload", {
-                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog"]),
+                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
             /**
              * Creates a new ClientAction instance using the specified properties.
              * @function create
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
-             * @param {elo.v2.IClientAction=} [properties] Properties to set
-             * @returns {elo.v2.ClientAction} ClientAction instance
+             * @param {elo.v3.IClientAction=} [properties] Properties to set
+             * @returns {elo.v3.ClientAction} ClientAction instance
              */
             ClientAction.create = function create(properties) {
                 return new ClientAction(properties);
             };
 
             /**
-             * Encodes the specified ClientAction message. Does not implicitly {@link elo.v2.ClientAction.verify|verify} messages.
+             * Encodes the specified ClientAction message. Does not implicitly {@link elo.v3.ClientAction.verify|verify} messages.
              * @function encode
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
-             * @param {elo.v2.IClientAction} message ClientAction message or plain object to encode
+             * @param {elo.v3.IClientAction} message ClientAction message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -1171,20 +2285,26 @@ export const elo = $root.elo = (() => {
                 if (message.joinQueuePlayerId != null && Object.hasOwnProperty.call(message, "joinQueuePlayerId"))
                     writer.uint32(/* id 6, wireType 2 =*/50).string(message.joinQueuePlayerId);
                 if (message.createCustomRoom != null && Object.hasOwnProperty.call(message, "createCustomRoom"))
-                    $root.elo.v2.CreateCustomRoomRequest.encode(message.createCustomRoom, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+                    $root.elo.v3.CreateCustomRoomRequest.encode(message.createCustomRoom, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
                 if (message.joinPrivateRoomCode != null && Object.hasOwnProperty.call(message, "joinPrivateRoomCode"))
                     writer.uint32(/* id 8, wireType 2 =*/66).string(message.joinPrivateRoomCode);
                 if (message.securityLog != null && Object.hasOwnProperty.call(message, "securityLog"))
-                    $root.elo.v2.MatchSecurityLog.encode(message.securityLog, writer.uint32(/* id 9, wireType 2 =*/74).fork(), q + 1).ldelim();
+                    $root.elo.v3.MatchSecurityLog.encode(message.securityLog, writer.uint32(/* id 9, wireType 2 =*/74).fork(), q + 1).ldelim();
+                if (message.joinTournamentPlayerId != null && Object.hasOwnProperty.call(message, "joinTournamentPlayerId"))
+                    writer.uint32(/* id 10, wireType 2 =*/82).string(message.joinTournamentPlayerId);
+                if (message.spectateRoomId != null && Object.hasOwnProperty.call(message, "spectateRoomId"))
+                    writer.uint32(/* id 11, wireType 2 =*/90).string(message.spectateRoomId);
+                if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst"))
+                    $root.elo.v3.SpectatorEmojiBurst.encode(message.emojiBurst, writer.uint32(/* id 12, wireType 2 =*/98).fork(), q + 1).ldelim();
                 return writer;
             };
 
             /**
-             * Encodes the specified ClientAction message, length delimited. Does not implicitly {@link elo.v2.ClientAction.verify|verify} messages.
+             * Encodes the specified ClientAction message, length delimited. Does not implicitly {@link elo.v3.ClientAction.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
-             * @param {elo.v2.IClientAction} message ClientAction message or plain object to encode
+             * @param {elo.v3.IClientAction} message ClientAction message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -1195,11 +2315,11 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a ClientAction message from the specified reader or buffer.
              * @function decode
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {elo.v2.ClientAction} ClientAction
+             * @returns {elo.v3.ClientAction} ClientAction
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -1210,7 +2330,7 @@ export const elo = $root.elo = (() => {
                     long = 0;
                 if (long > $Reader.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v2.ClientAction();
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.ClientAction();
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     if (tag === error)
@@ -1241,7 +2361,7 @@ export const elo = $root.elo = (() => {
                             break;
                         }
                     case 7: {
-                            message.createCustomRoom = $root.elo.v2.CreateCustomRoomRequest.decode(reader, reader.uint32(), undefined, long + 1);
+                            message.createCustomRoom = $root.elo.v3.CreateCustomRoomRequest.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     case 8: {
@@ -1249,7 +2369,19 @@ export const elo = $root.elo = (() => {
                             break;
                         }
                     case 9: {
-                            message.securityLog = $root.elo.v2.MatchSecurityLog.decode(reader, reader.uint32(), undefined, long + 1);
+                            message.securityLog = $root.elo.v3.MatchSecurityLog.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 10: {
+                            message.joinTournamentPlayerId = reader.string();
+                            break;
+                        }
+                    case 11: {
+                            message.spectateRoomId = reader.string();
+                            break;
+                        }
+                    case 12: {
+                            message.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     default:
@@ -1263,10 +2395,10 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a ClientAction message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {elo.v2.ClientAction} ClientAction
+             * @returns {elo.v3.ClientAction} ClientAction
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -1279,7 +2411,7 @@ export const elo = $root.elo = (() => {
             /**
              * Verifies a ClientAction message.
              * @function verify
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1325,7 +2457,7 @@ export const elo = $root.elo = (() => {
                         return "payload: multiple values";
                     properties.payload = 1;
                     {
-                        let error = $root.elo.v2.CreateCustomRoomRequest.verify(message.createCustomRoom, long + 1);
+                        let error = $root.elo.v3.CreateCustomRoomRequest.verify(message.createCustomRoom, long + 1);
                         if (error)
                             return "createCustomRoom." + error;
                     }
@@ -1342,9 +2474,33 @@ export const elo = $root.elo = (() => {
                         return "payload: multiple values";
                     properties.payload = 1;
                     {
-                        let error = $root.elo.v2.MatchSecurityLog.verify(message.securityLog, long + 1);
+                        let error = $root.elo.v3.MatchSecurityLog.verify(message.securityLog, long + 1);
                         if (error)
                             return "securityLog." + error;
+                    }
+                }
+                if (message.joinTournamentPlayerId != null && Object.hasOwnProperty.call(message, "joinTournamentPlayerId")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    if (!$util.isString(message.joinTournamentPlayerId))
+                        return "joinTournamentPlayerId: string expected";
+                }
+                if (message.spectateRoomId != null && Object.hasOwnProperty.call(message, "spectateRoomId")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    if (!$util.isString(message.spectateRoomId))
+                        return "spectateRoomId: string expected";
+                }
+                if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    {
+                        let error = $root.elo.v3.SpectatorEmojiBurst.verify(message.emojiBurst, long + 1);
+                        if (error)
+                            return "emojiBurst." + error;
                     }
                 }
                 return null;
@@ -1353,21 +2509,21 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a ClientAction message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {elo.v2.ClientAction} ClientAction
+             * @returns {elo.v3.ClientAction} ClientAction
              */
             ClientAction.fromObject = function fromObject(object, long) {
-                if (object instanceof $root.elo.v2.ClientAction)
+                if (object instanceof $root.elo.v3.ClientAction)
                     return object;
                 if (!$util.isObject(object))
-                    throw TypeError(".elo.v2.ClientAction: object expected");
+                    throw TypeError(".elo.v3.ClientAction: object expected");
                 if (long === undefined)
                     long = 0;
                 if (long > $util.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let message = new $root.elo.v2.ClientAction();
+                let message = new $root.elo.v3.ClientAction();
                 if (object.roomId != null)
                     message.roomId = String(object.roomId);
                 if (object.playerId != null)
@@ -1389,15 +2545,24 @@ export const elo = $root.elo = (() => {
                     message.joinQueuePlayerId = String(object.joinQueuePlayerId);
                 if (object.createCustomRoom != null) {
                     if (!$util.isObject(object.createCustomRoom))
-                        throw TypeError(".elo.v2.ClientAction.createCustomRoom: object expected");
-                    message.createCustomRoom = $root.elo.v2.CreateCustomRoomRequest.fromObject(object.createCustomRoom, long + 1);
+                        throw TypeError(".elo.v3.ClientAction.createCustomRoom: object expected");
+                    message.createCustomRoom = $root.elo.v3.CreateCustomRoomRequest.fromObject(object.createCustomRoom, long + 1);
                 }
                 if (object.joinPrivateRoomCode != null)
                     message.joinPrivateRoomCode = String(object.joinPrivateRoomCode);
                 if (object.securityLog != null) {
                     if (!$util.isObject(object.securityLog))
-                        throw TypeError(".elo.v2.ClientAction.securityLog: object expected");
-                    message.securityLog = $root.elo.v2.MatchSecurityLog.fromObject(object.securityLog, long + 1);
+                        throw TypeError(".elo.v3.ClientAction.securityLog: object expected");
+                    message.securityLog = $root.elo.v3.MatchSecurityLog.fromObject(object.securityLog, long + 1);
+                }
+                if (object.joinTournamentPlayerId != null)
+                    message.joinTournamentPlayerId = String(object.joinTournamentPlayerId);
+                if (object.spectateRoomId != null)
+                    message.spectateRoomId = String(object.spectateRoomId);
+                if (object.emojiBurst != null) {
+                    if (!$util.isObject(object.emojiBurst))
+                        throw TypeError(".elo.v3.ClientAction.emojiBurst: object expected");
+                    message.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.fromObject(object.emojiBurst, long + 1);
                 }
                 return message;
             };
@@ -1405,9 +2570,9 @@ export const elo = $root.elo = (() => {
             /**
              * Creates a plain object from a ClientAction message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
-             * @param {elo.v2.ClientAction} message ClientAction
+             * @param {elo.v3.ClientAction} message ClientAction
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
@@ -1455,7 +2620,7 @@ export const elo = $root.elo = (() => {
                         object.payload = "joinQueuePlayerId";
                 }
                 if (message.createCustomRoom != null && Object.hasOwnProperty.call(message, "createCustomRoom")) {
-                    object.createCustomRoom = $root.elo.v2.CreateCustomRoomRequest.toObject(message.createCustomRoom, options, q + 1);
+                    object.createCustomRoom = $root.elo.v3.CreateCustomRoomRequest.toObject(message.createCustomRoom, options, q + 1);
                     if (options.oneofs)
                         object.payload = "createCustomRoom";
                 }
@@ -1465,9 +2630,24 @@ export const elo = $root.elo = (() => {
                         object.payload = "joinPrivateRoomCode";
                 }
                 if (message.securityLog != null && Object.hasOwnProperty.call(message, "securityLog")) {
-                    object.securityLog = $root.elo.v2.MatchSecurityLog.toObject(message.securityLog, options, q + 1);
+                    object.securityLog = $root.elo.v3.MatchSecurityLog.toObject(message.securityLog, options, q + 1);
                     if (options.oneofs)
                         object.payload = "securityLog";
+                }
+                if (message.joinTournamentPlayerId != null && Object.hasOwnProperty.call(message, "joinTournamentPlayerId")) {
+                    object.joinTournamentPlayerId = message.joinTournamentPlayerId;
+                    if (options.oneofs)
+                        object.payload = "joinTournamentPlayerId";
+                }
+                if (message.spectateRoomId != null && Object.hasOwnProperty.call(message, "spectateRoomId")) {
+                    object.spectateRoomId = message.spectateRoomId;
+                    if (options.oneofs)
+                        object.payload = "spectateRoomId";
+                }
+                if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst")) {
+                    object.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.toObject(message.emojiBurst, options, q + 1);
+                    if (options.oneofs)
+                        object.payload = "emojiBurst";
                 }
                 return object;
             };
@@ -1475,7 +2655,7 @@ export const elo = $root.elo = (() => {
             /**
              * Converts this ClientAction to JSON.
              * @function toJSON
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
@@ -1486,7 +2666,7 @@ export const elo = $root.elo = (() => {
             /**
              * Gets the default type url for ClientAction
              * @function getTypeUrl
-             * @memberof elo.v2.ClientAction
+             * @memberof elo.v3.ClientAction
              * @static
              * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns {string} The default type url
@@ -1495,40 +2675,42 @@ export const elo = $root.elo = (() => {
                 if (typeUrlPrefix === undefined) {
                     typeUrlPrefix = "type.googleapis.com";
                 }
-                return typeUrlPrefix + "/elo.v2.ClientAction";
+                return typeUrlPrefix + "/elo.v3.ClientAction";
             };
 
             return ClientAction;
         })();
 
-        v2.ServerGameStateUpdate = (function() {
+        v3.ServerGameStateUpdate = (function() {
 
             /**
              * Properties of a ServerGameStateUpdate.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @interface IServerGameStateUpdate
              * @property {string|null} [roomId] ServerGameStateUpdate roomId
-             * @property {elo.v2.MatchState|null} [state] ServerGameStateUpdate state
+             * @property {elo.v3.MatchState|null} [state] ServerGameStateUpdate state
              * @property {number|null} [timeRemainingSeconds] ServerGameStateUpdate timeRemainingSeconds
-             * @property {elo.v2.RoomType|null} [roomType] ServerGameStateUpdate roomType
+             * @property {elo.v3.RoomType|null} [roomType] ServerGameStateUpdate roomType
              * @property {string|null} [privateRoomCode] ServerGameStateUpdate privateRoomCode
-             * @property {elo.v2.ServerGameStateUpdate.IPlayerProgress|null} [playerOne] ServerGameStateUpdate playerOne
-             * @property {elo.v2.ServerGameStateUpdate.IPlayerProgress|null} [playerTwo] ServerGameStateUpdate playerTwo
+             * @property {elo.v3.ServerGameStateUpdate.IPlayerProgress|null} [playerOne] ServerGameStateUpdate playerOne
+             * @property {elo.v3.ServerGameStateUpdate.IPlayerProgress|null} [playerTwo] ServerGameStateUpdate playerTwo
              * @property {string|null} [nextQuestionText] ServerGameStateUpdate nextQuestionText
              * @property {string|null} [winnerId] ServerGameStateUpdate winnerId
              * @property {number|null} [playerOneEloChange] ServerGameStateUpdate playerOneEloChange
              * @property {number|null} [playerTwoEloChange] ServerGameStateUpdate playerTwoEloChange
              * @property {number|null} [playerOneXpChange] ServerGameStateUpdate playerOneXpChange
              * @property {number|null} [playerTwoXpChange] ServerGameStateUpdate playerTwoXpChange
+             * @property {elo.v3.ITournamentBracketUpdate|null} [bracketUpdate] ServerGameStateUpdate bracketUpdate
+             * @property {elo.v3.ISpectatorEmojiBurst|null} [emojiBurst] ServerGameStateUpdate emojiBurst
              */
 
             /**
              * Constructs a new ServerGameStateUpdate.
-             * @memberof elo.v2
+             * @memberof elo.v3
              * @classdesc Represents a ServerGameStateUpdate.
              * @implements IServerGameStateUpdate
              * @constructor
-             * @param {elo.v2.IServerGameStateUpdate=} [properties] Properties to set
+             * @param {elo.v3.IServerGameStateUpdate=} [properties] Properties to set
              */
             function ServerGameStateUpdate(properties) {
                 if (properties)
@@ -1540,15 +2722,15 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate roomId.
              * @member {string} roomId
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.roomId = "";
 
             /**
              * ServerGameStateUpdate state.
-             * @member {elo.v2.MatchState} state
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @member {elo.v3.MatchState} state
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.state = 0;
@@ -1556,15 +2738,15 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate timeRemainingSeconds.
              * @member {number} timeRemainingSeconds
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.timeRemainingSeconds = 0;
 
             /**
              * ServerGameStateUpdate roomType.
-             * @member {elo.v2.RoomType} roomType
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @member {elo.v3.RoomType} roomType
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.roomType = 0;
@@ -1572,23 +2754,23 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate privateRoomCode.
              * @member {string} privateRoomCode
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.privateRoomCode = "";
 
             /**
              * ServerGameStateUpdate playerOne.
-             * @member {elo.v2.ServerGameStateUpdate.IPlayerProgress|null|undefined} playerOne
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @member {elo.v3.ServerGameStateUpdate.IPlayerProgress|null|undefined} playerOne
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.playerOne = null;
 
             /**
              * ServerGameStateUpdate playerTwo.
-             * @member {elo.v2.ServerGameStateUpdate.IPlayerProgress|null|undefined} playerTwo
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @member {elo.v3.ServerGameStateUpdate.IPlayerProgress|null|undefined} playerTwo
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.playerTwo = null;
@@ -1596,7 +2778,7 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate nextQuestionText.
              * @member {string} nextQuestionText
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.nextQuestionText = "";
@@ -1604,7 +2786,7 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate winnerId.
              * @member {string} winnerId
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.winnerId = "";
@@ -1612,7 +2794,7 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate playerOneEloChange.
              * @member {number} playerOneEloChange
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.playerOneEloChange = 0;
@@ -1620,7 +2802,7 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate playerTwoEloChange.
              * @member {number} playerTwoEloChange
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.playerTwoEloChange = 0;
@@ -1628,7 +2810,7 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate playerOneXpChange.
              * @member {number} playerOneXpChange
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.playerOneXpChange = 0;
@@ -1636,29 +2818,45 @@ export const elo = $root.elo = (() => {
             /**
              * ServerGameStateUpdate playerTwoXpChange.
              * @member {number} playerTwoXpChange
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              */
             ServerGameStateUpdate.prototype.playerTwoXpChange = 0;
 
             /**
+             * ServerGameStateUpdate bracketUpdate.
+             * @member {elo.v3.ITournamentBracketUpdate|null|undefined} bracketUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.bracketUpdate = null;
+
+            /**
+             * ServerGameStateUpdate emojiBurst.
+             * @member {elo.v3.ISpectatorEmojiBurst|null|undefined} emojiBurst
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.emojiBurst = null;
+
+            /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.
              * @function create
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
-             * @param {elo.v2.IServerGameStateUpdate=} [properties] Properties to set
-             * @returns {elo.v2.ServerGameStateUpdate} ServerGameStateUpdate instance
+             * @param {elo.v3.IServerGameStateUpdate=} [properties] Properties to set
+             * @returns {elo.v3.ServerGameStateUpdate} ServerGameStateUpdate instance
              */
             ServerGameStateUpdate.create = function create(properties) {
                 return new ServerGameStateUpdate(properties);
             };
 
             /**
-             * Encodes the specified ServerGameStateUpdate message. Does not implicitly {@link elo.v2.ServerGameStateUpdate.verify|verify} messages.
+             * Encodes the specified ServerGameStateUpdate message. Does not implicitly {@link elo.v3.ServerGameStateUpdate.verify|verify} messages.
              * @function encode
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
-             * @param {elo.v2.IServerGameStateUpdate} message ServerGameStateUpdate message or plain object to encode
+             * @param {elo.v3.IServerGameStateUpdate} message ServerGameStateUpdate message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -1680,9 +2878,9 @@ export const elo = $root.elo = (() => {
                 if (message.privateRoomCode != null && Object.hasOwnProperty.call(message, "privateRoomCode"))
                     writer.uint32(/* id 5, wireType 2 =*/42).string(message.privateRoomCode);
                 if (message.playerOne != null && Object.hasOwnProperty.call(message, "playerOne"))
-                    $root.elo.v2.ServerGameStateUpdate.PlayerProgress.encode(message.playerOne, writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
+                    $root.elo.v3.ServerGameStateUpdate.PlayerProgress.encode(message.playerOne, writer.uint32(/* id 6, wireType 2 =*/50).fork(), q + 1).ldelim();
                 if (message.playerTwo != null && Object.hasOwnProperty.call(message, "playerTwo"))
-                    $root.elo.v2.ServerGameStateUpdate.PlayerProgress.encode(message.playerTwo, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
+                    $root.elo.v3.ServerGameStateUpdate.PlayerProgress.encode(message.playerTwo, writer.uint32(/* id 7, wireType 2 =*/58).fork(), q + 1).ldelim();
                 if (message.nextQuestionText != null && Object.hasOwnProperty.call(message, "nextQuestionText"))
                     writer.uint32(/* id 8, wireType 2 =*/66).string(message.nextQuestionText);
                 if (message.winnerId != null && Object.hasOwnProperty.call(message, "winnerId"))
@@ -1695,15 +2893,19 @@ export const elo = $root.elo = (() => {
                     writer.uint32(/* id 12, wireType 0 =*/96).int32(message.playerOneXpChange);
                 if (message.playerTwoXpChange != null && Object.hasOwnProperty.call(message, "playerTwoXpChange"))
                     writer.uint32(/* id 13, wireType 0 =*/104).int32(message.playerTwoXpChange);
+                if (message.bracketUpdate != null && Object.hasOwnProperty.call(message, "bracketUpdate"))
+                    $root.elo.v3.TournamentBracketUpdate.encode(message.bracketUpdate, writer.uint32(/* id 14, wireType 2 =*/114).fork(), q + 1).ldelim();
+                if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst"))
+                    $root.elo.v3.SpectatorEmojiBurst.encode(message.emojiBurst, writer.uint32(/* id 15, wireType 2 =*/122).fork(), q + 1).ldelim();
                 return writer;
             };
 
             /**
-             * Encodes the specified ServerGameStateUpdate message, length delimited. Does not implicitly {@link elo.v2.ServerGameStateUpdate.verify|verify} messages.
+             * Encodes the specified ServerGameStateUpdate message, length delimited. Does not implicitly {@link elo.v3.ServerGameStateUpdate.verify|verify} messages.
              * @function encodeDelimited
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
-             * @param {elo.v2.IServerGameStateUpdate} message ServerGameStateUpdate message or plain object to encode
+             * @param {elo.v3.IServerGameStateUpdate} message ServerGameStateUpdate message or plain object to encode
              * @param {$protobuf.Writer} [writer] Writer to encode to
              * @returns {$protobuf.Writer} Writer
              */
@@ -1714,11 +2916,11 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a ServerGameStateUpdate message from the specified reader or buffer.
              * @function decode
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
              * @param {number} [length] Message length if known beforehand
-             * @returns {elo.v2.ServerGameStateUpdate} ServerGameStateUpdate
+             * @returns {elo.v3.ServerGameStateUpdate} ServerGameStateUpdate
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -1729,7 +2931,7 @@ export const elo = $root.elo = (() => {
                     long = 0;
                 if (long > $Reader.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v2.ServerGameStateUpdate();
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.ServerGameStateUpdate();
                 while (reader.pos < end) {
                     let tag = reader.uint32();
                     if (tag === error)
@@ -1756,11 +2958,11 @@ export const elo = $root.elo = (() => {
                             break;
                         }
                     case 6: {
-                            message.playerOne = $root.elo.v2.ServerGameStateUpdate.PlayerProgress.decode(reader, reader.uint32(), undefined, long + 1);
+                            message.playerOne = $root.elo.v3.ServerGameStateUpdate.PlayerProgress.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     case 7: {
-                            message.playerTwo = $root.elo.v2.ServerGameStateUpdate.PlayerProgress.decode(reader, reader.uint32(), undefined, long + 1);
+                            message.playerTwo = $root.elo.v3.ServerGameStateUpdate.PlayerProgress.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     case 8: {
@@ -1787,6 +2989,14 @@ export const elo = $root.elo = (() => {
                             message.playerTwoXpChange = reader.int32();
                             break;
                         }
+                    case 14: {
+                            message.bracketUpdate = $root.elo.v3.TournamentBracketUpdate.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 15: {
+                            message.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
                     default:
                         reader.skipType(tag & 7, long);
                         break;
@@ -1798,10 +3008,10 @@ export const elo = $root.elo = (() => {
             /**
              * Decodes a ServerGameStateUpdate message from the specified reader or buffer, length delimited.
              * @function decodeDelimited
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
              * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-             * @returns {elo.v2.ServerGameStateUpdate} ServerGameStateUpdate
+             * @returns {elo.v3.ServerGameStateUpdate} ServerGameStateUpdate
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
@@ -1814,7 +3024,7 @@ export const elo = $root.elo = (() => {
             /**
              * Verifies a ServerGameStateUpdate message.
              * @function verify
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
              * @param {Object.<string,*>} message Plain object to verify
              * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -1849,18 +3059,19 @@ export const elo = $root.elo = (() => {
                         return "roomType: enum value expected";
                     case 0:
                     case 1:
+                    case 2:
                         break;
                     }
                 if (message.privateRoomCode != null && Object.hasOwnProperty.call(message, "privateRoomCode"))
                     if (!$util.isString(message.privateRoomCode))
                         return "privateRoomCode: string expected";
                 if (message.playerOne != null && Object.hasOwnProperty.call(message, "playerOne")) {
-                    let error = $root.elo.v2.ServerGameStateUpdate.PlayerProgress.verify(message.playerOne, long + 1);
+                    let error = $root.elo.v3.ServerGameStateUpdate.PlayerProgress.verify(message.playerOne, long + 1);
                     if (error)
                         return "playerOne." + error;
                 }
                 if (message.playerTwo != null && Object.hasOwnProperty.call(message, "playerTwo")) {
-                    let error = $root.elo.v2.ServerGameStateUpdate.PlayerProgress.verify(message.playerTwo, long + 1);
+                    let error = $root.elo.v3.ServerGameStateUpdate.PlayerProgress.verify(message.playerTwo, long + 1);
                     if (error)
                         return "playerTwo." + error;
                 }
@@ -1882,27 +3093,37 @@ export const elo = $root.elo = (() => {
                 if (message.playerTwoXpChange != null && Object.hasOwnProperty.call(message, "playerTwoXpChange"))
                     if (!$util.isInteger(message.playerTwoXpChange))
                         return "playerTwoXpChange: integer expected";
+                if (message.bracketUpdate != null && Object.hasOwnProperty.call(message, "bracketUpdate")) {
+                    let error = $root.elo.v3.TournamentBracketUpdate.verify(message.bracketUpdate, long + 1);
+                    if (error)
+                        return "bracketUpdate." + error;
+                }
+                if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst")) {
+                    let error = $root.elo.v3.SpectatorEmojiBurst.verify(message.emojiBurst, long + 1);
+                    if (error)
+                        return "emojiBurst." + error;
+                }
                 return null;
             };
 
             /**
              * Creates a ServerGameStateUpdate message from a plain object. Also converts values to their respective internal types.
              * @function fromObject
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
              * @param {Object.<string,*>} object Plain object
-             * @returns {elo.v2.ServerGameStateUpdate} ServerGameStateUpdate
+             * @returns {elo.v3.ServerGameStateUpdate} ServerGameStateUpdate
              */
             ServerGameStateUpdate.fromObject = function fromObject(object, long) {
-                if (object instanceof $root.elo.v2.ServerGameStateUpdate)
+                if (object instanceof $root.elo.v3.ServerGameStateUpdate)
                     return object;
                 if (!$util.isObject(object))
-                    throw TypeError(".elo.v2.ServerGameStateUpdate: object expected");
+                    throw TypeError(".elo.v3.ServerGameStateUpdate: object expected");
                 if (long === undefined)
                     long = 0;
                 if (long > $util.recursionLimit)
                     throw Error("maximum nesting depth exceeded");
-                let message = new $root.elo.v2.ServerGameStateUpdate();
+                let message = new $root.elo.v3.ServerGameStateUpdate();
                 if (object.roomId != null)
                     message.roomId = String(object.roomId);
                 switch (object.state) {
@@ -1950,18 +3171,22 @@ export const elo = $root.elo = (() => {
                 case 1:
                     message.roomType = 1;
                     break;
+                case "ROOM_TYPE_TOURNAMENT":
+                case 2:
+                    message.roomType = 2;
+                    break;
                 }
                 if (object.privateRoomCode != null)
                     message.privateRoomCode = String(object.privateRoomCode);
                 if (object.playerOne != null) {
                     if (!$util.isObject(object.playerOne))
-                        throw TypeError(".elo.v2.ServerGameStateUpdate.playerOne: object expected");
-                    message.playerOne = $root.elo.v2.ServerGameStateUpdate.PlayerProgress.fromObject(object.playerOne, long + 1);
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.playerOne: object expected");
+                    message.playerOne = $root.elo.v3.ServerGameStateUpdate.PlayerProgress.fromObject(object.playerOne, long + 1);
                 }
                 if (object.playerTwo != null) {
                     if (!$util.isObject(object.playerTwo))
-                        throw TypeError(".elo.v2.ServerGameStateUpdate.playerTwo: object expected");
-                    message.playerTwo = $root.elo.v2.ServerGameStateUpdate.PlayerProgress.fromObject(object.playerTwo, long + 1);
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.playerTwo: object expected");
+                    message.playerTwo = $root.elo.v3.ServerGameStateUpdate.PlayerProgress.fromObject(object.playerTwo, long + 1);
                 }
                 if (object.nextQuestionText != null)
                     message.nextQuestionText = String(object.nextQuestionText);
@@ -1975,15 +3200,25 @@ export const elo = $root.elo = (() => {
                     message.playerOneXpChange = object.playerOneXpChange | 0;
                 if (object.playerTwoXpChange != null)
                     message.playerTwoXpChange = object.playerTwoXpChange | 0;
+                if (object.bracketUpdate != null) {
+                    if (!$util.isObject(object.bracketUpdate))
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.bracketUpdate: object expected");
+                    message.bracketUpdate = $root.elo.v3.TournamentBracketUpdate.fromObject(object.bracketUpdate, long + 1);
+                }
+                if (object.emojiBurst != null) {
+                    if (!$util.isObject(object.emojiBurst))
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.emojiBurst: object expected");
+                    message.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.fromObject(object.emojiBurst, long + 1);
+                }
                 return message;
             };
 
             /**
              * Creates a plain object from a ServerGameStateUpdate message. Also converts values to other types if specified.
              * @function toObject
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
-             * @param {elo.v2.ServerGameStateUpdate} message ServerGameStateUpdate
+             * @param {elo.v3.ServerGameStateUpdate} message ServerGameStateUpdate
              * @param {$protobuf.IConversionOptions} [options] Conversion options
              * @returns {Object.<string,*>} Plain object
              */
@@ -2009,21 +3244,23 @@ export const elo = $root.elo = (() => {
                     object.playerTwoEloChange = 0;
                     object.playerOneXpChange = 0;
                     object.playerTwoXpChange = 0;
+                    object.bracketUpdate = null;
+                    object.emojiBurst = null;
                 }
                 if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
                     object.roomId = message.roomId;
                 if (message.state != null && Object.hasOwnProperty.call(message, "state"))
-                    object.state = options.enums === String ? $root.elo.v2.MatchState[message.state] === undefined ? message.state : $root.elo.v2.MatchState[message.state] : message.state;
+                    object.state = options.enums === String ? $root.elo.v3.MatchState[message.state] === undefined ? message.state : $root.elo.v3.MatchState[message.state] : message.state;
                 if (message.timeRemainingSeconds != null && Object.hasOwnProperty.call(message, "timeRemainingSeconds"))
                     object.timeRemainingSeconds = message.timeRemainingSeconds;
                 if (message.roomType != null && Object.hasOwnProperty.call(message, "roomType"))
-                    object.roomType = options.enums === String ? $root.elo.v2.RoomType[message.roomType] === undefined ? message.roomType : $root.elo.v2.RoomType[message.roomType] : message.roomType;
+                    object.roomType = options.enums === String ? $root.elo.v3.RoomType[message.roomType] === undefined ? message.roomType : $root.elo.v3.RoomType[message.roomType] : message.roomType;
                 if (message.privateRoomCode != null && Object.hasOwnProperty.call(message, "privateRoomCode"))
                     object.privateRoomCode = message.privateRoomCode;
                 if (message.playerOne != null && Object.hasOwnProperty.call(message, "playerOne"))
-                    object.playerOne = $root.elo.v2.ServerGameStateUpdate.PlayerProgress.toObject(message.playerOne, options, q + 1);
+                    object.playerOne = $root.elo.v3.ServerGameStateUpdate.PlayerProgress.toObject(message.playerOne, options, q + 1);
                 if (message.playerTwo != null && Object.hasOwnProperty.call(message, "playerTwo"))
-                    object.playerTwo = $root.elo.v2.ServerGameStateUpdate.PlayerProgress.toObject(message.playerTwo, options, q + 1);
+                    object.playerTwo = $root.elo.v3.ServerGameStateUpdate.PlayerProgress.toObject(message.playerTwo, options, q + 1);
                 if (message.nextQuestionText != null && Object.hasOwnProperty.call(message, "nextQuestionText"))
                     object.nextQuestionText = message.nextQuestionText;
                 if (message.winnerId != null && Object.hasOwnProperty.call(message, "winnerId"))
@@ -2036,13 +3273,17 @@ export const elo = $root.elo = (() => {
                     object.playerOneXpChange = message.playerOneXpChange;
                 if (message.playerTwoXpChange != null && Object.hasOwnProperty.call(message, "playerTwoXpChange"))
                     object.playerTwoXpChange = message.playerTwoXpChange;
+                if (message.bracketUpdate != null && Object.hasOwnProperty.call(message, "bracketUpdate"))
+                    object.bracketUpdate = $root.elo.v3.TournamentBracketUpdate.toObject(message.bracketUpdate, options, q + 1);
+                if (message.emojiBurst != null && Object.hasOwnProperty.call(message, "emojiBurst"))
+                    object.emojiBurst = $root.elo.v3.SpectatorEmojiBurst.toObject(message.emojiBurst, options, q + 1);
                 return object;
             };
 
             /**
              * Converts this ServerGameStateUpdate to JSON.
              * @function toJSON
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @instance
              * @returns {Object.<string,*>} JSON object
              */
@@ -2053,7 +3294,7 @@ export const elo = $root.elo = (() => {
             /**
              * Gets the default type url for ServerGameStateUpdate
              * @function getTypeUrl
-             * @memberof elo.v2.ServerGameStateUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
              * @static
              * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns {string} The default type url
@@ -2062,14 +3303,14 @@ export const elo = $root.elo = (() => {
                 if (typeUrlPrefix === undefined) {
                     typeUrlPrefix = "type.googleapis.com";
                 }
-                return typeUrlPrefix + "/elo.v2.ServerGameStateUpdate";
+                return typeUrlPrefix + "/elo.v3.ServerGameStateUpdate";
             };
 
             ServerGameStateUpdate.PlayerProgress = (function() {
 
                 /**
                  * Properties of a PlayerProgress.
-                 * @memberof elo.v2.ServerGameStateUpdate
+                 * @memberof elo.v3.ServerGameStateUpdate
                  * @interface IPlayerProgress
                  * @property {string|null} [playerId] PlayerProgress playerId
                  * @property {string|null} [username] PlayerProgress username
@@ -2083,11 +3324,11 @@ export const elo = $root.elo = (() => {
 
                 /**
                  * Constructs a new PlayerProgress.
-                 * @memberof elo.v2.ServerGameStateUpdate
+                 * @memberof elo.v3.ServerGameStateUpdate
                  * @classdesc Represents a PlayerProgress.
                  * @implements IPlayerProgress
                  * @constructor
-                 * @param {elo.v2.ServerGameStateUpdate.IPlayerProgress=} [properties] Properties to set
+                 * @param {elo.v3.ServerGameStateUpdate.IPlayerProgress=} [properties] Properties to set
                  */
                 function PlayerProgress(properties) {
                     if (properties)
@@ -2099,7 +3340,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * PlayerProgress playerId.
                  * @member {string} playerId
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  */
                 PlayerProgress.prototype.playerId = "";
@@ -2107,7 +3348,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * PlayerProgress username.
                  * @member {string} username
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  */
                 PlayerProgress.prototype.username = "";
@@ -2115,7 +3356,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * PlayerProgress currentScore.
                  * @member {number} currentScore
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  */
                 PlayerProgress.prototype.currentScore = 0;
@@ -2123,7 +3364,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * PlayerProgress currentStreak.
                  * @member {number} currentStreak
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  */
                 PlayerProgress.prototype.currentStreak = 0;
@@ -2131,7 +3372,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * PlayerProgress ghostInput.
                  * @member {string} ghostInput
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  */
                 PlayerProgress.prototype.ghostInput = "";
@@ -2139,7 +3380,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * PlayerProgress elo.
                  * @member {number} elo
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  */
                 PlayerProgress.prototype.elo = 0;
@@ -2147,7 +3388,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * PlayerProgress activeTitle.
                  * @member {string} activeTitle
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  */
                 PlayerProgress.prototype.activeTitle = "";
@@ -2155,7 +3396,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * PlayerProgress level.
                  * @member {number} level
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  */
                 PlayerProgress.prototype.level = 0;
@@ -2163,21 +3404,21 @@ export const elo = $root.elo = (() => {
                 /**
                  * Creates a new PlayerProgress instance using the specified properties.
                  * @function create
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
-                 * @param {elo.v2.ServerGameStateUpdate.IPlayerProgress=} [properties] Properties to set
-                 * @returns {elo.v2.ServerGameStateUpdate.PlayerProgress} PlayerProgress instance
+                 * @param {elo.v3.ServerGameStateUpdate.IPlayerProgress=} [properties] Properties to set
+                 * @returns {elo.v3.ServerGameStateUpdate.PlayerProgress} PlayerProgress instance
                  */
                 PlayerProgress.create = function create(properties) {
                     return new PlayerProgress(properties);
                 };
 
                 /**
-                 * Encodes the specified PlayerProgress message. Does not implicitly {@link elo.v2.ServerGameStateUpdate.PlayerProgress.verify|verify} messages.
+                 * Encodes the specified PlayerProgress message. Does not implicitly {@link elo.v3.ServerGameStateUpdate.PlayerProgress.verify|verify} messages.
                  * @function encode
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
-                 * @param {elo.v2.ServerGameStateUpdate.IPlayerProgress} message PlayerProgress message or plain object to encode
+                 * @param {elo.v3.ServerGameStateUpdate.IPlayerProgress} message PlayerProgress message or plain object to encode
                  * @param {$protobuf.Writer} [writer] Writer to encode to
                  * @returns {$protobuf.Writer} Writer
                  */
@@ -2208,11 +3449,11 @@ export const elo = $root.elo = (() => {
                 };
 
                 /**
-                 * Encodes the specified PlayerProgress message, length delimited. Does not implicitly {@link elo.v2.ServerGameStateUpdate.PlayerProgress.verify|verify} messages.
+                 * Encodes the specified PlayerProgress message, length delimited. Does not implicitly {@link elo.v3.ServerGameStateUpdate.PlayerProgress.verify|verify} messages.
                  * @function encodeDelimited
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
-                 * @param {elo.v2.ServerGameStateUpdate.IPlayerProgress} message PlayerProgress message or plain object to encode
+                 * @param {elo.v3.ServerGameStateUpdate.IPlayerProgress} message PlayerProgress message or plain object to encode
                  * @param {$protobuf.Writer} [writer] Writer to encode to
                  * @returns {$protobuf.Writer} Writer
                  */
@@ -2223,11 +3464,11 @@ export const elo = $root.elo = (() => {
                 /**
                  * Decodes a PlayerProgress message from the specified reader or buffer.
                  * @function decode
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
                  * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
                  * @param {number} [length] Message length if known beforehand
-                 * @returns {elo.v2.ServerGameStateUpdate.PlayerProgress} PlayerProgress
+                 * @returns {elo.v3.ServerGameStateUpdate.PlayerProgress} PlayerProgress
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
@@ -2238,7 +3479,7 @@ export const elo = $root.elo = (() => {
                         long = 0;
                     if (long > $Reader.recursionLimit)
                         throw Error("maximum nesting depth exceeded");
-                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v2.ServerGameStateUpdate.PlayerProgress();
+                    let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.ServerGameStateUpdate.PlayerProgress();
                     while (reader.pos < end) {
                         let tag = reader.uint32();
                         if (tag === error)
@@ -2287,10 +3528,10 @@ export const elo = $root.elo = (() => {
                 /**
                  * Decodes a PlayerProgress message from the specified reader or buffer, length delimited.
                  * @function decodeDelimited
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
                  * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
-                 * @returns {elo.v2.ServerGameStateUpdate.PlayerProgress} PlayerProgress
+                 * @returns {elo.v3.ServerGameStateUpdate.PlayerProgress} PlayerProgress
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
@@ -2303,7 +3544,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * Verifies a PlayerProgress message.
                  * @function verify
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
                  * @param {Object.<string,*>} message Plain object to verify
                  * @returns {string|null} `null` if valid, otherwise the reason why it is not
@@ -2345,21 +3586,21 @@ export const elo = $root.elo = (() => {
                 /**
                  * Creates a PlayerProgress message from a plain object. Also converts values to their respective internal types.
                  * @function fromObject
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
                  * @param {Object.<string,*>} object Plain object
-                 * @returns {elo.v2.ServerGameStateUpdate.PlayerProgress} PlayerProgress
+                 * @returns {elo.v3.ServerGameStateUpdate.PlayerProgress} PlayerProgress
                  */
                 PlayerProgress.fromObject = function fromObject(object, long) {
-                    if (object instanceof $root.elo.v2.ServerGameStateUpdate.PlayerProgress)
+                    if (object instanceof $root.elo.v3.ServerGameStateUpdate.PlayerProgress)
                         return object;
                     if (!$util.isObject(object))
-                        throw TypeError(".elo.v2.ServerGameStateUpdate.PlayerProgress: object expected");
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.PlayerProgress: object expected");
                     if (long === undefined)
                         long = 0;
                     if (long > $util.recursionLimit)
                         throw Error("maximum nesting depth exceeded");
-                    let message = new $root.elo.v2.ServerGameStateUpdate.PlayerProgress();
+                    let message = new $root.elo.v3.ServerGameStateUpdate.PlayerProgress();
                     if (object.playerId != null)
                         message.playerId = String(object.playerId);
                     if (object.username != null)
@@ -2382,9 +3623,9 @@ export const elo = $root.elo = (() => {
                 /**
                  * Creates a plain object from a PlayerProgress message. Also converts values to other types if specified.
                  * @function toObject
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
-                 * @param {elo.v2.ServerGameStateUpdate.PlayerProgress} message PlayerProgress
+                 * @param {elo.v3.ServerGameStateUpdate.PlayerProgress} message PlayerProgress
                  * @param {$protobuf.IConversionOptions} [options] Conversion options
                  * @returns {Object.<string,*>} Plain object
                  */
@@ -2428,7 +3669,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * Converts this PlayerProgress to JSON.
                  * @function toJSON
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @instance
                  * @returns {Object.<string,*>} JSON object
                  */
@@ -2439,7 +3680,7 @@ export const elo = $root.elo = (() => {
                 /**
                  * Gets the default type url for PlayerProgress
                  * @function getTypeUrl
-                 * @memberof elo.v2.ServerGameStateUpdate.PlayerProgress
+                 * @memberof elo.v3.ServerGameStateUpdate.PlayerProgress
                  * @static
                  * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
                  * @returns {string} The default type url
@@ -2448,7 +3689,7 @@ export const elo = $root.elo = (() => {
                     if (typeUrlPrefix === undefined) {
                         typeUrlPrefix = "type.googleapis.com";
                     }
-                    return typeUrlPrefix + "/elo.v2.ServerGameStateUpdate.PlayerProgress";
+                    return typeUrlPrefix + "/elo.v3.ServerGameStateUpdate.PlayerProgress";
                 };
 
                 return PlayerProgress;
@@ -2457,7 +3698,7 @@ export const elo = $root.elo = (() => {
             return ServerGameStateUpdate;
         })();
 
-        return v2;
+        return v3;
     })();
 
     return elo;

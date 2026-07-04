@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package elo.v2;
+package elo.v3;
 
 enum MatchState {
   MATCH_STATE_UNSPECIFIED = 0;
@@ -13,6 +13,20 @@ enum MatchState {
 enum RoomType {
   ROOM_TYPE_RANKED = 0;
   ROOM_TYPE_PRIVATE = 1;
+  ROOM_TYPE_TOURNAMENT = 2;
+}
+
+enum TournamentRound {
+  ROUND_UNSPECIFIED = 0;
+  ROUND_QUARTERFINALS = 1;
+  ROUND_SEMIFINALS = 2;
+  ROUND_FINALS = 3;
+}
+
+enum MatchNodeStatus {
+  STATUS_PENDING = 0;
+  STATUS_IN_PROGRESS = 1;
+  STATUS_COMPLETED = 2;
 }
 
 message PlayerIdentity {
@@ -34,8 +48,32 @@ message CreateCustomRoomRequest {
 
 message MatchSecurityLog {
   string action_sequence_id = 1;
-  int64 keystroke_delta_ms = 2; // Time difference between consecutive character typed inputs
+  int64 keystroke_delta_ms = 2;
   string input_value = 3;
+}
+
+message TournamentNode {
+  string node_id = 1;
+  TournamentRound round_tier = 2;
+  MatchNodeStatus status = 3;
+  string player_one_id = 4;
+  string player_two_id = 5;
+  string winner_id = 6;
+  string active_room_id = 7;
+  string player_one_username = 8;
+  string player_two_username = 9;
+}
+
+message TournamentBracketUpdate {
+  string tournament_id = 1;
+  repeated TournamentNode bracket_nodes = 2;
+  int64 next_round_global_start_time = 3;
+}
+
+message SpectatorEmojiBurst {
+  string room_id = 1;
+  string emoji_type = 2;
+  int32 execution_coordinate_x = 3; // Coordinate for rendering floating visuals
 }
 
 message ClientAction {
@@ -44,12 +82,17 @@ message ClientAction {
   int64 timestamp = 3;
   
   oneof payload {
-    string current_input = 4; // Current keystroke stream (ghost text)
-    string submitted_answer = 5; // Final answer submission
-    string join_queue_player_id = 6; // Client requests to join queue
-    CreateCustomRoomRequest create_custom_room = 7; // Request to create a custom room
-    string join_private_room_code = 8; // Request to join a private room by code
-    MatchSecurityLog security_log = 9; // Client telemetry report
+    string current_input = 4;
+    string submitted_answer = 5;
+    string join_queue_player_id = 6;
+    CreateCustomRoomRequest create_custom_room = 7;
+    string join_private_room_code = 8;
+    MatchSecurityLog security_log = 9;
+    
+    // Phase 3 Extensions
+    string join_tournament_player_id = 10;
+    string spectate_room_id = 11;
+    SpectatorEmojiBurst emoji_burst = 12;
   }
 }
 
@@ -65,7 +108,7 @@ message ServerGameStateUpdate {
     string username = 2;
     int32 current_score = 3;
     int32 current_streak = 4;
-    string ghost_input = 5; // What the opponent is currently typing
+    string ghost_input = 5;
     int32 elo = 6;
     string active_title = 7;
     int32 level = 8;
@@ -74,10 +117,14 @@ message ServerGameStateUpdate {
   PlayerProgress player_one = 6;
   PlayerProgress player_two = 7;
   
-  string next_question_text = 8; // Labeled arithmetic question string (e.g. "14 * 3 - 7")
+  string next_question_text = 8;
   string winner_id = 9;
   int32 player_one_elo_change = 10;
   int32 player_two_elo_change = 11;
   int32 player_one_xp_change = 12;
   int32 player_two_xp_change = 13;
+  
+  // Phase 3 Extensions
+  TournamentBracketUpdate bracket_update = 14;
+  SpectatorEmojiBurst emoji_burst = 15;
 }

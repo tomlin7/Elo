@@ -3,8 +3,8 @@ import Long = require("long");
 /** Namespace elo. */
 export namespace elo {
 
-    /** Namespace v2. */
-    namespace v2 {
+    /** Namespace v3. */
+    namespace v3 {
 
         /** MatchState enum. */
         enum MatchState {
@@ -18,7 +18,23 @@ export namespace elo {
         /** RoomType enum. */
         enum RoomType {
             ROOM_TYPE_RANKED = 0,
-            ROOM_TYPE_PRIVATE = 1
+            ROOM_TYPE_PRIVATE = 1,
+            ROOM_TYPE_TOURNAMENT = 2
+        }
+
+        /** TournamentRound enum. */
+        enum TournamentRound {
+            ROUND_UNSPECIFIED = 0,
+            ROUND_QUARTERFINALS = 1,
+            ROUND_SEMIFINALS = 2,
+            ROUND_FINALS = 3
+        }
+
+        /** MatchNodeStatus enum. */
+        enum MatchNodeStatus {
+            STATUS_PENDING = 0,
+            STATUS_IN_PROGRESS = 1,
+            STATUS_COMPLETED = 2
         }
 
         /** Properties of a PlayerIdentity. */
@@ -53,7 +69,7 @@ export namespace elo {
              * Constructs a new PlayerIdentity.
              * @param [properties] Properties to set
              */
-            constructor(properties?: elo.v2.IPlayerIdentity);
+            constructor(properties?: elo.v3.IPlayerIdentity);
 
             /** PlayerIdentity playerId. */
             public playerId: string;
@@ -81,23 +97,23 @@ export namespace elo {
              * @param [properties] Properties to set
              * @returns PlayerIdentity instance
              */
-            public static create(properties?: elo.v2.IPlayerIdentity): elo.v2.PlayerIdentity;
+            public static create(properties?: elo.v3.IPlayerIdentity): elo.v3.PlayerIdentity;
 
             /**
-             * Encodes the specified PlayerIdentity message. Does not implicitly {@link elo.v2.PlayerIdentity.verify|verify} messages.
+             * Encodes the specified PlayerIdentity message. Does not implicitly {@link elo.v3.PlayerIdentity.verify|verify} messages.
              * @param message PlayerIdentity message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encode(message: elo.v2.IPlayerIdentity, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encode(message: elo.v3.IPlayerIdentity, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Encodes the specified PlayerIdentity message, length delimited. Does not implicitly {@link elo.v2.PlayerIdentity.verify|verify} messages.
+             * Encodes the specified PlayerIdentity message, length delimited. Does not implicitly {@link elo.v3.PlayerIdentity.verify|verify} messages.
              * @param message PlayerIdentity message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encodeDelimited(message: elo.v2.IPlayerIdentity, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encodeDelimited(message: elo.v3.IPlayerIdentity, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
              * Decodes a PlayerIdentity message from the specified reader or buffer.
@@ -107,7 +123,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v2.PlayerIdentity;
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.PlayerIdentity;
 
             /**
              * Decodes a PlayerIdentity message from the specified reader or buffer, length delimited.
@@ -116,7 +132,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v2.PlayerIdentity;
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.PlayerIdentity;
 
             /**
              * Verifies a PlayerIdentity message.
@@ -130,7 +146,7 @@ export namespace elo {
              * @param object Plain object
              * @returns PlayerIdentity
              */
-            public static fromObject(object: { [k: string]: any }): elo.v2.PlayerIdentity;
+            public static fromObject(object: { [k: string]: any }): elo.v3.PlayerIdentity;
 
             /**
              * Creates a plain object from a PlayerIdentity message. Also converts values to other types if specified.
@@ -138,7 +154,7 @@ export namespace elo {
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: elo.v2.PlayerIdentity, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: elo.v3.PlayerIdentity, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
              * Converts this PlayerIdentity to JSON.
@@ -177,7 +193,7 @@ export namespace elo {
              * Constructs a new CreateCustomRoomRequest.
              * @param [properties] Properties to set
              */
-            constructor(properties?: elo.v2.ICreateCustomRoomRequest);
+            constructor(properties?: elo.v3.ICreateCustomRoomRequest);
 
             /** CreateCustomRoomRequest hostPlayerId. */
             public hostPlayerId: string;
@@ -196,23 +212,23 @@ export namespace elo {
              * @param [properties] Properties to set
              * @returns CreateCustomRoomRequest instance
              */
-            public static create(properties?: elo.v2.ICreateCustomRoomRequest): elo.v2.CreateCustomRoomRequest;
+            public static create(properties?: elo.v3.ICreateCustomRoomRequest): elo.v3.CreateCustomRoomRequest;
 
             /**
-             * Encodes the specified CreateCustomRoomRequest message. Does not implicitly {@link elo.v2.CreateCustomRoomRequest.verify|verify} messages.
+             * Encodes the specified CreateCustomRoomRequest message. Does not implicitly {@link elo.v3.CreateCustomRoomRequest.verify|verify} messages.
              * @param message CreateCustomRoomRequest message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encode(message: elo.v2.ICreateCustomRoomRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encode(message: elo.v3.ICreateCustomRoomRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Encodes the specified CreateCustomRoomRequest message, length delimited. Does not implicitly {@link elo.v2.CreateCustomRoomRequest.verify|verify} messages.
+             * Encodes the specified CreateCustomRoomRequest message, length delimited. Does not implicitly {@link elo.v3.CreateCustomRoomRequest.verify|verify} messages.
              * @param message CreateCustomRoomRequest message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encodeDelimited(message: elo.v2.ICreateCustomRoomRequest, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encodeDelimited(message: elo.v3.ICreateCustomRoomRequest, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
              * Decodes a CreateCustomRoomRequest message from the specified reader or buffer.
@@ -222,7 +238,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v2.CreateCustomRoomRequest;
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.CreateCustomRoomRequest;
 
             /**
              * Decodes a CreateCustomRoomRequest message from the specified reader or buffer, length delimited.
@@ -231,7 +247,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v2.CreateCustomRoomRequest;
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.CreateCustomRoomRequest;
 
             /**
              * Verifies a CreateCustomRoomRequest message.
@@ -245,7 +261,7 @@ export namespace elo {
              * @param object Plain object
              * @returns CreateCustomRoomRequest
              */
-            public static fromObject(object: { [k: string]: any }): elo.v2.CreateCustomRoomRequest;
+            public static fromObject(object: { [k: string]: any }): elo.v3.CreateCustomRoomRequest;
 
             /**
              * Creates a plain object from a CreateCustomRoomRequest message. Also converts values to other types if specified.
@@ -253,7 +269,7 @@ export namespace elo {
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: elo.v2.CreateCustomRoomRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: elo.v3.CreateCustomRoomRequest, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
              * Converts this CreateCustomRoomRequest to JSON.
@@ -289,7 +305,7 @@ export namespace elo {
              * Constructs a new MatchSecurityLog.
              * @param [properties] Properties to set
              */
-            constructor(properties?: elo.v2.IMatchSecurityLog);
+            constructor(properties?: elo.v3.IMatchSecurityLog);
 
             /** MatchSecurityLog actionSequenceId. */
             public actionSequenceId: string;
@@ -305,23 +321,23 @@ export namespace elo {
              * @param [properties] Properties to set
              * @returns MatchSecurityLog instance
              */
-            public static create(properties?: elo.v2.IMatchSecurityLog): elo.v2.MatchSecurityLog;
+            public static create(properties?: elo.v3.IMatchSecurityLog): elo.v3.MatchSecurityLog;
 
             /**
-             * Encodes the specified MatchSecurityLog message. Does not implicitly {@link elo.v2.MatchSecurityLog.verify|verify} messages.
+             * Encodes the specified MatchSecurityLog message. Does not implicitly {@link elo.v3.MatchSecurityLog.verify|verify} messages.
              * @param message MatchSecurityLog message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encode(message: elo.v2.IMatchSecurityLog, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encode(message: elo.v3.IMatchSecurityLog, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Encodes the specified MatchSecurityLog message, length delimited. Does not implicitly {@link elo.v2.MatchSecurityLog.verify|verify} messages.
+             * Encodes the specified MatchSecurityLog message, length delimited. Does not implicitly {@link elo.v3.MatchSecurityLog.verify|verify} messages.
              * @param message MatchSecurityLog message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encodeDelimited(message: elo.v2.IMatchSecurityLog, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encodeDelimited(message: elo.v3.IMatchSecurityLog, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
              * Decodes a MatchSecurityLog message from the specified reader or buffer.
@@ -331,7 +347,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v2.MatchSecurityLog;
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.MatchSecurityLog;
 
             /**
              * Decodes a MatchSecurityLog message from the specified reader or buffer, length delimited.
@@ -340,7 +356,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v2.MatchSecurityLog;
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.MatchSecurityLog;
 
             /**
              * Verifies a MatchSecurityLog message.
@@ -354,7 +370,7 @@ export namespace elo {
              * @param object Plain object
              * @returns MatchSecurityLog
              */
-            public static fromObject(object: { [k: string]: any }): elo.v2.MatchSecurityLog;
+            public static fromObject(object: { [k: string]: any }): elo.v3.MatchSecurityLog;
 
             /**
              * Creates a plain object from a MatchSecurityLog message. Also converts values to other types if specified.
@@ -362,7 +378,7 @@ export namespace elo {
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: elo.v2.MatchSecurityLog, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: elo.v3.MatchSecurityLog, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
              * Converts this MatchSecurityLog to JSON.
@@ -372,6 +388,369 @@ export namespace elo {
 
             /**
              * Gets the default type url for MatchSecurityLog
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a TournamentNode. */
+        interface ITournamentNode {
+
+            /** TournamentNode nodeId */
+            nodeId?: (string|null);
+
+            /** TournamentNode roundTier */
+            roundTier?: (elo.v3.TournamentRound|null);
+
+            /** TournamentNode status */
+            status?: (elo.v3.MatchNodeStatus|null);
+
+            /** TournamentNode playerOneId */
+            playerOneId?: (string|null);
+
+            /** TournamentNode playerTwoId */
+            playerTwoId?: (string|null);
+
+            /** TournamentNode winnerId */
+            winnerId?: (string|null);
+
+            /** TournamentNode activeRoomId */
+            activeRoomId?: (string|null);
+
+            /** TournamentNode playerOneUsername */
+            playerOneUsername?: (string|null);
+
+            /** TournamentNode playerTwoUsername */
+            playerTwoUsername?: (string|null);
+        }
+
+        /** Represents a TournamentNode. */
+        class TournamentNode implements ITournamentNode {
+
+            /**
+             * Constructs a new TournamentNode.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.ITournamentNode);
+
+            /** TournamentNode nodeId. */
+            public nodeId: string;
+
+            /** TournamentNode roundTier. */
+            public roundTier: elo.v3.TournamentRound;
+
+            /** TournamentNode status. */
+            public status: elo.v3.MatchNodeStatus;
+
+            /** TournamentNode playerOneId. */
+            public playerOneId: string;
+
+            /** TournamentNode playerTwoId. */
+            public playerTwoId: string;
+
+            /** TournamentNode winnerId. */
+            public winnerId: string;
+
+            /** TournamentNode activeRoomId. */
+            public activeRoomId: string;
+
+            /** TournamentNode playerOneUsername. */
+            public playerOneUsername: string;
+
+            /** TournamentNode playerTwoUsername. */
+            public playerTwoUsername: string;
+
+            /**
+             * Creates a new TournamentNode instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns TournamentNode instance
+             */
+            public static create(properties?: elo.v3.ITournamentNode): elo.v3.TournamentNode;
+
+            /**
+             * Encodes the specified TournamentNode message. Does not implicitly {@link elo.v3.TournamentNode.verify|verify} messages.
+             * @param message TournamentNode message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.ITournamentNode, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified TournamentNode message, length delimited. Does not implicitly {@link elo.v3.TournamentNode.verify|verify} messages.
+             * @param message TournamentNode message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.ITournamentNode, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a TournamentNode message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns TournamentNode
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.TournamentNode;
+
+            /**
+             * Decodes a TournamentNode message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns TournamentNode
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.TournamentNode;
+
+            /**
+             * Verifies a TournamentNode message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a TournamentNode message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns TournamentNode
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.TournamentNode;
+
+            /**
+             * Creates a plain object from a TournamentNode message. Also converts values to other types if specified.
+             * @param message TournamentNode
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.TournamentNode, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this TournamentNode to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for TournamentNode
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a TournamentBracketUpdate. */
+        interface ITournamentBracketUpdate {
+
+            /** TournamentBracketUpdate tournamentId */
+            tournamentId?: (string|null);
+
+            /** TournamentBracketUpdate bracketNodes */
+            bracketNodes?: (elo.v3.ITournamentNode[]|null);
+
+            /** TournamentBracketUpdate nextRoundGlobalStartTime */
+            nextRoundGlobalStartTime?: (number|Long|null);
+        }
+
+        /** Represents a TournamentBracketUpdate. */
+        class TournamentBracketUpdate implements ITournamentBracketUpdate {
+
+            /**
+             * Constructs a new TournamentBracketUpdate.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.ITournamentBracketUpdate);
+
+            /** TournamentBracketUpdate tournamentId. */
+            public tournamentId: string;
+
+            /** TournamentBracketUpdate bracketNodes. */
+            public bracketNodes: elo.v3.ITournamentNode[];
+
+            /** TournamentBracketUpdate nextRoundGlobalStartTime. */
+            public nextRoundGlobalStartTime: (number|Long);
+
+            /**
+             * Creates a new TournamentBracketUpdate instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns TournamentBracketUpdate instance
+             */
+            public static create(properties?: elo.v3.ITournamentBracketUpdate): elo.v3.TournamentBracketUpdate;
+
+            /**
+             * Encodes the specified TournamentBracketUpdate message. Does not implicitly {@link elo.v3.TournamentBracketUpdate.verify|verify} messages.
+             * @param message TournamentBracketUpdate message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.ITournamentBracketUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified TournamentBracketUpdate message, length delimited. Does not implicitly {@link elo.v3.TournamentBracketUpdate.verify|verify} messages.
+             * @param message TournamentBracketUpdate message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.ITournamentBracketUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a TournamentBracketUpdate message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns TournamentBracketUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.TournamentBracketUpdate;
+
+            /**
+             * Decodes a TournamentBracketUpdate message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns TournamentBracketUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.TournamentBracketUpdate;
+
+            /**
+             * Verifies a TournamentBracketUpdate message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a TournamentBracketUpdate message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns TournamentBracketUpdate
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.TournamentBracketUpdate;
+
+            /**
+             * Creates a plain object from a TournamentBracketUpdate message. Also converts values to other types if specified.
+             * @param message TournamentBracketUpdate
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.TournamentBracketUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this TournamentBracketUpdate to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for TournamentBracketUpdate
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a SpectatorEmojiBurst. */
+        interface ISpectatorEmojiBurst {
+
+            /** SpectatorEmojiBurst roomId */
+            roomId?: (string|null);
+
+            /** SpectatorEmojiBurst emojiType */
+            emojiType?: (string|null);
+
+            /** SpectatorEmojiBurst executionCoordinateX */
+            executionCoordinateX?: (number|null);
+        }
+
+        /** Represents a SpectatorEmojiBurst. */
+        class SpectatorEmojiBurst implements ISpectatorEmojiBurst {
+
+            /**
+             * Constructs a new SpectatorEmojiBurst.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.ISpectatorEmojiBurst);
+
+            /** SpectatorEmojiBurst roomId. */
+            public roomId: string;
+
+            /** SpectatorEmojiBurst emojiType. */
+            public emojiType: string;
+
+            /** SpectatorEmojiBurst executionCoordinateX. */
+            public executionCoordinateX: number;
+
+            /**
+             * Creates a new SpectatorEmojiBurst instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SpectatorEmojiBurst instance
+             */
+            public static create(properties?: elo.v3.ISpectatorEmojiBurst): elo.v3.SpectatorEmojiBurst;
+
+            /**
+             * Encodes the specified SpectatorEmojiBurst message. Does not implicitly {@link elo.v3.SpectatorEmojiBurst.verify|verify} messages.
+             * @param message SpectatorEmojiBurst message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.ISpectatorEmojiBurst, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SpectatorEmojiBurst message, length delimited. Does not implicitly {@link elo.v3.SpectatorEmojiBurst.verify|verify} messages.
+             * @param message SpectatorEmojiBurst message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.ISpectatorEmojiBurst, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SpectatorEmojiBurst message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SpectatorEmojiBurst
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.SpectatorEmojiBurst;
+
+            /**
+             * Decodes a SpectatorEmojiBurst message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SpectatorEmojiBurst
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.SpectatorEmojiBurst;
+
+            /**
+             * Verifies a SpectatorEmojiBurst message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SpectatorEmojiBurst message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SpectatorEmojiBurst
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.SpectatorEmojiBurst;
+
+            /**
+             * Creates a plain object from a SpectatorEmojiBurst message. Also converts values to other types if specified.
+             * @param message SpectatorEmojiBurst
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.SpectatorEmojiBurst, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SpectatorEmojiBurst to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SpectatorEmojiBurst
              * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
              * @returns The default type url
              */
@@ -400,13 +779,22 @@ export namespace elo {
             joinQueuePlayerId?: (string|null);
 
             /** ClientAction createCustomRoom */
-            createCustomRoom?: (elo.v2.ICreateCustomRoomRequest|null);
+            createCustomRoom?: (elo.v3.ICreateCustomRoomRequest|null);
 
             /** ClientAction joinPrivateRoomCode */
             joinPrivateRoomCode?: (string|null);
 
             /** ClientAction securityLog */
-            securityLog?: (elo.v2.IMatchSecurityLog|null);
+            securityLog?: (elo.v3.IMatchSecurityLog|null);
+
+            /** ClientAction joinTournamentPlayerId */
+            joinTournamentPlayerId?: (string|null);
+
+            /** ClientAction spectateRoomId */
+            spectateRoomId?: (string|null);
+
+            /** ClientAction emojiBurst */
+            emojiBurst?: (elo.v3.ISpectatorEmojiBurst|null);
         }
 
         /** Represents a ClientAction. */
@@ -416,7 +804,7 @@ export namespace elo {
              * Constructs a new ClientAction.
              * @param [properties] Properties to set
              */
-            constructor(properties?: elo.v2.IClientAction);
+            constructor(properties?: elo.v3.IClientAction);
 
             /** ClientAction roomId. */
             public roomId: string;
@@ -437,39 +825,48 @@ export namespace elo {
             public joinQueuePlayerId?: (string|null);
 
             /** ClientAction createCustomRoom. */
-            public createCustomRoom?: (elo.v2.ICreateCustomRoomRequest|null);
+            public createCustomRoom?: (elo.v3.ICreateCustomRoomRequest|null);
 
             /** ClientAction joinPrivateRoomCode. */
             public joinPrivateRoomCode?: (string|null);
 
             /** ClientAction securityLog. */
-            public securityLog?: (elo.v2.IMatchSecurityLog|null);
+            public securityLog?: (elo.v3.IMatchSecurityLog|null);
+
+            /** ClientAction joinTournamentPlayerId. */
+            public joinTournamentPlayerId?: (string|null);
+
+            /** ClientAction spectateRoomId. */
+            public spectateRoomId?: (string|null);
+
+            /** ClientAction emojiBurst. */
+            public emojiBurst?: (elo.v3.ISpectatorEmojiBurst|null);
 
             /** ClientAction payload. */
-            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog");
+            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst");
 
             /**
              * Creates a new ClientAction instance using the specified properties.
              * @param [properties] Properties to set
              * @returns ClientAction instance
              */
-            public static create(properties?: elo.v2.IClientAction): elo.v2.ClientAction;
+            public static create(properties?: elo.v3.IClientAction): elo.v3.ClientAction;
 
             /**
-             * Encodes the specified ClientAction message. Does not implicitly {@link elo.v2.ClientAction.verify|verify} messages.
+             * Encodes the specified ClientAction message. Does not implicitly {@link elo.v3.ClientAction.verify|verify} messages.
              * @param message ClientAction message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encode(message: elo.v2.IClientAction, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encode(message: elo.v3.IClientAction, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Encodes the specified ClientAction message, length delimited. Does not implicitly {@link elo.v2.ClientAction.verify|verify} messages.
+             * Encodes the specified ClientAction message, length delimited. Does not implicitly {@link elo.v3.ClientAction.verify|verify} messages.
              * @param message ClientAction message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encodeDelimited(message: elo.v2.IClientAction, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encodeDelimited(message: elo.v3.IClientAction, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
              * Decodes a ClientAction message from the specified reader or buffer.
@@ -479,7 +876,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v2.ClientAction;
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.ClientAction;
 
             /**
              * Decodes a ClientAction message from the specified reader or buffer, length delimited.
@@ -488,7 +885,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v2.ClientAction;
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.ClientAction;
 
             /**
              * Verifies a ClientAction message.
@@ -502,7 +899,7 @@ export namespace elo {
              * @param object Plain object
              * @returns ClientAction
              */
-            public static fromObject(object: { [k: string]: any }): elo.v2.ClientAction;
+            public static fromObject(object: { [k: string]: any }): elo.v3.ClientAction;
 
             /**
              * Creates a plain object from a ClientAction message. Also converts values to other types if specified.
@@ -510,7 +907,7 @@ export namespace elo {
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: elo.v2.ClientAction, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: elo.v3.ClientAction, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
              * Converts this ClientAction to JSON.
@@ -533,22 +930,22 @@ export namespace elo {
             roomId?: (string|null);
 
             /** ServerGameStateUpdate state */
-            state?: (elo.v2.MatchState|null);
+            state?: (elo.v3.MatchState|null);
 
             /** ServerGameStateUpdate timeRemainingSeconds */
             timeRemainingSeconds?: (number|null);
 
             /** ServerGameStateUpdate roomType */
-            roomType?: (elo.v2.RoomType|null);
+            roomType?: (elo.v3.RoomType|null);
 
             /** ServerGameStateUpdate privateRoomCode */
             privateRoomCode?: (string|null);
 
             /** ServerGameStateUpdate playerOne */
-            playerOne?: (elo.v2.ServerGameStateUpdate.IPlayerProgress|null);
+            playerOne?: (elo.v3.ServerGameStateUpdate.IPlayerProgress|null);
 
             /** ServerGameStateUpdate playerTwo */
-            playerTwo?: (elo.v2.ServerGameStateUpdate.IPlayerProgress|null);
+            playerTwo?: (elo.v3.ServerGameStateUpdate.IPlayerProgress|null);
 
             /** ServerGameStateUpdate nextQuestionText */
             nextQuestionText?: (string|null);
@@ -567,6 +964,12 @@ export namespace elo {
 
             /** ServerGameStateUpdate playerTwoXpChange */
             playerTwoXpChange?: (number|null);
+
+            /** ServerGameStateUpdate bracketUpdate */
+            bracketUpdate?: (elo.v3.ITournamentBracketUpdate|null);
+
+            /** ServerGameStateUpdate emojiBurst */
+            emojiBurst?: (elo.v3.ISpectatorEmojiBurst|null);
         }
 
         /** Represents a ServerGameStateUpdate. */
@@ -576,28 +979,28 @@ export namespace elo {
              * Constructs a new ServerGameStateUpdate.
              * @param [properties] Properties to set
              */
-            constructor(properties?: elo.v2.IServerGameStateUpdate);
+            constructor(properties?: elo.v3.IServerGameStateUpdate);
 
             /** ServerGameStateUpdate roomId. */
             public roomId: string;
 
             /** ServerGameStateUpdate state. */
-            public state: elo.v2.MatchState;
+            public state: elo.v3.MatchState;
 
             /** ServerGameStateUpdate timeRemainingSeconds. */
             public timeRemainingSeconds: number;
 
             /** ServerGameStateUpdate roomType. */
-            public roomType: elo.v2.RoomType;
+            public roomType: elo.v3.RoomType;
 
             /** ServerGameStateUpdate privateRoomCode. */
             public privateRoomCode: string;
 
             /** ServerGameStateUpdate playerOne. */
-            public playerOne?: (elo.v2.ServerGameStateUpdate.IPlayerProgress|null);
+            public playerOne?: (elo.v3.ServerGameStateUpdate.IPlayerProgress|null);
 
             /** ServerGameStateUpdate playerTwo. */
-            public playerTwo?: (elo.v2.ServerGameStateUpdate.IPlayerProgress|null);
+            public playerTwo?: (elo.v3.ServerGameStateUpdate.IPlayerProgress|null);
 
             /** ServerGameStateUpdate nextQuestionText. */
             public nextQuestionText: string;
@@ -617,28 +1020,34 @@ export namespace elo {
             /** ServerGameStateUpdate playerTwoXpChange. */
             public playerTwoXpChange: number;
 
+            /** ServerGameStateUpdate bracketUpdate. */
+            public bracketUpdate?: (elo.v3.ITournamentBracketUpdate|null);
+
+            /** ServerGameStateUpdate emojiBurst. */
+            public emojiBurst?: (elo.v3.ISpectatorEmojiBurst|null);
+
             /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.
              * @param [properties] Properties to set
              * @returns ServerGameStateUpdate instance
              */
-            public static create(properties?: elo.v2.IServerGameStateUpdate): elo.v2.ServerGameStateUpdate;
+            public static create(properties?: elo.v3.IServerGameStateUpdate): elo.v3.ServerGameStateUpdate;
 
             /**
-             * Encodes the specified ServerGameStateUpdate message. Does not implicitly {@link elo.v2.ServerGameStateUpdate.verify|verify} messages.
+             * Encodes the specified ServerGameStateUpdate message. Does not implicitly {@link elo.v3.ServerGameStateUpdate.verify|verify} messages.
              * @param message ServerGameStateUpdate message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encode(message: elo.v2.IServerGameStateUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encode(message: elo.v3.IServerGameStateUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
-             * Encodes the specified ServerGameStateUpdate message, length delimited. Does not implicitly {@link elo.v2.ServerGameStateUpdate.verify|verify} messages.
+             * Encodes the specified ServerGameStateUpdate message, length delimited. Does not implicitly {@link elo.v3.ServerGameStateUpdate.verify|verify} messages.
              * @param message ServerGameStateUpdate message or plain object to encode
              * @param [writer] Writer to encode to
              * @returns Writer
              */
-            public static encodeDelimited(message: elo.v2.IServerGameStateUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+            public static encodeDelimited(message: elo.v3.IServerGameStateUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
 
             /**
              * Decodes a ServerGameStateUpdate message from the specified reader or buffer.
@@ -648,7 +1057,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v2.ServerGameStateUpdate;
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.ServerGameStateUpdate;
 
             /**
              * Decodes a ServerGameStateUpdate message from the specified reader or buffer, length delimited.
@@ -657,7 +1066,7 @@ export namespace elo {
              * @throws {Error} If the payload is not a reader or valid buffer
              * @throws {$protobuf.util.ProtocolError} If required fields are missing
              */
-            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v2.ServerGameStateUpdate;
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.ServerGameStateUpdate;
 
             /**
              * Verifies a ServerGameStateUpdate message.
@@ -671,7 +1080,7 @@ export namespace elo {
              * @param object Plain object
              * @returns ServerGameStateUpdate
              */
-            public static fromObject(object: { [k: string]: any }): elo.v2.ServerGameStateUpdate;
+            public static fromObject(object: { [k: string]: any }): elo.v3.ServerGameStateUpdate;
 
             /**
              * Creates a plain object from a ServerGameStateUpdate message. Also converts values to other types if specified.
@@ -679,7 +1088,7 @@ export namespace elo {
              * @param [options] Conversion options
              * @returns Plain object
              */
-            public static toObject(message: elo.v2.ServerGameStateUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+            public static toObject(message: elo.v3.ServerGameStateUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
             /**
              * Converts this ServerGameStateUpdate to JSON.
@@ -732,7 +1141,7 @@ export namespace elo {
                  * Constructs a new PlayerProgress.
                  * @param [properties] Properties to set
                  */
-                constructor(properties?: elo.v2.ServerGameStateUpdate.IPlayerProgress);
+                constructor(properties?: elo.v3.ServerGameStateUpdate.IPlayerProgress);
 
                 /** PlayerProgress playerId. */
                 public playerId: string;
@@ -763,23 +1172,23 @@ export namespace elo {
                  * @param [properties] Properties to set
                  * @returns PlayerProgress instance
                  */
-                public static create(properties?: elo.v2.ServerGameStateUpdate.IPlayerProgress): elo.v2.ServerGameStateUpdate.PlayerProgress;
+                public static create(properties?: elo.v3.ServerGameStateUpdate.IPlayerProgress): elo.v3.ServerGameStateUpdate.PlayerProgress;
 
                 /**
-                 * Encodes the specified PlayerProgress message. Does not implicitly {@link elo.v2.ServerGameStateUpdate.PlayerProgress.verify|verify} messages.
+                 * Encodes the specified PlayerProgress message. Does not implicitly {@link elo.v3.ServerGameStateUpdate.PlayerProgress.verify|verify} messages.
                  * @param message PlayerProgress message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encode(message: elo.v2.ServerGameStateUpdate.IPlayerProgress, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encode(message: elo.v3.ServerGameStateUpdate.IPlayerProgress, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
-                 * Encodes the specified PlayerProgress message, length delimited. Does not implicitly {@link elo.v2.ServerGameStateUpdate.PlayerProgress.verify|verify} messages.
+                 * Encodes the specified PlayerProgress message, length delimited. Does not implicitly {@link elo.v3.ServerGameStateUpdate.PlayerProgress.verify|verify} messages.
                  * @param message PlayerProgress message or plain object to encode
                  * @param [writer] Writer to encode to
                  * @returns Writer
                  */
-                public static encodeDelimited(message: elo.v2.ServerGameStateUpdate.IPlayerProgress, writer?: $protobuf.Writer): $protobuf.Writer;
+                public static encodeDelimited(message: elo.v3.ServerGameStateUpdate.IPlayerProgress, writer?: $protobuf.Writer): $protobuf.Writer;
 
                 /**
                  * Decodes a PlayerProgress message from the specified reader or buffer.
@@ -789,7 +1198,7 @@ export namespace elo {
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v2.ServerGameStateUpdate.PlayerProgress;
+                public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.ServerGameStateUpdate.PlayerProgress;
 
                 /**
                  * Decodes a PlayerProgress message from the specified reader or buffer, length delimited.
@@ -798,7 +1207,7 @@ export namespace elo {
                  * @throws {Error} If the payload is not a reader or valid buffer
                  * @throws {$protobuf.util.ProtocolError} If required fields are missing
                  */
-                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v2.ServerGameStateUpdate.PlayerProgress;
+                public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.ServerGameStateUpdate.PlayerProgress;
 
                 /**
                  * Verifies a PlayerProgress message.
@@ -812,7 +1221,7 @@ export namespace elo {
                  * @param object Plain object
                  * @returns PlayerProgress
                  */
-                public static fromObject(object: { [k: string]: any }): elo.v2.ServerGameStateUpdate.PlayerProgress;
+                public static fromObject(object: { [k: string]: any }): elo.v3.ServerGameStateUpdate.PlayerProgress;
 
                 /**
                  * Creates a plain object from a PlayerProgress message. Also converts values to other types if specified.
@@ -820,7 +1229,7 @@ export namespace elo {
                  * @param [options] Conversion options
                  * @returns Plain object
                  */
-                public static toObject(message: elo.v2.ServerGameStateUpdate.PlayerProgress, options?: $protobuf.IConversionOptions): { [k: string]: any };
+                public static toObject(message: elo.v3.ServerGameStateUpdate.PlayerProgress, options?: $protobuf.IConversionOptions): { [k: string]: any };
 
                 /**
                  * Converts this PlayerProgress to JSON.
