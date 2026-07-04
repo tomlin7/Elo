@@ -94,6 +94,8 @@ export class GameRoom {
   playerOneXpChange: number = 0;
   playerTwoXpChange: number = 0;
   winnerId: string | null = null;
+  playerOneReconToken: string = "";
+  playerTwoReconToken: string = "";
 
   constructor(
     id: string,
@@ -114,6 +116,9 @@ export class GameRoom {
     this.allowDivision = allowDivision;
     this.allowMultiplication = allowMultiplication;
     this.durationSeconds = durationSeconds;
+    this.timeRemainingSeconds = durationSeconds;
+    this.playerOneReconToken = `recon_p1_${id}_${Math.random().toString(36).substring(2, 7)}`;
+    this.playerTwoReconToken = `recon_p2_${id}_${Math.random().toString(36).substring(2, 7)}`;
     this.state = MatchState.MATCH_STATE_COUNTDOWN;
 
     // Prefill questions with rule configurations
@@ -515,6 +520,7 @@ export class GameRoom {
 
     if (!this.playerOne.isBot && this.playerOne.socket) {
       update.nextQuestionText = this.questions[this.playerOne.questionIndex].text;
+      update.activeReconnectionToken = this.playerOneReconToken;
       const buffer = ServerGameStateUpdate.encode(update).finish();
       try {
         this.playerOne.socket.send(buffer);
@@ -525,6 +531,7 @@ export class GameRoom {
 
     if (!this.playerTwo.isBot && this.playerTwo.socket) {
       update.nextQuestionText = this.questions[this.playerTwo.questionIndex].text;
+      update.activeReconnectionToken = this.playerTwoReconToken;
       const buffer = ServerGameStateUpdate.encode(update).finish();
       try {
         this.playerTwo.socket.send(buffer);
@@ -552,6 +559,19 @@ export class GameRoom {
 class GameManagerClass {
   private activeRooms = new Map<string, GameRoom>();
   private privateLobbies = new Map<string, { code: string; hostId: string; hostSocket: any; allowDivision: boolean; allowMultiplication: boolean; duration: number }>();
+  private reconnectionMap = new Map<string, { roomId: string; playerId: string }>();
+
+  reconnectPlayer(reconnectionToken: string, newWs: any): GameRoom | null {
+    const session = this.reconnectionMap.get(reconnectionToken);
+    if (!session) return null;
+
+    const room = this.activeRooms.get(session.roomId);
+    if (!room) return null;
+
+    console.log(`[RECONNECT] Reconnecting player ${session.playerId} using token ${reconnectionToken}`);
+    room.handleReconnect(session.playerId, newWs);
+    return room;
+  }
 
   createGame(
     p1Id: string, p1Socket: any, p1Elo: number,
@@ -603,6 +623,8 @@ class GameManagerClass {
 
     const room = new GameRoom(roomId, playerOne, playerTwo);
     this.activeRooms.set(roomId, room);
+    this.reconnectionMap.set(room.playerOneReconToken, { roomId, playerId: p1Id });
+    this.reconnectionMap.set(room.playerTwoReconToken, { roomId, playerId: p2Id });
     console.log(`Created human match ${roomId}`);
     return room;
   }
@@ -653,6 +675,8 @@ class GameManagerClass {
 
     const room = new GameRoom(roomId, playerOne, playerTwo);
     this.activeRooms.set(roomId, room);
+    this.reconnectionMap.set(room.playerOneReconToken, { roomId, playerId: p1Id });
+    this.reconnectionMap.set(room.playerTwoReconToken, { roomId, playerId: botId });
     console.log(`Created bot match ${roomId}`);
     return room;
   }

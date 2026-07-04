@@ -183,12 +183,33 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
     },
 
     message(ws, message) {
+      if (typeof message === "string" && message === "ping") {
+        ws.send("pong");
+        return;
+      }
+
       try {
         const buffer = message as Buffer;
         const action = ClientAction.decode(new Uint8Array(buffer));
         console.log("Decoded Action:", JSON.stringify(action));
 
-        if (action.joinQueuePlayerId || action.payload === "joinQueuePlayerId") {
+        if (action.payload === "connectionHandshake" && action.connectionHandshake) {
+          const token = action.connectionHandshake.reconnectionToken;
+          console.log(`[HANDSHAKE] Player reconnecting with token: ${token}`);
+          const room = GameManager.reconnectPlayer(token, ws);
+          if (room) {
+            ws.data.playerId = action.connectionHandshake.playerId;
+            ws.data.roomId = room.id;
+          } else {
+            console.log(`[HANDSHAKE] Invalid or expired reconnection token: ${token}`);
+            const responseUpdate = ServerGameStateUpdate.create({
+              roomId: "",
+              state: MatchState.MATCH_STATE_FINISHED,
+              winnerId: "error_handshake_failed"
+            });
+            ws.send(ServerGameStateUpdate.encode(responseUpdate).finish());
+          }
+        } else if (action.joinQueuePlayerId || action.payload === "joinQueuePlayerId") {
           const pId = action.joinQueuePlayerId || action.playerId;
           console.log(`Join Queue Request for ${pId}`);
           Matchmaker.join(pId, ws);
