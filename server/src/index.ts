@@ -4,6 +4,7 @@ import { Matchmaker } from "./matchmaker.ts";
 import { GameManager } from "./game.ts";
 import { TournamentManager } from "./tournament.ts";
 import { ClusterManager } from "./cluster.ts";
+import { MetricsExporter } from "./metrics.ts";
 
 const ClientAction = elo.v3.ClientAction;
 const ServerGameStateUpdate = elo.v3.ServerGameStateUpdate;
@@ -51,6 +52,25 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
         ]
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    if (url.pathname === "/api/metrics" && req.method === "GET") {
+      return new Response(MetricsExporter.getPrometheusMetrics(), {
+        headers: { ...corsHeaders, "Content-Type": "text/plain; version=0.0.4; charset=utf-8" }
+      });
+    }
+
+    if (url.pathname.startsWith("/api/cdn/plugins/") && req.method === "GET") {
+      const parts = url.pathname.split("/");
+      const pluginId = parts[parts.length - 1];
+      return new Response(JSON.stringify({
+        id: pluginId,
+        cachedAt: Date.now(),
+        status: "cached_at_edge",
+        sourceUrl: `https://elo.cdn.planet/artifacts/${pluginId}.js`
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json", "Cache-Control": "public, max-age=3600" }
       });
     }
 
