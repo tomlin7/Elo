@@ -31,6 +31,10 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
     }
 
     // REST API routes
+    if (url.pathname === "/api/ping") {
+      return new Response("pong", { headers: corsHeaders });
+    }
+
     if (url.pathname === "/api/auth/guest" && req.method === "POST") {
       return req.json()
         .then((body: any) => {
