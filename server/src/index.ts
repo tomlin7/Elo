@@ -5,6 +5,7 @@ import { GameManager } from "./game.ts";
 import { TournamentManager } from "./tournament.ts";
 import { ClusterManager } from "./cluster.ts";
 import { MetricsExporter } from "./metrics.ts";
+import { LiveOpsManager } from "./liveops.ts";
 
 const ClientAction = elo.v3.ClientAction;
 const ServerGameStateUpdate = elo.v3.ServerGameStateUpdate;
@@ -13,6 +14,10 @@ const RoomType = elo.v3.RoomType;
 
 // Start cluster hot-standby replication
 ClusterManager.start();
+
+// Initialize dynamic live-ops seasonal catalog
+dbService.initializeBattlePassSeason("season_1", 1, "Alpha Season");
+LiveOpsManager.addEvent("DOUBLE_XP");
 
 // Start matchmaker ticker
 Matchmaker.start();
@@ -122,6 +127,59 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
             return new Response("Missing parameters", { status: 400, headers: corsHeaders });
           }
           dbService.registerWebhook(playerId, targetUrl, secret);
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        })
+        .catch(err => new Response(err.message, { status: 500, headers: corsHeaders }));
+    }
+
+    // ── Live-Ops Events ──────────────────────────────────────────────────
+    if (url.pathname === "/api/events/active" && req.method === "GET") {
+      return new Response(JSON.stringify({ events: LiveOpsManager.getActiveEventsList() }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    // ── Battle Pass ──────────────────────────────────────────────────────
+    if (url.pathname === "/api/profile/battlepass" && req.method === "GET") {
+      const playerId = url.searchParams.get("playerId");
+      if (!playerId) return new Response("Missing playerId", { status: 400, headers: corsHeaders });
+      const pass = dbService.getUserCombatPass(playerId, "season_1");
+      return new Response(JSON.stringify(pass), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    if (url.pathname === "/api/profile/battlepass/claim" && req.method === "POST") {
+      return req.json()
+        .then((body: any) => {
+          const { playerId, tier } = body;
+          if (!playerId || tier == null) return new Response("Missing parameters", { status: 400, headers: corsHeaders });
+          dbService.claimBattlePassTier(playerId, "season_1", tier);
+          return new Response(JSON.stringify({ success: true }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        })
+        .catch(err => new Response(err.message, { status: 500, headers: corsHeaders }));
+    }
+
+    // ── Daily Challenges ─────────────────────────────────────────────────
+    if (url.pathname === "/api/profile/challenges" && req.method === "GET") {
+      const playerId = url.searchParams.get("playerId");
+      if (!playerId) return new Response("Missing playerId", { status: 400, headers: corsHeaders });
+      const challenges = dbService.getUserChallenges(playerId);
+      return new Response(JSON.stringify(challenges), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    if (url.pathname === "/api/admin/refresh-challenges" && req.method === "POST") {
+      return req.json()
+        .then((body: any) => {
+          const { playerId } = body;
+          if (!playerId) return new Response("Missing playerId", { status: 400, headers: corsHeaders });
+          dbService.generateDailyObjectives(playerId);
           return new Response(JSON.stringify({ success: true }), {
             headers: { ...corsHeaders, "Content-Type": "application/json" }
           });

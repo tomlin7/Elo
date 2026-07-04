@@ -23,6 +23,7 @@ export default function RootLayout() {
         <Stack.Screen name="analytics" options={{ headerShown: false }} />
         <Stack.Screen name="settings" options={{ headerShown: false }} />
         <Stack.Screen name="plugins" options={{ headerShown: false }} />
+        <Stack.Screen name="battle-pass" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
       <StatusBar style="auto" />

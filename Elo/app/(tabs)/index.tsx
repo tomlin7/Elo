@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   ActivityIndicator,
+  Animated,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -27,10 +29,39 @@ export default function HomeScreen() {
   const [usernameInput, setUsernameInput] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [challenges, setChallenges] = useState<any[]>([]);
+  const [activeEvents, setActiveEvents] = useState<string[]>([]);
+  const bannerPulse = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     checkAuth();
+    fetchLiveOps();
   }, []);
+
+  const fetchLiveOps = () => {
+    const SERVER = "http://10.0.2.2:8080";
+    fetch(`${SERVER}/api/events/active`)
+      .then(r => r.json())
+      .then(data => {
+        setActiveEvents(data.events || []);
+        if ((data.events || []).length > 0) {
+          Animated.loop(
+            Animated.sequence([
+              Animated.timing(bannerPulse, { toValue: 1.03, duration: 700, useNativeDriver: true }),
+              Animated.timing(bannerPulse, { toValue: 1.0, duration: 700, useNativeDriver: true }),
+            ])
+          ).start();
+        }
+      })
+      .catch(() => {});
+
+    if (profile?.id) {
+      fetch(`${SERVER}/api/profile/challenges?playerId=${profile.id}`)
+        .then(r => r.json())
+        .then(data => setChallenges(Array.isArray(data) ? data : []))
+        .catch(() => {});
+    }
+  };
 
   const checkAuth = async () => {
     try {
@@ -246,6 +277,38 @@ export default function HomeScreen() {
           </View>
         </View>
 
+        {/* Live-Ops Event Banner */}
+        {activeEvents.length > 0 && (
+          <Animated.View style={[styles.eventBanner, { transform: [{ scale: bannerPulse }] }]}>
+            <Text style={styles.eventBannerText}>
+              🔥 {activeEvents.join(" + ")} ACTIVE — Earn boosted rewards now!
+            </Text>
+          </Animated.View>
+        )}
+
+        {/* Daily Challenges Card */}
+        {challenges.length > 0 && (
+          <View style={styles.challengesCard}>
+            <Text style={styles.challengesTitle}>📋 Daily Challenges</Text>
+            {challenges.map((ch: any) => (
+              <View key={ch.id} style={styles.challengeRow}>
+                <View style={styles.challengeInfo}>
+                  <Text style={styles.challengeType}>{ch.challenge_type.replace(/_/g, " ")}</Text>
+                  <Text style={styles.challengeProgress}>{ch.current_value}/{ch.target_value}</Text>
+                </View>
+                <View style={styles.challengeTrack}>
+                  <View style={[
+                    styles.challengeFill,
+                    { width: `${Math.min(100, (ch.current_value / ch.target_value) * 100)}%` },
+                    ch.is_completed ? styles.challengeComplete : {}
+                  ]} />
+                </View>
+                {ch.is_completed ? <Text style={styles.challengeDone}>✓ +{ch.reward_stars}⭐</Text> : null}
+              </View>
+            ))}
+          </View>
+        )}
+
         {/* Navigation Actions */}
         <View style={styles.actionContainer}>
           <TouchableOpacity
@@ -286,6 +349,14 @@ export default function HomeScreen() {
             activeOpacity={0.85}
           >
             <Text style={[styles.secondaryBtnText, { color: colors.text }]}>PLUGINS VAULT</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.secondaryActionBtn, { borderColor: "#4F46E5", backgroundColor: "#1E1B4B", marginBottom: 12 }]}
+            onPress={() => router.push("/battle-pass")}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.secondaryBtnText, { color: "#A5B4FC" }]}>⚔️ COMBAT PASS</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -545,5 +616,64 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "800",
     letterSpacing: 1,
+  },
+  eventBanner: {
+    marginHorizontal: 16,
+    marginBottom: 10,
+    backgroundColor: "#2D1B69",
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: "#6D28D9",
+  },
+  eventBannerText: {
+    color: "#DDD6FE",
+    fontSize: 13,
+    fontWeight: "700",
+    textAlign: "center",
+    letterSpacing: 0.5,
+  },
+  challengesCard: {
+    marginHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: "#111827",
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: "#1F2937",
+  },
+  challengesTitle: {
+    color: "#E5E7EB",
+    fontSize: 14,
+    fontWeight: "700",
+    marginBottom: 10,
+  },
+  challengeRow: { marginBottom: 10 },
+  challengeInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  challengeType: { color: "#9CA3AF", fontSize: 12, fontWeight: "600" },
+  challengeProgress: { color: "#6366F1", fontSize: 12, fontWeight: "700" },
+  challengeTrack: {
+    height: 5,
+    backgroundColor: "#1F2937",
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  challengeFill: {
+    height: "100%",
+    backgroundColor: "#6366F1",
+    borderRadius: 3,
+  },
+  challengeComplete: { backgroundColor: "#22C55E" },
+  challengeDone: {
+    color: "#22C55E",
+    fontSize: 11,
+    fontWeight: "700",
+    marginTop: 3,
   },
 });
