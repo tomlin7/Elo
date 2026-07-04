@@ -273,11 +273,19 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
+            style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg, marginBottom: 12 }]}
             onPress={() => router.push("/analytics")}
             activeOpacity={0.85}
           >
             <Text style={[styles.secondaryBtnText, { color: colors.text }]}>PERFORMANCE ANALYTICS</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
+            onPress={() => router.push("/settings")}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.secondaryBtnText, { color: colors.text }]}>SETTINGS & PRIVACY</Text>
           </TouchableOpacity>
         </View>
       </View>
