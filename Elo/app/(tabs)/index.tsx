@@ -281,6 +281,14 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg, marginBottom: 12 }]}
+            onPress={() => router.push("/plugins")}
+            activeOpacity={0.85}
+          >
+            <Text style={[styles.secondaryBtnText, { color: colors.text }]}>PLUGINS VAULT</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
             style={[styles.secondaryActionBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
             onPress={() => router.push("/settings")}
             activeOpacity={0.85}
