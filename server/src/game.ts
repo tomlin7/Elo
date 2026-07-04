@@ -1,5 +1,6 @@
 import { elo } from "./proto/elo_proto.js";
 import { dbService, Player } from "./db.ts";
+import { LiveOpsManager } from "./liveops.ts";
 
 const MatchState = elo.v3.MatchState;
 const RoomType = elo.v3.RoomType;
@@ -445,21 +446,24 @@ export class GameRoom {
       if (player.isBot) return 0;
       
       const outcomeVal = this.winnerId === player.id ? 1 : this.winnerId === null ? 0.5 : 0;
-      const xpEarned = Math.round((outcomeVal * 100) + (player.score * 5) + (player.maxStreak * 2));
+      const baseXP = Math.round((outcomeVal * 100) + (player.score * 5) + (player.maxStreak * 2));
+      
+      // Live-Ops Double XP modifier (Epic 3)
+      const xpEarned = Math.round(baseXP * LiveOpsManager.getMultiplierForXP());
 
       const record = dbService.getPlayer(player.id);
       if (record) {
         const newXP = record.xp + xpEarned;
         const newLevel = Math.floor(newXP / 1000) + 1;
-        let creditsEarned = 0;
+        let baseCredits = 0;
         
         // Passive credits from XP level-ups
         if (newLevel > record.level) {
-          creditsEarned += (newLevel - record.level) * 200;
+          baseCredits += (newLevel - record.level) * 200;
         }
 
         // Passive match completion credits (5 credits per correct answer)
-        creditsEarned += player.score * 5;
+        baseCredits += player.score * 5;
 
         // Daily Streak logic (Ranked matches only)
         if (this.roomType === RoomType.ROOM_TYPE_RANKED) {
@@ -477,23 +481,33 @@ export class GameRoom {
             completedCount++;
             if (completedCount === 3) {
               streak++;
-              creditsEarned += 100; // 100 credits streak completion bonus
+              baseCredits += 100;
             }
             dbService.updatePlayerStreak(player.id, streak, currentDateStr, completedCount);
           } else if (record.last_played_date === yesterdayDateStr || record.last_played_date === null) {
-            // New day check-in
             completedCount = 1;
-            // Streak stays at yesterday's value until they complete 3 games today
             dbService.updatePlayerStreak(player.id, streak, currentDateStr, completedCount);
           } else {
-            // Streak broken (missed day)
             completedCount = 1;
             streak = 0;
             dbService.updatePlayerStreak(player.id, streak, currentDateStr, completedCount);
           }
         }
 
+        // Live-Ops Double Credits modifier (Epic 3)
+        const creditsEarned = Math.round(baseCredits * LiveOpsManager.getMultiplierForCredits());
+
         dbService.updatePlayerProgression(player.id, xpEarned, newLevel, creditsEarned);
+
+        // Daily challenges progression checkpoints (Epic 2)
+        dbService.incrementChallengeProgress(player.id, "SPEED_STREAK", player.score);
+        dbService.incrementChallengeProgress(player.id, "ENDURANCE_STREAK", player.maxStreak);
+        if (this.winnerId === player.id) {
+          dbService.incrementChallengeProgress(player.id, "WIN_COUNT", 1);
+        }
+
+        // Increment Combat Pass progression (Epic 1)
+        dbService.incrementCombatStars(player.id, "season_1", this.winnerId === player.id ? 3 : 1);
       }
       return xpEarned;
     };
