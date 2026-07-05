@@ -6,6 +6,7 @@ import { TournamentManager } from "./tournament.ts";
 import { ClusterManager } from "./cluster.ts";
 import { MetricsExporter } from "./metrics.ts";
 import { LiveOpsManager } from "./liveops.ts";
+import { IntegrityGuard } from "./security.ts";
 
 const ClientAction = elo.v3.ClientAction;
 const ServerGameStateUpdate = elo.v3.ServerGameStateUpdate;
@@ -18,6 +19,9 @@ ClusterManager.start();
 // Initialize dynamic live-ops seasonal catalog
 dbService.initializeBattlePassSeason("season_1", 1, "Alpha Season");
 LiveOpsManager.addEvent("DOUBLE_XP");
+
+// Pre-provision enterprise B2B partner
+dbService.registerB2BPartner("partner_1", "Global E-Sports Federation", "CORP_SECRET_KEY_123");
 
 // Start matchmaker ticker
 Matchmaker.start();
@@ -187,6 +191,33 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
         .catch(err => new Response(err.message, { status: 500, headers: corsHeaders }));
     }
 
+    if (url.pathname === "/api/v1/federation/tournaments/create" && req.method === "POST") {
+      const authHeader = req.headers.get("Authorization") || "";
+      const apiKey = authHeader.replace("Bearer ", "").trim();
+      
+      const partner = dbService.verifyB2BPartnerKey(apiKey);
+      if (!partner) {
+        return new Response(JSON.stringify({ error: "Unauthorized B2B access key" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
+        });
+      }
+
+      return req.json()
+        .then((body: any) => {
+          const { title, customConfig } = body;
+          if (!title || !customConfig) {
+            return new Response("Missing parameters", { status: 400, headers: corsHeaders });
+          }
+          const tId = `fed_tour_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+          dbService.createFederatedTournament(tId, partner.id, title, JSON.stringify(customConfig));
+          return new Response(JSON.stringify({ success: true, tournamentId: tId, is_corporate: 1 }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" }
+          });
+        })
+        .catch(err => new Response(err.message, { status: 500, headers: corsHeaders }));
+    }
+
     if (url.pathname === "/api/auth/guest" && req.method === "POST") {
       return req.json()
         .then((body: any) => {
@@ -332,6 +363,14 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
 
     // WebSocket Upgrade
     if (url.pathname === "/ws") {
+      const attestation = url.searchParams.get("attestationToken");
+      if (attestation && !IntegrityGuard.verifyAttestation(attestation)) {
+        return new Response("Tampered client runtime or root detection flagged", {
+          status: 400,
+          headers: corsHeaders
+        });
+      }
+
       const upgraded = server.upgrade(req, {
         data: {
           playerId: url.searchParams.get("playerId") || undefined,
