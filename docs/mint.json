@@ -19,101 +19,100 @@
       "href": "https://github.com/tomlin7/Elo"
     }
   },
-  "tabs": [
-    {
-      "tab": "Get Started",
-      "href": "introduction"
-    },
-    {
-      "tab": "Core Engine",
-      "href": "tournaments"
-    },
-    {
-      "tab": "Architecture",
-      "href": "architecture"
-    },
-    {
-      "tab": "Security & Sandbox",
-      "href": "security/integrity-guard"
-    },
-    {
-      "tab": "Live Ops",
-      "href": "live-ops/combat-pass"
-    },
-    {
-      "tab": "Protocols",
-      "href": "api-reference/rest-endpoints"
-    },
-    {
-      "tab": "Blog & Updates",
-      "href": "blog/high-performance-foundations"
-    }
-  ],
-  "navigation": [
-    {
-      "group": "Player Guide",
-      "tab": "Get Started",
-      "pages": [
-        "introduction",
-        "user-guide"
-      ]
-    },
-    {
-      "group": "Developer Portal",
-      "tab": "Get Started",
-      "pages": [
-        "getting-started"
-      ]
-    },
-    {
-      "group": "Game Lifecycles",
-      "tab": "Core Engine",
-      "pages": [
-        "tournaments",
-        "core/matchmaking"
-      ]
-    },
-    {
-      "group": "Enterprise Mesh",
-      "tab": "Architecture",
-      "pages": [
-        "architecture",
-        "architecture/failover"
-      ]
-    },
-    {
-      "group": "Anti-Cheat Protection",
-      "tab": "Security & Sandbox",
-      "pages": [
-        "security/integrity-guard",
-        "security/anti-cheat-sandbox"
-      ]
-    },
-    {
-      "group": "Progression Systems",
-      "tab": "Live Ops",
-      "pages": [
-        "live-ops/combat-pass",
-        "live-ops/challenges"
-      ]
-    },
-    {
-      "group": "Protocol Specifications",
-      "tab": "Protocols",
-      "pages": [
-        "api-reference/rest-endpoints",
-        "api-reference/websocket-protocol"
-      ]
-    },
-    {
-      "group": "Blog & Updates",
-      "tab": "Blog & Updates",
-      "pages": [
-        "blog/high-performance-foundations",
-        "blog/progression-social-ecosystem"
-      ]
-    }
-  ],
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Get Started",
+        "groups": [
+          {
+            "group": "Player Guide",
+            "pages": [
+              "introduction",
+              "user-guide"
+            ]
+          },
+          {
+            "group": "Developer Portal",
+            "pages": [
+              "getting-started"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Core Engine",
+        "groups": [
+          {
+            "group": "Game Lifecycles",
+            "pages": [
+              "tournaments",
+              "core/matchmaking"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Architecture",
+        "groups": [
+          {
+            "group": "Enterprise Mesh",
+            "pages": [
+              "architecture",
+              "architecture/failover"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Security & Sandbox",
+        "groups": [
+          {
+            "group": "Anti-Cheat Protection",
+            "pages": [
+              "security/integrity-guard",
+              "security/anti-cheat-sandbox"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Live Ops",
+        "groups": [
+          {
+            "group": "Progression Systems",
+            "pages": [
+              "live-ops/combat-pass",
+              "live-ops/challenges"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Protocols",
+        "groups": [
+          {
+            "group": "Protocol Specifications",
+            "pages": [
+              "api-reference/rest-endpoints",
+              "api-reference/websocket-protocol"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Blog & Updates",
+        "groups": [
+          {
+            "group": "Blog & Updates",
+            "pages": [
+              "blog/high-performance-foundations",
+              "blog/progression-social-ecosystem"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "footer": {
     "socials": {
       "github": "https://github.com/tomlin7/Elo"
