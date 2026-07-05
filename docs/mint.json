@@ -8,37 +8,64 @@
     "light": "#818CF8",
     "dark": "#4F46E5"
   },
-  "navigation": [
-    {
-      "group": "Player Guide",
-      "pages": [
-        "introduction",
-        "user-guide"
-      ]
-    },
-    {
-      "group": "Developer Portal",
-      "pages": [
-        "getting-started",
-        "architecture",
-        "tournaments"
-      ]
-    },
-    {
-      "group": "Protocol Specifications",
-      "pages": [
-        "api-reference/rest-endpoints",
-        "api-reference/websocket-protocol"
-      ]
-    },
-    {
-      "group": "Blog & Updates",
-      "pages": [
-        "blog/high-performance-foundations",
-        "blog/progression-social-ecosystem"
-      ]
-    }
-  ],
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Get Started",
+        "groups": [
+          {
+            "group": "Player Guide",
+            "pages": [
+              "introduction",
+              "user-guide"
+            ]
+          },
+          {
+            "group": "Developer Portal",
+            "pages": [
+              "getting-started"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Architecture",
+        "groups": [
+          {
+            "group": "Core Systems",
+            "pages": [
+              "architecture",
+              "tournaments"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Protocols",
+        "groups": [
+          {
+            "group": "Protocol Specifications",
+            "pages": [
+              "api-reference/rest-endpoints",
+              "api-reference/websocket-protocol"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Blog & Updates",
+        "groups": [
+          {
+            "group": "Blog & Updates",
+            "pages": [
+              "blog/high-performance-foundations",
+              "blog/progression-social-ecosystem"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
