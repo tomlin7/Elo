@@ -1,64 +1,137 @@
 ---
-title: "Elo Progression & Social Ecosystem: Retention, Custom Lobbies, and Anti-Cheat"
-description: "A technical overview of the progression and social ecosystem update for Elo, introducing streaks, custom rooms, cosmetics, and server-side verification."
+title: "Retention, Cosmetics & Anti-Cheat: Inside Elo's Progression Update"
+description: "A deep technical dive into Elo's second major release—introducing Daily Streaks, XP leveling, custom private lobbies, a cosmetic economy, and Rust-powered server-side anti-cheat."
 date: "2026-07-05"
 author: "Elo Engineering Team"
 ---
 
-Following the release of our core real-time 1v1 execution loop, our development focus has shifted toward **retention, monetization foundations, competitive depth, and anti-cheat infrastructure**. 
-
-This update transitions Elo from a technical demonstration of real-time synchronization into a sticky, highly repeatable competitive ecosystem.
+With our core real-time 1v1 execution loop shipped and battle-tested, we are turning our full attention to making Elo a platform players return to every day. This update is our first major step toward building a sustainable competitive ecosystem—introducing persistent progression, a cosmetic economy, private match lobbies, and server-side anti-cheat infrastructure.
 
 ---
 
-## 1. Executive Summary & Objective
+## 1. Objective & Strategy
 
-While our initial launch proved that we could run an ultra-low-latency 1v1 math duel, this update turns Elo into a sustainable competitive platform. 
+Our initial release proved we could deliver a sub-40ms synchronized math duel on Android. But a fast engine alone does not create a habit. To transition Elo from a technical showcase into a sticky competitive platform, we have identified four key pillars for this update:
 
-Our core goal is to maximize player retention and engagement by introducing persistent progression (Daily Streaks, XP Levels), a modular cosmetic economy, customizable private matches, and server-side anti-cheat verification.
+1. **Retention** — Keep players coming back with Daily Streaks and XP leveling.
+2. **Social Growth** — Let players invite friends with custom private rooms.
+3. **Monetization Foundation** — Introduce a cosmetic economy via an in-game credit system.
+4. **Trust & Security** — Enforce server-side answer validation and input cadence profiling.
 
 ---
 
-## 2. Core Feature Scope & Epics
+## 2. Progression Framework
 
-### Epic 1: The Progression Framework (Retention Engine)
-* **Daily Streak Tracker**: A rolling 24-hour check-in window. Completing at least **3 ranked matches** in a calendar day retains the streak. The UI features a dynamic streak flame icon that scales in intensity (bronze $\rightarrow$ silver $\rightarrow$ cosmic purple) as milestones are reached (7, 30, and 100 days).
-* **Player XP & Account Leveling**: Performance-based experience points ($\text{XP}$) calculated post-match:
+### Daily Streak Tracker
+
+The streak system operates on a rolling 24-hour check-in window. Completing at least **3 ranked matches** in a calendar day maintains the streak. As milestones accumulate, the home screen's streak flame icon visually escalates in intensity:
+
+| Milestone | Flame Color |
+| --- | --- |
+| Day 1–6 | Bronze |
+| Day 7–29 | Silver |
+| Day 30–99 | Gold |
+| Day 100+ | Cosmic Purple |
+
+### XP & Account Leveling
+
+Every completed match awards performance-based experience points using the following formula:
 
 $$\text{XP}_{\text{Earned}} = (\text{MatchOutcome} \times 100) + (\text{CorrectAnswers} \times 5) + (\text{MaxStreak} \times 2)$$
 
-Advancing account levels unlocks profile badge borders and custom titles displayed in matchmaking lobbies.
-
-### Epic 2: Custom Rooms & Social Hub (Growth Loop)
-* **Direct Friendly Duels**: Players can create private rooms to generate a short, numeric 6-digit access code. Invite links can be shared instantly using the native Android share sheet. Private matches bypass global rating updates but track custom head-to-head win/loss histories.
-* **Modular Rulesets**: Lobbies support customized math modifiers, including operation selection (e.g. multiplication/division, absolute values, addition/subtraction) and round lengths (30s, 60s, or 120s).
-
-### Epic 3: Customization & Cosmetic Economy
-* **In-Game Currency**: Credits are granted passively via level-ups, streak completions, and daily win bonuses.
-* **The Cosmetics Vault**: A clean, high-contrast shop catalog interface supporting customized arena themes (such as Nord, Dracula, Cyberpunk, and Monochrome Light), visual particle trails triggered by correct answers, and SVG-rendered avatar borders.
-
-### Epic 4: Server-Side Anti-Cheat & Validation (Security Guardrails)
-* **Input Cadence Profiling**: The Rust game server records the exact milliseconds elapsing between numeric keyboard inputs (`ClientAction.timestamp`). Consistent inputs under an inhuman threshold (e.g., `< 120ms` per multidigit evaluation) trigger cheating flags.
-* **Client-Server Scrutiny**: Clients are restricted from passing verification flags. The server holds the master seed and evaluates absolute correctness.
+Advancing account levels unlocks profile badge borders and custom titles displayed in matchmaking lobbies and on the global leaderboard.
 
 ---
 
-## 3. Technical Requirements & Architecture Evolution
+## 3. Custom Rooms & Private Lobbies
 
-To maintain the performance standards established during our initial release, we have introduced state isolation layers to handle store and theme updates without dropping UI frames.
+### Direct Friendly Duels
 
-### 3.1 Advanced UI Theme Engine
-* The application UI switches styles dynamically without requiring a full React component tree remount.
-* Theme values are injected via an atomic Zustand store (`useThemeStore`) passing Hex configurations directly into Reanimated shared styling hooks (`useAnimatedStyle`).
+Players can generate a **6-digit numeric room code** with a single tap on "Create Private Room." The code can be shared via the native Android share sheet (`Share.share`) as a deep link to instantly drop a friend into the waiting lobby.
 
-### 3.2 Offline Sync & State Resiliency
-* **Local Stash Layer**: Profiles, streaks, unlocked cosmetics, and match backlogs are cached locally using **MMKV** (a highly optimized native C++ key-value storage framework for React Native that reads/writes data synchronously up to 30x faster than traditional `AsyncStorage`).
+Private rooms intentionally **bypass global Elo rating calculations** but maintain a separate head-to-head record for bragging rights.
+
+### Modular Rulesets
+
+Room owners have full control over the match ruleset before kicking off the game:
+
+* **Operations**: Restrict questions to only multiplication/division, pure addition/subtraction, or enable absolute value problems.
+* **Round Duration**: Choose from 30s, 60s, or 120s sudden-death bounds.
 
 ---
 
-## 4. Extended Protobuf Schema
+## 4. Cosmetic Economy
 
-To support private lobbies, customization profiles, and anti-cheat tracking, the structural data contract has been expanded:
+### In-Game Currency: Credits
+
+Credits are the primary in-game currency, earned passively through:
+- Account level-ups
+- Streak milestone completions
+- Daily win bonuses
+
+### The Cosmetics Vault
+
+The shop interface features a clean, high-contrast catalog organized into three tiers:
+
+| Category | Examples |
+| --- | --- |
+| **Arena Themes** | Nord, Dracula, Cyberpunk, Monochrome Light |
+| **UI Feedback Textures** | Particle trails and animation overlays on correct answers |
+| **Avatar Borders** | SVG-rendered gradient and animated border frames |
+
+All themed skins are injected atomically at runtime without triggering a component tree remount (see [Theme Engine](#41-ui-theme-engine) below).
+
+---
+
+## 5. Technical Architecture
+
+### 5.1 UI Theme Engine
+
+The cosmetic system requires zero-overhead theme switching. Theme values are injected via an atomic **Zustand store** (`useThemeStore`) that passes hex configurations directly into **React Native Reanimated** shared styling hooks:
+
+```ts
+const animatedStyle = useAnimatedStyle(() => ({
+  backgroundColor: themeStore.primaryColor.value,
+  borderColor: themeStore.accentColor.value,
+}));
+```
+
+This approach avoids triggering a full React reconciliation cycle, keeping the JS thread free and ensuring UI settle times stay **under 5ms** during theme swaps.
+
+### 5.2 Offline Sync via MMKV
+
+To ensure the app feels snappy even with poor connectivity, all persistent player state is cached locally using **MMKV**—a native C++ key-value storage engine that is synchronous and up to 30× faster than `AsyncStorage`:
+
+| State Type | Storage Strategy |
+| --- | --- |
+| Player profiles & titles | MMKV (synchronous read/write) |
+| Active streak counters | MMKV |
+| Unlocked cosmetics catalog | MMKV |
+| Pending match backlog | MMKV |
+
+---
+
+## 6. Server-Side Anti-Cheat
+
+### Input Cadence Profiling
+
+The Rust game server now records the elapsed time in milliseconds between every numeric keyboard input using `ClientAction.timestamp`. A statistical model flags sessions where answers to multi-digit problems are consistently submitted faster than the human reaction floor:
+
+```
+Flag threshold: < 120ms per multi-digit evaluation (sustained over 5+ consecutive inputs)
+```
+
+Flagged matches are quarantined for manual review or automatic rating rollback.
+
+### Client-Server Answer Scrutiny
+
+Clients cannot self-report correctness. The server owns the master question generation seed and evaluates every submitted answer against the authoritative result. There is no `isCorrect` boolean in the client-to-server contract—only the raw answer string.
+
+---
+
+## 7. Extended Protobuf Schema
+
+The network data contract for this update introduces three new message types:
 
 ```protobuf
 syntax = "proto3";
@@ -86,19 +159,17 @@ message CreateCustomRoomRequest {
 
 message MatchSecurityLog {
   string action_sequence_id = 1;
-  int64 keystroke_delta_ms = 2; // Time difference between consecutive character typed inputs
+  int64 keystroke_delta_ms = 2; // Time between consecutive keystrokes
   string input_value = 3;
 }
 ```
 
 ---
 
-## 5. Success Criteria & Quality Targets
+## 8. Success Criteria
 
-We evaluate this update against key performance indicators (KPIs) to ensure maximum engagement:
-
-| Metric | Target Goal | Tracking Method |
+| Metric | Target | Tracking Method |
 | --- | --- | --- |
-| **Day 7 Retention (D7)** | Maintain $> 28\%$ | Amplitude / PostHog retention matrix funnels. |
-| **Custom Match Conversion** | $15\%$ of total active users invite a peer | Server event metrics tracking `ROOM_TYPE_PRIVATE` creation rates. |
-| **Average UI Settle Time** | Under 5ms during theme swaps | Native profiling logs tracking JS thread frame layout latency. |
+| **Day 7 Retention (D7)** | $> 28\%$ | Amplitude / PostHog retention funnels |
+| **Custom Match Conversion** | $15\%$ of active users invite a peer | `ROOM_TYPE_PRIVATE` creation rate |
+| **UI Settle Time on Theme Swap** | `< 5ms` | Native profiling: JS thread frame latency logs |
