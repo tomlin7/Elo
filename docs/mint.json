@@ -2,7 +2,7 @@
   "$schema": "https://mintlify.com/docs.json",
   "name": "Elo",
   "description": "The high-stakes 1v1 mental math competitive arena. Engineered using React Native and Bun for sub-40ms real-time game updates and native 120Hz frame rates.",
-  "theme": "venus",
+  "theme": "mint",
   "colors": {
     "primary": "#6366F1",
     "light": "#818CF8",
