@@ -169,6 +169,42 @@ db.run(`
   )
 `);
 
+// B2B Corporate Partner Registry
+db.run(`
+  CREATE TABLE IF NOT EXISTS b2b_partners (
+    id TEXT PRIMARY KEY,
+    organization_name TEXT NOT NULL,
+    api_key_hash TEXT NOT NULL UNIQUE,
+    rate_limit_per_minute INTEGER DEFAULT 60,
+    is_active INTEGER DEFAULT 1,
+    created_at INTEGER NOT NULL
+  )
+`);
+
+// Federated Corporate Tournament Directory
+db.run(`
+  CREATE TABLE IF NOT EXISTS federated_tournaments (
+    id TEXT PRIMARY KEY,
+    partner_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    custom_config_json TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )
+`);
+
+// Anti-Cheat Security Violation Ledger
+db.run(`
+  CREATE TABLE IF NOT EXISTS security_violations (
+    id TEXT PRIMARY KEY,
+    player_id TEXT NOT NULL,
+    violation_type TEXT NOT NULL,
+    evidence_payload TEXT NOT NULL,
+    action_taken TEXT NOT NULL,
+    created_at INTEGER NOT NULL
+  )
+`);
+
 // Run Migrations dynamically for Phase 2, 4 & 6 columns
 const addColumn = (col: string, defVal: string) => {
   try {
@@ -191,6 +227,7 @@ addColumn("active_title", "TEXT NOT NULL DEFAULT ''");
 addColumn("peak_elo", "INTEGER NOT NULL DEFAULT 1000"); // Peak Elo tracking for season placement
 addColumn("privacy_consent_version", "TEXT DEFAULT ''");
 addColumn("privacy_consent_timestamp", "INTEGER DEFAULT 0");
+addColumn("is_banned", "INTEGER NOT NULL DEFAULT 0");
 
 export interface Player {
   id: string;
@@ -620,6 +657,61 @@ export const dbService = {
   getUserChallenges(playerId: string): any[] {
     const query = db.query("SELECT * FROM user_daily_challenges WHERE player_id = $playerId");
     return query.all({ $playerId: playerId }) as any[];
+  },
+
+  registerB2BPartner(partnerId: string, orgName: string, apiKey: string): void {
+    const hash = Bun.hash(apiKey).toString(16);
+    const query = db.query(`
+      INSERT OR REPLACE INTO b2b_partners (id, organization_name, api_key_hash, created_at)
+      VALUES ($id, $name, $hash, $now)
+    `);
+    query.run({
+      $id: partnerId,
+      $name: orgName,
+      $hash: hash,
+      $now: Date.now()
+    });
+  },
+
+  verifyB2BPartnerKey(apiKey: string): any {
+    const hash = Bun.hash(apiKey).toString(16);
+    const query = db.query("SELECT * FROM b2b_partners WHERE api_key_hash = $hash AND is_active = 1");
+    return query.get({ $hash: hash });
+  },
+
+  createFederatedTournament(id: string, partnerId: string, title: string, configJson: string): void {
+    const query = db.query(`
+      INSERT INTO federated_tournaments (id, partner_id, title, custom_config_json, status, created_at)
+      VALUES ($id, $partnerId, $title, $configJson, 'PROVISIONED', $now)
+    `);
+    query.run({
+      $id: id,
+      $partnerId: partnerId,
+      $title: title,
+      $configJson: configJson,
+      $now: Date.now()
+    });
+  },
+
+  logSecurityViolation(playerId: string, type: string, evidence: string, action: string): void {
+    const id = `viol_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+    const query = db.query(`
+      INSERT INTO security_violations (id, player_id, violation_type, evidence_payload, action_taken, created_at)
+      VALUES ($id, $playerId, $type, $evidence, $action, $now)
+    `);
+    query.run({
+      $id: id,
+      $playerId: playerId,
+      $type: type,
+      $evidence: evidence,
+      $action: action,
+      $now: Date.now()
+    });
+  },
+
+  updatePlayerBanStatus(playerId: string, isBanned: number): void {
+    const query = db.query("UPDATE players SET is_banned = $ban WHERE id = $id");
+    query.run({ $ban: isBanned, $id: playerId });
   }
 };
 
