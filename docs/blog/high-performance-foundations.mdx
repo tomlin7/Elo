@@ -1,0 +1,132 @@
+---
+title: "Elo MVP Launch: High-Performance 1v1 Mental Math"
+description: "A technical deep dive into the MVP release of Elo—a real-time, low-latency mental math competitive arena."
+date: "2026-07-05"
+author: "Elo Engineering Team"
+---
+
+Welcome to the inaugural post of the Elo developer blog! Today, we are excited to share the release details and technical architecture behind the **MVP Launch** of Elo. 
+
+Elo is designed to transform mental math from a simple learning exercise into a high-stakes, competitive e-sport. To achieve this, our primary focus has been on minimizing latency, maximizing rendering performance, and building a highly synchronized game engine.
+
+---
+
+## 1. Executive Summary & Core Objective
+
+The goal of the MVP is to deliver a functional, low-latency release centered strictly around the core multiplayer game loop:
+
+```mermaid
+graph LR
+    A[Authentication] --> B[Real-Time Matchmaking]
+    B --> C[1v1 Mental Math Battle]
+    C --> D[Elo Progression]
+```
+
+By deferring secondary features (such as social networks, cosmetics shops, and offline solo modes) to subsequent updates, we have concentrated entirely on refining the core gameplay feel to be fast, fluid, and visually stimulating.
+
+---
+
+## 2. Core Feature Scope & Epics
+
+### Epic 1: Identity & Authentication
+* **Guest Login**: Instant entry utilizing unique device ID token mapping, bypassing signup friction for new players.
+* **Social Login (Google OAuth)**: Secure authentication ensuring cross-device synchronization and permanent Elo persistence.
+* **Onboarding**: A mandatory, one-time username selection screen restricted to 14 alphanumeric characters and validated in real time for uniqueness.
+
+### Epic 2: Real-Time Matchmaking
+* **Global Queue**: A single "Find Match" tap places the player in a ticket queue backed by their current Elo rating.
+* **Adaptive Bot Safeguard**: If no opponent is paired within 20 seconds, the client transitions to an active match against an adaptive server-side Bot matched to the player's skill level.
+* **Synchronized Launch**: A 3-second countdown timer initiates simultaneously on both client devices before the first arithmetic puzzle is served.
+
+### Epic 3: The 1v1 Battle Engine
+* **Synchronized Question Stream**: Both users receive identical math questions simultaneously from the server.
+* **Custom Numeric Keypad**: A custom-built, ultra-responsive in-app keyboard layout (numbers `0-9`, `Backspace`, `Minus`) bypasses the native system keyboard to guarantee instantaneous key-tap responsiveness and eliminate layout shifts.
+* **Live Progress Streaming**: To simulate high-stakes tension, opponents' live input progress and current question index are streamed in real-time.
+* **Instant Visual Feedback**: Correct answers trigger a green flash and advance the question, while incorrect inputs flash red.
+
+### Epic 4: Post-Match & Progression
+* **Results Dashboard**: Displays winner/loser banners, final scores, accuracy percentages, and current Elo changes ($\pm \Delta \text{Elo}$).
+* **Global Leaderboard**: A ranking dashboard displaying the top 50 players sorted by their current Elo rating.
+
+---
+
+## 3. Rendering & Network Architecture
+
+To prevent React Native from feeling sluggish during intense typing sessions, we implement strict architectural constraints:
+
+### 3.1 UI & Rendering Architecture
+* **Native Threading Canvas**: All high-frequency visual elements (countdown micro-animations, particle flashes, and streak flames) run exclusively on the native thread using **React Native Reanimated** and **Moti**.
+* **Zero JS-Thread Stutters**: The JavaScript main thread is completely unburdened by rendering calculations.
+* **Shopify Flash-List**: The global leaderboards utilize `@shopify/flash-list` instead of React Native's standard `FlatList` to eliminate frame dropping during fast scroll speeds.
+
+### 3.2 Network Architecture
+* **Persistent WebSockets**: Real-time communication leverages raw WebSockets instead of polling or bulky HTTP requests.
+* **Binary Serialization via Protobuf**: Data packets communicate via **Protocol Buffers (v3)** payloads, reducing packet sizes by up to 70% compared to standard stringified JSON.
+* **Kernel-Level Speed**: Socket handlers on both the client and backend enforce the `TCP_NODELAY` flag to prevent mobile network packet buffering.
+
+---
+
+## 4. MVP Data Schema (Protobuf Event Definitions)
+
+The network communication layer relies on strict, strongly typed packets. The primary events are mapped out below:
+
+```protobuf
+syntax = "proto3";
+
+package matiks.v1;
+
+enum MatchState {
+  MATCH_STATE_UNSPECIFIED = 0;
+  MATCH_STATE_COUNTDOWN = 1;
+  MATCH_STATE_ACTIVE = 2;
+  MATCH_STATE_PAUSED_DISCONNECT = 3;
+  MATCH_STATE_FINISHED = 4;
+}
+
+message ClientAction {
+  string room_id = 1;
+  string player_id = 2;
+  int64 timestamp = 3;
+  
+  oneof payload {
+    string current_input = 4; // Current keystroke stream
+    string submitted_answer = 5; // Final answer submission
+  }
+}
+
+message ServerGameStateUpdate {
+  string room_id = 1;
+  MatchState state = 2;
+  int32 time_remaining_seconds = 3;
+  
+  message PlayerProgress {
+    string player_id = 1;
+    int32 current_score = 2;
+    int32 current_streak = 3;
+    string ghost_input = 4; // What the opponent is currently typing
+  }
+  
+  PlayerProgress player_one = 4;
+  PlayerProgress player_two = 5;
+  
+  string next_question_text = 6; // Labeled arithmetic question string (e.g. "14 * 3 - 7")
+}
+```
+
+---
+
+## 5. Success Metrics & Quality Benchmarks
+
+We measure the success of the release against strict Non-Functional Requirements (NFRs):
+
+| Metric / NFR | Target Benchmark | Verification Method |
+| --- | --- | --- |
+| **UI Frame Consistency** | Steady 60fps / 120fps (device max) | Profiling via Android Studio Device Monitor during active duels. |
+| **Input to Network Latency** | `< 80ms` round-trip time | Data tracking between `ClientAction` and `ServerGameStateUpdate`. |
+| **Matchmaking Search Time** | Max 10 seconds for human pairing | Server logs analyzing timestamps between queue entry and room allocation. |
+| **App Crash Rate** | `< 0.2%` | Production crash reporting via Firebase Crashlytics. |
+
+---
+
+## What's Next?
+With the foundation fully realized, we are paving the way for further updates: progression systems, customizable lobbies, and advanced stats dashboards. Stay tuned for more technical deep dives!

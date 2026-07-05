@@ -1,0 +1,104 @@
+---
+title: "Elo Progression & Social Ecosystem: Retention, Custom Lobbies, and Anti-Cheat"
+description: "A technical overview of the progression and social ecosystem update for Elo, introducing streaks, custom rooms, cosmetics, and server-side verification."
+date: "2026-07-05"
+author: "Elo Engineering Team"
+---
+
+Following the release of our core real-time 1v1 execution loop, our development focus has shifted toward **retention, monetization foundations, competitive depth, and anti-cheat infrastructure**. 
+
+This update transitions Elo from a technical demonstration of real-time synchronization into a sticky, highly repeatable competitive ecosystem.
+
+---
+
+## 1. Executive Summary & Objective
+
+While our initial launch proved that we could run an ultra-low-latency 1v1 math duel, this update turns Elo into a sustainable competitive platform. 
+
+Our core goal is to maximize player retention and engagement by introducing persistent progression (Daily Streaks, XP Levels), a modular cosmetic economy, customizable private matches, and server-side anti-cheat verification.
+
+---
+
+## 2. Core Feature Scope & Epics
+
+### Epic 1: The Progression Framework (Retention Engine)
+* **Daily Streak Tracker**: A rolling 24-hour check-in window. Completing at least **3 ranked matches** in a calendar day retains the streak. The UI features a dynamic streak flame icon that scales in intensity (bronze $\rightarrow$ silver $\rightarrow$ cosmic purple) as milestones are reached (7, 30, and 100 days).
+* **Player XP & Account Leveling**: Performance-based experience points ($\text{XP}$) calculated post-match:
+
+$$\text{XP}_{\text{Earned}} = (\text{MatchOutcome} \times 100) + (\text{CorrectAnswers} \times 5) + (\text{MaxStreak} \times 2)$$
+
+Advancing account levels unlocks profile badge borders and custom titles displayed in matchmaking lobbies.
+
+### Epic 2: Custom Rooms & Social Hub (Growth Loop)
+* **Direct Friendly Duels**: Players can create private rooms to generate a short, numeric 6-digit access code. Invite links can be shared instantly using the native Android share sheet. Private matches bypass global rating updates but track custom head-to-head win/loss histories.
+* **Modular Rulesets**: Lobbies support customized math modifiers, including operation selection (e.g. multiplication/division, absolute values, addition/subtraction) and round lengths (30s, 60s, or 120s).
+
+### Epic 3: Customization & Cosmetic Economy
+* **In-Game Currency**: Credits are granted passively via level-ups, streak completions, and daily win bonuses.
+* **The Cosmetics Vault**: A clean, high-contrast shop catalog interface supporting customized arena themes (such as Nord, Dracula, Cyberpunk, and Monochrome Light), visual particle trails triggered by correct answers, and SVG-rendered avatar borders.
+
+### Epic 4: Server-Side Anti-Cheat & Validation (Security Guardrails)
+* **Input Cadence Profiling**: The Rust game server records the exact milliseconds elapsing between numeric keyboard inputs (`ClientAction.timestamp`). Consistent inputs under an inhuman threshold (e.g., `< 120ms` per multidigit evaluation) trigger cheating flags.
+* **Client-Server Scrutiny**: Clients are restricted from passing verification flags. The server holds the master seed and evaluates absolute correctness.
+
+---
+
+## 3. Technical Requirements & Architecture Evolution
+
+To maintain the performance standards established during our initial release, we have introduced state isolation layers to handle store and theme updates without dropping UI frames.
+
+### 3.1 Advanced UI Theme Engine
+* The application UI switches styles dynamically without requiring a full React component tree remount.
+* Theme values are injected via an atomic Zustand store (`useThemeStore`) passing Hex configurations directly into Reanimated shared styling hooks (`useAnimatedStyle`).
+
+### 3.2 Offline Sync & State Resiliency
+* **Local Stash Layer**: Profiles, streaks, unlocked cosmetics, and match backlogs are cached locally using **MMKV** (a highly optimized native C++ key-value storage framework for React Native that reads/writes data synchronously up to 30x faster than traditional `AsyncStorage`).
+
+---
+
+## 4. Extended Protobuf Schema
+
+To support private lobbies, customization profiles, and anti-cheat tracking, the structural data contract has been expanded:
+
+```protobuf
+syntax = "proto3";
+
+package elo.v2;
+
+enum RoomType {
+  ROOM_TYPE_RANKED = 0;
+  ROOM_TYPE_PRIVATE = 1;
+}
+
+message PlayerIdentity {
+  string player_id = 1;
+  string username = 2;
+  int32 elo_rating = 3;
+  string selected_theme_id = 4;
+  string active_title = 5;
+}
+
+message CreateCustomRoomRequest {
+  string host_player_id = 1;
+  bool allow_division = 2;
+  int32 custom_duration_seconds = 3;
+}
+
+message MatchSecurityLog {
+  string action_sequence_id = 1;
+  int64 keystroke_delta_ms = 2; // Time difference between consecutive character typed inputs
+  string input_value = 3;
+}
+```
+
+---
+
+## 5. Success Criteria & Quality Targets
+
+We evaluate this update against key performance indicators (KPIs) to ensure maximum engagement:
+
+| Metric | Target Goal | Tracking Method |
+| --- | --- | --- |
+| **Day 7 Retention (D7)** | Maintain $> 28\%$ | Amplitude / PostHog retention matrix funnels. |
+| **Custom Match Conversion** | $15\%$ of total active users invite a peer | Server event metrics tracking `ROOM_TYPE_PRIVATE` creation rates. |
+| **Average UI Settle Time** | Under 5ms during theme swaps | Native profiling logs tracking JS thread frame layout latency. |
