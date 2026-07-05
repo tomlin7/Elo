@@ -1,0 +1,12 @@
+---
+title: "Play Integrity Runtime Security"
+description: "Hardware attestation checks validating client app binaries against emulators and roots."
+---
+
+## Hardware Safety Attestation
+
+Elo enforces client app security using Google Play Integrity framework:
+
+- **Attestation Handshakes**: The React Native client transmits a signed hardware attestation token during connection upgrades.
+- **Verification Window**: The server decrypts and verifies the attestation payload in under **8ms** to prevent match ingress delays.
+- **Tamper Rejections**: If root injection tools (Magisk, Xposed), emulator containers, or modified APK binaries are detected, the upgrade is immediately rejected with a `400 Bad Request` status.

@@ -1,0 +1,16 @@
+---
+title: "Heuristic Sandboxing & Honeypots"
+description: "Isolating anomalous cadence inputs and injecting impossible validation traps."
+---
+
+## Cadence Anomaly Detection
+
+- **Keystroke Timers**: The server registers incoming client input time differentials.
+- **Flagging Criteria**: Typing cadences registering consecutive inputs below **120ms** more than 4 times are flagged as anomalies.
+- **Silent Sandbox**: Instead of being kicked, flagged players are silently routed into a isolated sandbox workspace.
+
+## Honey-Pot Question Traps
+
+- **Trap Generation**: Sandboxed players receive impossible division-by-zero or non-invertible matrix questions (e.g. `999/0 = ?`).
+- **Triggering Bans**: Because the display shows an unsolvable question, humans get stuck. If a bot uses background memory access to solve the *original* hidden question index, it submits the correct answer.
+- **Hardware Ban**: Solving a honeypot trap results in an immediate permanent account ban and writes the incident into the `security_violations` ledger.

@@ -1,0 +1,121 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "name": "Elo",
+  "description": "The high-stakes 1v1 mental math competitive arena. Engineered using React Native and Bun for sub-40ms real-time game updates and native 120Hz frame rates.",
+  "theme": "mint",
+  "colors": {
+    "primary": "#6366F1",
+    "light": "#818CF8",
+    "dark": "#4F46E5"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/tomlin7/Elo"
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Get Started",
+        "groups": [
+          {
+            "group": "Player Guide",
+            "pages": [
+              "introduction",
+              "user-guide"
+            ]
+          },
+          {
+            "group": "Developer Portal",
+            "pages": [
+              "getting-started"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Core Engine",
+        "groups": [
+          {
+            "group": "Game Lifecycles",
+            "pages": [
+              "tournaments",
+              "core/matchmaking"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Architecture",
+        "groups": [
+          {
+            "group": "Enterprise Mesh",
+            "pages": [
+              "architecture",
+              "architecture/failover"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Security & Sandbox",
+        "groups": [
+          {
+            "group": "Anti-Cheat Protection",
+            "pages": [
+              "security/integrity-guard",
+              "security/anti-cheat-sandbox"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Live Ops",
+        "groups": [
+          {
+            "group": "Progression Systems",
+            "pages": [
+              "live-ops/combat-pass",
+              "live-ops/challenges"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Protocols",
+        "groups": [
+          {
+            "group": "Protocol Specifications",
+            "pages": [
+              "api-reference/rest-endpoints",
+              "api-reference/websocket-protocol"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Blog & Updates",
+        "groups": [
+          {
+            "group": "Blog & Updates",
+            "pages": [
+              "blog/high-performance-foundations",
+              "blog/progression-social-ecosystem"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/tomlin7/Elo"
+    }
+  }
+}

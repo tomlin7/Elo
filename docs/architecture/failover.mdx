@@ -1,0 +1,12 @@
+---
+title: "Planetary Standby & Evacuation Router"
+description: "High-availability multi-region topology and automated standby failover mechanics."
+---
+
+## Multi-Region Resiliency
+
+Elo's backend architecture runs on globally distributed edge nodes to minimize ping times:
+
+- **Hot Standby Nodes**: Secondary standby server zones mirror active game room state snapshots in real-time.
+- **Catastrophic Infrastructure Evacuation**: If a regional node suffers a connection drop, the `ClusterManager` evacuates active match room descriptors to the hot standby instance in under a **1500ms window**.
+- **State Synchronization**: WebSocket clients reconnect transparently using unique token handshakes without resetting game scores.

@@ -32,65 +32,124 @@ Creates or retrieves a guest profile.
 
 ---
 
-### Retrieve Match History Feed
-Fetch the player's last 50 matches and aggregated telemetry stats.
+### B2B Federated Tournament Creation
+Secured endpoint allowing corporate partners to programmatically allocate isolated brackets on high-priority virtual node lanes.
 
-* **URL**: `/api/profile/history`
+* **URL**: `/api/v1/federation/tournaments/create`
+* **Method**: `POST`
+* **Headers**:
+  * `Authorization: Bearer <CORP_ACCESS_KEY>`
+* **Body Parameters**:
+  ```json
+  {
+    "title": "Collegiate Speed Math Cup",
+    "customConfig": {
+      "operations": ["MULTIPLICATION", "ADD_SUB"],
+      "durationSeconds": 45,
+      "rewardsMultiplier": 1.5
+    }
+  }
+  ```
+* **Success Response (200)**:
+  ```json
+  {
+    "success": true,
+    "tournamentId": "fed_tour_17832...",
+    "is_corporate": 1
+  }
+  ```
+
+---
+
+### Retrieve Combat Pass Progression
+Retrieve user progress, levels, stars, and claimed rewards for the active season.
+
+* **URL**: `/api/profile/battlepass`
 * **Method**: `GET`
 * **Query Parameters**:
   * `playerId` (string)
 * **Success Response (200)**:
   ```json
   {
-    "history": [
-      {
-        "matchId": "room_17832...",
-        "opponentUsername": "ChallengerBot",
-        "isVictory": true,
-        "eloDelta": 16,
-        "matchTimestamp": 1783201254000,
-        "stats": [
-          {
-            "operationType": "MULTIPLICATION",
-            "totalPresented": 8,
-            "totalCorrect": 7,
-            "averageSolveTimeMs": 1150
-          }
-        ]
-      }
-    ]
+    "player_id": "player_8f32a...",
+    "season_id": "season_1",
+    "current_stars": 12,
+    "current_tier": 2,
+    "is_premium_unlocked": 0,
+    "claimed_tiers_mask": "1,2"
   }
   ```
 
 ---
 
-### Retrieve Historical Season Placements
-Fetch archives of prior ranked placements and tiers.
+### Claim Combat Pass Tier
+Record a reward tier claim within the seasonal claimed tiers bitmask ledger.
 
-* **URL**: `/api/profile/archives`
+* **URL**: `/api/profile/battlepass/claim`
+* **Method**: `POST`
+* **Body Parameters**:
+  ```json
+  {
+    "playerId": "player_8f32a...",
+    "tier": 3
+  }
+  ```
+* **Success Response (200)**:
+  ```json
+  {
+    "success": true
+  }
+  ```
+
+---
+
+### Retrieve Daily Challenge Rotations
+Fetch active daily objectives, milestone progressions, and corresponding star values.
+
+* **URL**: `/api/profile/challenges`
 * **Method**: `GET`
 * **Query Parameters**:
   * `playerId` (string)
 * **Success Response (200)**:
   ```json
+  [
+    {
+      "id": "ch1_player_8f...",
+      "player_id": "player_8f32a...",
+      "challenge_type": "SPEED_STREAK",
+      "target_value": 5,
+      "current_value": 2,
+      "is_completed": 0,
+      "reward_stars": 4,
+      "expires_timestamp": 1783204780000
+    }
+  ]
+  ```
+
+---
+
+### Active Live-Ops Event Modifiers
+Query ongoing global multiplier windows (e.g. Double XP, Double Credits).
+
+* **URL**: `/api/events/active`
+* **Method**: `GET`
+* **Success Response (200)**:
+  ```json
   {
-    "archives": [
-      {
-        "season_number": 1,
-        "tier": "Diamond",
-        "peak_elo": 1820,
-        "final_elo": 1740,
-        "archived_at": "2026-06-30 23:59:59"
-      }
-    ]
+    "events": ["DOUBLE_XP"]
   }
   ```
 
 ---
 
-### Ping Latency Check
-High-speed endpoint returning a fast ping response.
+### Prometheus Observation Metrics
+Scrapable plain-text endpoint exposing real-time container metrics, active websocket connections, and memory heaps.
 
-* **URL**: `/api/ping`
+* **URL**: `/api/metrics`
 * **Method**: `GET`
-* **Success Response (200)**: `pong`
+* **Success Response (200)**:
+  ```text
+  # HELP elo_active_connections_count Current websocket connections
+  # TYPE elo_active_connections_count gauge
+  elo_active_connections_count 14
+  ```
