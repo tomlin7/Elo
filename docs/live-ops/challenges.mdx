@@ -1,0 +1,17 @@
+---
+title: "Dynamic Daily Objectives"
+description: "How Elo schedules daily challenge rotations and tracks target milestones."
+---
+
+## Daily Challenge Slots
+
+Every 24 hours at 00:00:00 UTC, the server rotates three dynamic challenge milestones per player:
+
+- **Speed Slot**: `"Solve 5 multiplication/matrix problems in under 600ms."`
+- **Endurance Slot**: `"Maintain a 10-problem correct answer streak in a ranked duel."`
+- **Volume Slot**: `"Win 3 ranked duels or clear 1 global Blitz tournament."`
+
+## Milestones Tracker
+
+- **Progress Sync**: Post-match player inputs update challenge values asynchronously.
+- **Auto-Awards**: Completing a daily challenge updates the database status and automatically awards bonus Combat Stars to the user's active seasonal pass.

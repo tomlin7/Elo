@@ -40,13 +40,49 @@
         ]
       },
       {
+        "tab": "Core Engine",
+        "groups": [
+          {
+            "group": "Game Lifecycles",
+            "pages": [
+              "tournaments",
+              "core/matchmaking"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Architecture",
         "groups": [
           {
-            "group": "Core Systems",
+            "group": "Enterprise Mesh",
             "pages": [
               "architecture",
-              "tournaments"
+              "architecture/failover"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Security & Sandbox",
+        "groups": [
+          {
+            "group": "Anti-Cheat Protection",
+            "pages": [
+              "security/integrity-guard",
+              "security/anti-cheat-sandbox"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Live Ops",
+        "groups": [
+          {
+            "group": "Progression Systems",
+            "pages": [
+              "live-ops/combat-pass",
+              "live-ops/challenges"
             ]
           }
         ]

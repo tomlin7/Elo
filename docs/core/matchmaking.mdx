@@ -1,0 +1,17 @@
+---
+title: "Matchmaking & Dynamic Lobbies"
+description: "How Elo groups players, manages private friendly matches, and leverages adaptive bots."
+---
+
+## Competitive Matchmaking
+
+Elo matches players using an adaptive queue system that balances wait times against skill proximity:
+
+- **Queue Polling**: The server scans for matches using ELO ratings ranges.
+- **Bot Backfill**: If a human player is queued for longer than **20 seconds**, the server automatically spawns an adaptive bot matched to the player's ELO level.
+- **Adaptive ELO Adjustments**: Ratings scale using a standard $K$-factor multiplier of $32$ based on game outcomes.
+
+## Lobbies & Code Isolation
+
+- **Ranked Match Lobbies**: Globally sharded nodes host ranked games in isolation.
+- **Private Room Codes**: Players can spin up custom lobbies using shared 4-digit codes, choosing math operations (e.g. enabling multiplication) and game duration rules.
