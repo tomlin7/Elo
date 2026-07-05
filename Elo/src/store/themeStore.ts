@@ -18,15 +18,15 @@ export type ThemeId = "dark" | "dracula" | "nord" | "cyberpunk" | "light";
 
 export const THEMES: Record<ThemeId, ThemeColors> = {
   dark: {
-    background: "#0A0A0C",
-    cardBg: "rgba(255, 255, 255, 0.03)",
-    cardBorder: "rgba(255, 255, 255, 0.08)",
+    background: "#161616",
+    cardBg: "#262626",
+    cardBorder: "#333333",
     text: "#FFFFFF",
-    textMuted: "rgba(255, 255, 255, 0.4)",
-    primary: "#6366F1", // Indigo
-    accent: "#10B981", // Emerald
-    accentMuted: "rgba(16, 185, 129, 0.2)",
-    correctFlash: "rgba(16, 185, 129, 0.25)",
+    textMuted: "#8E8E93",
+    primary: "#8AFF29",
+    accent: "#FFD400",
+    accentMuted: "rgba(255, 212, 0, 0.2)",
+    correctFlash: "rgba(0, 230, 118, 0.25)",
     wrongFlash: "rgba(239, 68, 68, 0.25)",
   },
   dracula: {

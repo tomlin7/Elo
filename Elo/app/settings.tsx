@@ -7,7 +7,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  Clipboard
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useThemeStore } from "../src/store/themeStore.ts";
@@ -18,7 +19,7 @@ import * as Haptics from "expo-haptics";
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { colors, themeId } = useThemeStore();
+  const { colors } = useThemeStore();
   const { profile, clearProfile } = useProfileStore();
 
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -105,58 +106,88 @@ export default function SettingsScreen() {
     }
   };
 
+  const copyAttestation = () => {
+    Clipboard.setString(profile?.id || "guest_player");
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert("Copied", "Attestation key signature copied to clipboard.");
+  };
+
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <StatusBar style={themeId === "light" ? "dark" : "light"} />
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar style="light" />
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: colors.primary }]}>OPERATIONS & PRIVACY</Text>
+          <Text style={styles.headerTitle}>OPERATIONS & IDENTITY</Text>
           <TouchableOpacity
-            style={[styles.backBtn, { borderColor: colors.cardBorder }]}
+            style={styles.backBtn}
             onPress={() => router.replace("/(tabs)")}
           >
-            <Text style={[styles.backBtnText, { color: colors.text }]}>BACK</Text>
+            <Text style={styles.backBtnText}>BACK</Text>
           </TouchableOpacity>
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-          {/* Privacy Terms Section */}
-          <View style={[styles.sectionCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>CCPA / GDPR Consent Status</Text>
-            <Text style={[styles.descText, { color: colors.textMuted }]}>
-              Version ACCEPTED: v1.0.0
+          
+          {/* Attestation Signature Banner */}
+          <View style={styles.attestationBanner}>
+            <Text style={styles.attestationLabel}>Attested Corporate Identity</Text>
+            <Text style={styles.attestationName}>DHEERAJ CHARAUNGON</Text>
+            <TouchableOpacity style={styles.copyRow} onPress={copyAttestation}>
+              <Text style={styles.attestationId} numberOfLines={1}>
+                {profile?.id || "dhe-17832-attestation-signature"}
+              </Text>
+              <View style={styles.copyBadge}>
+                <Text style={styles.copyBadgeText}>COPY</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Widget Embedding Layer */}
+          <View style={styles.widgetCard}>
+            <Text style={styles.widgetTitle}>Streak Widget Companion</Text>
+            <Text style={styles.widgetDesc}>
+              Embed your active daily streak indicators directly on the device home-screen launcher layer.
             </Text>
-            <Text style={[styles.descText, { color: colors.textMuted }]}>
+            <TouchableOpacity style={styles.widgetBtn} onPress={() => Alert.alert("Widget Shortcut", "Hold down on your home launcher screen to add ELO telemetry widgets.")}>
+              <Text style={styles.widgetBtnText}>INSTALL COMPANION</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Privacy Terms Section */}
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>CCPA / GDPR Consent Status</Text>
+            <Text style={styles.descText}>Version ACCEPTED: v1.0.0</Text>
+            <Text style={styles.descText}>
               Timestamp: {profile ? new Date(profile.privacy_consent_timestamp || Date.now()).toLocaleDateString() : "Now"}
             </Text>
-            <Text style={[styles.legalDetail, { color: colors.textMuted }]}>
+            <Text style={styles.legalDetail}>
               We commit to collecting mathematical solving cadence data only for cheat verification. No telemetry variables map to private identifiers.
             </Text>
           </View>
 
           {/* Webhook Registry Section */}
-          <View style={[styles.sectionCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Developer Portal (Webhooks)</Text>
-            <Text style={[styles.descText, { color: colors.textMuted, marginBottom: 16 }]}>
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>Developer Portal (Webhooks)</Text>
+            <Text style={styles.descText}>
               Link outbound hooks to trigger external integrations on tournament finishes.
             </Text>
 
-            <Text style={[styles.inputLabel, { color: colors.text }]}>Target Webhook URL</Text>
+            <Text style={styles.inputLabel}>Target Webhook URL</Text>
             <TextInput
-              style={[styles.input, { borderColor: colors.cardBorder, color: colors.text }]}
+              style={styles.input}
               placeholder="https://yourserver.com/webhook"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor="#8E8E93"
               value={webhookUrl}
               onChangeText={setWebhookUrl}
               autoCapitalize="none"
               autoCorrect={false}
             />
 
-            <Text style={[styles.inputLabel, { color: colors.text }]}>Secret Signature Token</Text>
+            <Text style={styles.inputLabel}>Secret Signature Token</Text>
             <TextInput
-              style={[styles.input, { borderColor: colors.cardBorder, color: colors.text }]}
+              style={styles.input}
               placeholder="secret_token"
-              placeholderTextColor={colors.textMuted}
+              placeholderTextColor="#8E8E93"
               value={webhookSecret}
               onChangeText={setWebhookSecret}
               secureTextEntry
@@ -165,7 +196,7 @@ export default function SettingsScreen() {
             />
 
             <TouchableOpacity
-              style={[styles.btnPrimary, { backgroundColor: colors.primary }]}
+              style={styles.btnPrimary}
               onPress={handleRegisterWebhook}
               disabled={loading}
             >
@@ -174,14 +205,14 @@ export default function SettingsScreen() {
           </View>
 
           {/* Right to be Forgotten Settings */}
-          <View style={[styles.sectionCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Right to Be Forgotten</Text>
-            <Text style={[styles.descText, { color: colors.textMuted, marginBottom: 20 }]}>
-              Cascades purges through users database tables, match telemetries, and season archives.
+          <View style={styles.sectionCard}>
+            <Text style={styles.sectionTitle}>Right to Be Forgotten</Text>
+            <Text style={styles.descText}>
+              Cascades purges through users database tables, match telemetries, and archives.
             </Text>
 
             <TouchableOpacity
-              style={[styles.btnDelete, { backgroundColor: "#EF4444" }]}
+              style={styles.btnDelete}
               onPress={handleDeleteAccount}
               disabled={loading}
             >
@@ -195,88 +226,38 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
-  container: {
-    flex: 1,
-    paddingTop: 16,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 24,
-    marginBottom: 20,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "900",
-    letterSpacing: 0.5,
-  },
-  backBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  backBtnText: {
-    fontSize: 12,
-    fontWeight: "700",
-  },
-  scrollContainer: {
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-  },
-  sectionCard: {
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 20,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "800",
-    marginBottom: 6,
-  },
-  descText: {
-    fontSize: 13,
-  },
-  legalDetail: {
-    fontSize: 11,
-    marginTop: 12,
-    lineHeight: 16,
-  },
-  inputLabel: {
-    fontSize: 12,
-    fontWeight: "700",
-    marginBottom: 6,
-  },
-  input: {
-    height: 48,
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 14,
-    marginBottom: 16,
-    fontSize: 13,
-  },
-  btnPrimary: {
-    height: 48,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 8,
-  },
-  btnText: {
-    color: "#FFF",
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 0.5,
-  },
-  btnDelete: {
-    height: 48,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
+  safeArea: { flex: 1, backgroundColor: "#161616" },
+  container: { flex: 1, paddingTop: 16 },
+  header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 24, marginBottom: 20 },
+  headerTitle: { fontSize: 16, fontWeight: "900", letterSpacing: 0.5, color: "#8AFF29" },
+  backBtn: { paddingVertical: 6, paddingHorizontal: 12, borderRadius: 8, borderWidth: 1, borderColor: "#333", backgroundColor: "#262626" },
+  backBtnText: { fontSize: 12, fontWeight: "800", color: "#FFFFFF" },
+  scrollContainer: { paddingHorizontal: 24, paddingBottom: 40 },
+  
+  // Attestation Banner
+  attestationBanner: { backgroundColor: "#262626", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#333", marginBottom: 24 },
+  attestationLabel: { color: "#8E8E93", fontSize: 10, fontWeight: "800", textTransform: "uppercase", marginBottom: 4 },
+  attestationName: { color: "#FFFFFF", fontSize: 15, fontWeight: "800", marginBottom: 8 },
+  copyRow: { flexDirection: "row", alignItems: "center", backgroundColor: "#161616", borderRadius: 8, paddingHorizontal: 10, paddingVertical: 8, justifyContent: "space-between" },
+  attestationId: { color: "#8E8E93", fontSize: 12, flex: 1, marginRight: 8, fontFamily: "monospace" },
+  copyBadge: { backgroundColor: "#8AFF29", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  copyBadgeText: { color: "#000000", fontSize: 9, fontWeight: "900" },
+
+  // Widget Companion
+  widgetCard: { backgroundColor: "#262626", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#333", marginBottom: 24 },
+  widgetTitle: { color: "#FFFFFF", fontSize: 14, fontWeight: "800", marginBottom: 6 },
+  widgetDesc: { color: "#8E8E93", fontSize: 12, lineHeight: 16, marginBottom: 12 },
+  widgetBtn: { height: 36, backgroundColor: "#8AFF29", borderRadius: 10, justifyContent: "center", alignItems: "center" },
+  widgetBtnText: { color: "#000000", fontSize: 11, fontWeight: "800" },
+
+  // Cards
+  sectionCard: { borderWidth: 1, borderColor: "#333", backgroundColor: "#262626", borderRadius: 20, padding: 20, marginBottom: 24 },
+  sectionTitle: { fontSize: 15, fontWeight: "800", color: "#FFFFFF", marginBottom: 6 },
+  descText: { fontSize: 13, color: "#8E8E93" },
+  legalDetail: { fontSize: 11, color: "#8E8E93", marginTop: 12, lineHeight: 16 },
+  inputLabel: { fontSize: 12, fontWeight: "700", color: "#FFFFFF", marginTop: 12, marginBottom: 6 },
+  input: { height: 46, borderWidth: 1, borderColor: "#333", backgroundColor: "#161616", borderRadius: 10, paddingHorizontal: 14, color: "#FFFFFF", marginBottom: 16, fontSize: 13 },
+  btnPrimary: { height: 46, borderRadius: 12, backgroundColor: "#8AFF29", justifyContent: "center", alignItems: "center", marginTop: 8 },
+  btnText: { color: "#000000", fontSize: 13, fontWeight: "800", letterSpacing: 0.5 },
+  btnDelete: { height: 46, borderRadius: 12, backgroundColor: "#FFD400", justifyContent: "center", alignItems: "center", marginTop: 8 }
 });

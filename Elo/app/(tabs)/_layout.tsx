@@ -1,40 +1,51 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeStore } from '../../src/store/themeStore.ts';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { colors } = useThemeStore();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: "#8AFF29",
+        tabBarInactiveTintColor: "#8E8E93",
+        tabBarStyle: {
+          backgroundColor: "#161616",
+          borderTopWidth: 1,
+          borderTopColor: "#262626"
+        },
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Arena',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="compete"
         options={{
-          title: 'Leaderboard',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="list.number" color={color} />,
+          title: 'Compete',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="list.number" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="dailies"
+        options={{
+          title: 'Dailies',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="checkmark.circle.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="vault"
         options={{
           title: 'Vault',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bag.fill" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="bag.fill" color={color} />,
         }}
       />
     </Tabs>
