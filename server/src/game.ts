@@ -22,6 +22,7 @@ export interface GamePlayer {
   lastKeystrokeTime: number;
   consecutiveFastInputs: number;
   isFlaggedCheat: boolean;
+  isSandboxed?: boolean;
   operationStats?: Map<string, { totalPresented: number; totalCorrect: number; totalSolveTimeMs: number }>;
   currentQuestionStartTime?: number;
 }
@@ -255,9 +256,11 @@ export class GameRoom {
         const delta = clientTime - player.lastKeystrokeTime;
         if (delta > 0 && delta < 120) {
           player.consecutiveFastInputs++;
-          if (player.consecutiveFastInputs >= 4 && !player.isFlaggedCheat) {
+          if (player.consecutiveFastInputs >= 4 && !player.isSandboxed) {
+            player.isSandboxed = true;
             player.isFlaggedCheat = true;
-            console.warn(`[SECURITY ALERT] Player ${player.username} (${player.id}) flagged for bot-like cadence (<120ms consecutive inputs)`);
+            console.warn(`[SECURITY ALERT] Player ${player.username} (${player.id}) moved to SILENT_SANDBOX due to bot-like cadence.`);
+            dbService.logSecurityViolation(player.id, "CADENCE_ANOMALY", `Consecutive delta: ${delta}ms`, "SANDBOXED");
           }
         } else if (delta > 0) {
           player.consecutiveFastInputs = 0;
@@ -287,6 +290,20 @@ export class GameRoom {
       if (!statsRec) {
         statsRec = { totalPresented: 0, totalCorrect: 0, totalSolveTimeMs: 0 };
         player.operationStats.set(opType, statsRec);
+      }
+
+      // Honey-Pot Sandbox Trap Check
+      if (player.isSandboxed) {
+        if (submitted === currentQuestion.answer) {
+          dbService.updatePlayerBanStatus(player.id, 1);
+          dbService.logSecurityViolation(player.id, "HONEYPOT_FAIL", `Submitted answer '${submitted}' for displayed question '999/0 = ?'`, "PERMANENT_BAN");
+          console.error(`[SECURITY BAN] Player ${player.username} (${player.id}) banned via honeypot trap.`);
+          this.endGame(this.playerOne.id === player.id ? this.playerTwo.id : this.playerOne.id);
+          return;
+        }
+        player.streak = 0;
+        this.broadcastState();
+        return;
       }
 
       if (submitted === currentQuestion.answer) {
@@ -584,7 +601,7 @@ export class GameRoom {
     });
 
     if (!this.playerOne.isBot && this.playerOne.socket) {
-      update.nextQuestionText = this.questions[this.playerOne.questionIndex].text;
+      update.nextQuestionText = this.playerOne.isSandboxed ? "999/0 = ?" : this.questions[this.playerOne.questionIndex].text;
       update.activeReconnectionToken = this.playerOneReconToken;
       const buffer = ServerGameStateUpdate.encode(update).finish();
       try {
@@ -595,7 +612,7 @@ export class GameRoom {
     }
 
     if (!this.playerTwo.isBot && this.playerTwo.socket) {
-      update.nextQuestionText = this.questions[this.playerTwo.questionIndex].text;
+      update.nextQuestionText = this.playerTwo.isSandboxed ? "999/0 = ?" : this.questions[this.playerTwo.questionIndex].text;
       update.activeReconnectionToken = this.playerTwoReconToken;
       const buffer = ServerGameStateUpdate.encode(update).finish();
       try {
