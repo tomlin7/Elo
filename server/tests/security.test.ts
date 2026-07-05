@@ -61,7 +61,8 @@ describe("Enterprise Security & B2B Federation Tests", () => {
         isFlaggedCheat: false,
       };
 
-      room = new GameRoom("test_room_sec", p1, p2, RoomType.ROOM_TYPE_RANKED);
+      const roomId = `test_room_sec_${Math.random().toString(36).substring(2, 9)}`;
+      room = new GameRoom(roomId, p1, p2, RoomType.ROOM_TYPE_RANKED);
       room.state = MatchState.MATCH_STATE_ACTIVE;
     });
 
