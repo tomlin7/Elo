@@ -13,6 +13,7 @@ import * as Haptics from "expo-haptics";
 import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { Spacing, Radius, Typography } from "@/constants/design";
 
 interface ShopItem {
@@ -227,6 +228,7 @@ export default function CosmeticsVault() {
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.primary }]}>COSMETICS VAULT</Text>
           <View style={[styles.creditsBox, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+            <IconSymbol name="dollarsign.circle.fill" size={14} color={colors.primary} style={{ marginRight: 6 }} />
             <Text style={[styles.creditsText, { color: colors.accent }]}>
               {profile ? profile.credits : 0} 
             </Text>
@@ -265,11 +267,11 @@ const styles = StyleSheet.create({
   },
   creditsBox: {
     flexDirection: "row",
-    alignItems: "baseline",
+    alignItems: "center",
     paddingHorizontal: Spacing.md,
     paddingVertical: 8,
     borderRadius: Radius.md,
-    borderWidth: 1,
+    borderWidth: 2,
   },
   creditsText: {
     fontSize: 20,
@@ -285,6 +287,7 @@ const styles = StyleSheet.create({
   },
   card: {
     marginBottom: Spacing.lg,
+    marginRight: 0,
   },
   cardHeader: {
     flexDirection: "row",

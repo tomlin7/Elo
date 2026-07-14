@@ -100,7 +100,7 @@ export default function DailiesScreen() {
                   {ch.current_value}/{ch.target_value} ({ch.is_completed ? "Completed" : `+${ch.reward_stars} CS`})
                 </Text>
               </View>
-              <View style={[styles.barTrack, { backgroundColor: colors.background }]}>
+              <View style={[styles.barTrack, { backgroundColor: colors.background, borderColor: colors.cardBorder }]}>
                 <View style={[
                   styles.barFill,
                   { width: `${Math.min(100, (ch.current_value / ch.target_value) * 100)}%`, backgroundColor: ch.is_completed ? colors.success : colors.primary },
@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
   trackerInfo: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
   trackerName: { fontSize: 12, fontWeight: "600" },
   trackerVal: { fontSize: 12, fontWeight: "700" },
-  barTrack: { height: 6, borderRadius: 3, overflow: "hidden" },
-  barFill: { height: "100%", borderRadius: 3 },
+  barTrack: { height: 12, borderRadius: Radius.sm, overflow: "hidden", borderWidth: 2 },
+  barFill: { height: "100%" },
   noChallengesText: { fontSize: 12, textAlign: "center", marginVertical: 8 },
   puzzleGrid: { paddingHorizontal: Spacing.lg },
   card: { marginBottom: Spacing.lg },

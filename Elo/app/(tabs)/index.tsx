@@ -241,6 +241,10 @@ export default function HomeScreen() {
             <Text style={[styles.brandTitle, { color: colors.primary }]}>ELO</Text>
             <Text style={[styles.brandSubtitle, { color: colors.textMuted }]}>1v1 MENTAL MATH DUEL</Text>
 
+            <View style={{ marginBottom: Spacing.xl }}>
+              <ShapesComposition type="slide1" size={120} />
+            </View>
+
             <Card style={styles.card}>
               <Text style={[styles.onboardLabel, { color: colors.text }]}>Choose your username</Text>
               <Text style={[styles.onboardDesc, { color: colors.textMuted }]}>
@@ -293,20 +297,29 @@ export default function HomeScreen() {
         <SectionLabel>ONLINE DUELISTS</SectionLabel>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.onlineTray}>
           <View style={styles.onlineUser}>
-            <View style={[styles.onlineRing, { borderColor: colors.primary, backgroundColor: colors.cardBg }]}>
-              <Text style={[styles.onlineInitial, { color: colors.text }]}>U</Text>
+            <View style={styles.avatarShadowContainer}>
+              <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
+              <View style={[styles.onlineRing, { borderColor: colors.primary, backgroundColor: colors.cardBg }]}>
+                <Text style={[styles.onlineInitial, { color: colors.text }]}>U</Text>
+              </View>
             </View>
             <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>YOU</Text>
           </View>
           <View style={styles.onlineUser}>
-            <View style={[styles.onlineRing, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
-              <Text style={[styles.onlineInitial, { color: colors.text }]}>A</Text>
+            <View style={styles.avatarShadowContainer}>
+              <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
+              <View style={[styles.onlineRing, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+                <Text style={[styles.onlineInitial, { color: colors.text }]}>A</Text>
+              </View>
             </View>
             <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>UserA</Text>
           </View>
           <View style={styles.onlineUser}>
-            <View style={[styles.onlineRing, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
-              <Text style={[styles.onlineInitial, { color: colors.text }]}>B</Text>
+            <View style={styles.avatarShadowContainer}>
+              <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
+              <View style={[styles.onlineRing, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+                <Text style={[styles.onlineInitial, { color: colors.text }]}>B</Text>
+              </View>
             </View>
             <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>UserB</Text>
           </View>
@@ -470,8 +483,10 @@ const styles = StyleSheet.create({
   streakWarning: { paddingVertical: 8, paddingHorizontal: Spacing.lg, alignItems: "center" },
   streakWarningText: { fontSize: 11, fontWeight: "800" },
   onlineTray: { paddingLeft: Spacing.lg, marginBottom: Spacing.xl, flexDirection: "row" },
-  onlineUser: { alignItems: "center", marginRight: Spacing.lg },
-  onlineRing: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, justifyContent: "center", alignItems: "center" },
+  onlineUser: { alignItems: "center", marginRight: Spacing.lg + 4 },
+  avatarShadowContainer: { position: "relative", width: 48, height: 48, marginBottom: 6 },
+  avatarShadow: { position: "absolute", top: 4, left: 4, width: 44, height: 44, borderRadius: Radius.md },
+  onlineRing: { width: 44, height: 44, borderRadius: Radius.md, borderWidth: 2.5, justifyContent: "center", alignItems: "center" },
   onlineInitial: { fontSize: 14, fontWeight: "700" },
   onlineUsername: { fontSize: 10, fontWeight: "600", marginTop: 4 },
   questEngine: { marginHorizontal: Spacing.lg, marginBottom: Spacing.xl },
