@@ -12,10 +12,10 @@ import { useRouter } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { Button } from "@/components/ui/Button";
 import { Screen } from "@/components/ui/Screen";
-import { Layout, Radius, Spacing, Typography } from "@/constants/design";
+import { Radius, Spacing, Typography } from "@/constants/design";
 import { appStorage } from "@/src/utils/storage";
 import { useThemeStore } from "@/src/store/themeStore";
-import { IconSymbol } from "@/components/ui/icon-symbol";
+import { ShapesComposition } from "@/components/ui/Shapes";
 
 const INTRO_KEY = "elo_intro_seen";
 const { width } = Dimensions.get("window");
@@ -23,21 +23,21 @@ const { width } = Dimensions.get("window");
 const SLIDES = [
   {
     id: "1",
-    iconName: "bolt" as const,
+    compositionType: "slide1" as const,
     title: "Welcome to Elo",
-    body: "1v1 mental math duels. Out-calculate opponents in real time and climb the global rankings.",
+    body: "1v1 real-time mental math duels.",
   },
   {
     id: "2",
-    iconName: "psychology" as const,
+    compositionType: "slide2" as const,
     title: "Train & Compete",
-    body: "Complete daily puzzles, enter tournaments, and sharpen your speed across math, memory, and logic.",
+    body: "Solve dailies and join tournaments.",
   },
   {
     id: "3",
-    iconName: "star" as const,
+    compositionType: "slide3" as const,
     title: "Earn & Customize",
-    body: "Stack Pies, unlock themes in the Vault, and flex your rank on the leaderboard.",
+    body: "Unlock premium custom themes.",
   },
 ];
 
@@ -84,8 +84,8 @@ export default function IntroScreen() {
           scrollEventThrottle={16}
           renderItem={({ item }) => (
             <View style={[styles.slide, { width }]}>
-              <View style={[styles.emojiRing, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-                <IconSymbol name={item.iconName} size={44} color={colors.primary} />
+              <View style={styles.shapesWrapper}>
+                <ShapesComposition type={item.compositionType} size={130} />
               </View>
               <Text style={[styles.title, { color: colors.text }]}>{item.title}</Text>
               <Text style={[styles.body, { color: colors.textMuted }]}>{item.body}</Text>
@@ -141,14 +141,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  emojiRing: {
-    width: 96,
-    height: 96,
-    borderRadius: Radius.pill,
-    borderWidth: 2,
+  shapesWrapper: {
+    width: 140,
+    height: 140,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.xxl,
   },
   title: {
     ...Typography.title,
@@ -160,7 +158,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     textAlign: "center",
     lineHeight: 22,
-    maxWidth: 300,
+    maxWidth: 260,
   },
   footer: {
     paddingHorizontal: Spacing.xl,
@@ -181,6 +179,5 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
     alignSelf: "center",
     borderWidth: 0,
-    height: Layout.buttonHeight - 8,
   },
 });

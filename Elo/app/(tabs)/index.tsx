@@ -26,6 +26,7 @@ import { Spacing, Radius, Typography } from "@/constants/design";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { StarburstShape, ShapesComposition } from "@/components/ui/Shapes";
 
 interface ModeProps {
   label: string;
@@ -71,6 +72,26 @@ export default function HomeScreen() {
   const { isQueued, queueTime, disciplineMode, matchReadyData, startQueue, cancelQueue } = useMatchmakingStore();
   const [showMatchReadyModal, setShowMatchReadyModal] = useState(false);
   const [matchInfo, setMatchInfo] = useState<any>(null);
+  const spinAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (isQueued) {
+      Animated.loop(
+        Animated.timing(spinAnim, {
+          toValue: 1,
+          duration: 3500,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      spinAnim.setValue(0);
+    }
+  }, [isQueued]);
+
+  const spinRotation = spinAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
 
   useEffect(() => {
     if (matchReadyData) {
@@ -319,24 +340,34 @@ export default function HomeScreen() {
         <SectionLabel>CHALLENGE DUELS</SectionLabel>
         <View style={styles.duelCardContainer}>
           <Card style={styles.duelVariantCard} onPress={handleFindMatch}>
-            <View style={styles.variantHeader}>
-              <Text style={[styles.variantTitle, { color: colors.text }]}>Sprint Duels</Text>
-              <View style={[styles.badgeAmber, { backgroundColor: colors.accent }]}>
-                <Text style={[styles.badgeAmberText, { color: colors.onPrimary }]}>JUST PLAYED</Text>
+            <View style={styles.cardRow}>
+              <View style={{ flex: 1, paddingRight: 8 }}>
+                <View style={styles.variantHeader}>
+                  <Text style={[styles.variantTitle, { color: colors.text }]}>Sprint Duels</Text>
+                  <View style={[styles.badgeAmber, { backgroundColor: colors.accent }]}>
+                    <Text style={[styles.badgeAmberText, { color: colors.onPrimary }]}>LIVE</Text>
+                  </View>
+                </View>
+                <Text style={[styles.variantDescription, { color: colors.textMuted }]}>
+                  Solve math questions under 60s.
+                </Text>
               </View>
+              <ShapesComposition type="sprint" />
             </View>
-            <Text style={[styles.variantDescription, { color: colors.textMuted }]}>
-              High-velocity race to solve mathematical anomalies in under 60 seconds.
-            </Text>
           </Card>
 
           <Card style={styles.duelVariantCard} onPress={() => router.push("/tournament-lobby")}>
-            <View style={styles.variantHeader}>
-              <Text style={[styles.variantTitle, { color: colors.text }]}>Fast & First Duels</Text>
+            <View style={styles.cardRow}>
+              <View style={{ flex: 1, paddingRight: 8 }}>
+                <View style={styles.variantHeader}>
+                  <Text style={[styles.variantTitle, { color: colors.text }]}>Fast & First Duels</Text>
+                </View>
+                <Text style={[styles.variantDescription, { color: colors.textMuted }]}>
+                  First correct response wins.
+                </Text>
+              </View>
+              <ShapesComposition type="first" />
             </View>
-            <Text style={[styles.variantDescription, { color: colors.textMuted }]}>
-              Synchronized matches where the first response captures point dominance.
-            </Text>
           </Card>
         </View>
 
@@ -356,7 +387,9 @@ export default function HomeScreen() {
       <Modal transparent visible={isQueued} animationType="slide">
         <View style={styles.modalOverlay}>
           <Card style={styles.matchmakingCard}>
-            <ActivityIndicator size="large" color={colors.primary} style={{ marginBottom: 16 }} />
+            <Animated.View style={{ transform: [{ rotate: spinRotation }], marginBottom: 20 }}>
+              <StarburstShape color={colors.primary} size={64} />
+            </Animated.View>
             <Text style={[styles.queueTitle, { color: colors.text }]}>SEARCHING FOR OPPONENT</Text>
             <Text style={[styles.queueSubtitle, { color: colors.textMuted }]}>Discipline: {disciplineMode}</Text>
             <Text style={[styles.queueTimerText, { color: colors.primary }]}>{queueTime}s</Text>
@@ -457,8 +490,9 @@ const styles = StyleSheet.create({
   pointsBadge: { position: "absolute", bottom: -6, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 6 },
   pointsText: { fontSize: 8, fontWeight: "900" },
   duelCardContainer: { paddingHorizontal: Spacing.lg, marginBottom: 20 },
-  duelVariantCard: { marginBottom: Spacing.md },
-  variantHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
+  duelVariantCard: { marginBottom: Spacing.md, marginRight: 0 },
+  cardRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  variantHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 4 },
   variantTitle: { fontSize: 15, fontWeight: "700" },
   badgeAmber: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
   badgeAmberText: { fontSize: 9, fontWeight: "900" },

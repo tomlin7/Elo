@@ -15,6 +15,7 @@ import { Spacing, Radius } from "@/constants/design";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { IconSymbol } from "@/components/ui/icon-symbol";
+import { ShapesComposition } from "@/components/ui/Shapes";
 
 interface PuzzleCardProps {
   title: string;
@@ -30,25 +31,28 @@ const PuzzleCard: React.FC<PuzzleCardProps> = ({ title, desc, iconName, isHard, 
   return (
     <Card style={styles.card}>
       <View style={styles.cardHeader}>
-        <IconSymbol name={iconName} size={28} color={colors.primary} style={styles.cardIcon} />
+        <IconSymbol name={iconName} size={24} color={colors.primary} style={styles.cardIcon} />
         <View style={styles.titleBlock}>
-          <Text style={[styles.cardTitle, { color: colors.text }]}>{title}</Text>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "95%" }}>
+            <Text style={[styles.cardTitle, { color: colors.text }]}>{title}</Text>
+            <ShapesComposition type="miniDecor" />
+          </View>
           <Text style={[styles.cardDesc, { color: colors.textMuted }]}>{desc}</Text>
         </View>
       </View>
 
-      <View style={[styles.toggleRow, { backgroundColor: colors.background, borderColor: colors.cardBorder, borderWidth: 1 }]}>
+      <View style={[styles.toggleRow, { backgroundColor: colors.background, borderColor: colors.cardBorder, borderWidth: 2 }]}>
         <TouchableOpacity
-          style={[styles.toggleBtn, !isHard && { backgroundColor: colors.cardBg, borderColor: colors.cardBorder, borderWidth: 1 }]}
+          style={[styles.toggleBtn, !isHard && { backgroundColor: colors.cardBg }]}
           onPress={() => isHard && onToggleDifficulty()}
         >
-          <Text style={[styles.toggleBtnText, { color: colors.textMuted }, !isHard && { color: colors.primary }]}>EASY</Text>
+          <Text style={[styles.toggleBtnText, { color: colors.textMuted }, !isHard && { color: colors.primary, fontWeight: "900" }]}>EASY</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.toggleBtn, isHard && { backgroundColor: colors.cardBg, borderColor: colors.cardBorder, borderWidth: 1 }]}
+          style={[styles.toggleBtn, isHard && { backgroundColor: colors.cardBg }]}
           onPress={() => !isHard && onToggleDifficulty()}
         >
-          <Text style={[styles.toggleBtnText, { color: colors.textMuted }, isHard && { color: colors.primary }]}>HARD</Text>
+          <Text style={[styles.toggleBtnText, { color: colors.textMuted }, isHard && { color: colors.primary, fontWeight: "900" }]}>HARD</Text>
         </TouchableOpacity>
       </View>
 
@@ -111,10 +115,10 @@ export default function DailiesScreen() {
 
         <SectionLabel>BRAIN-TRAINING PUZZLES</SectionLabel>
         <View style={styles.puzzleGrid}>
-          <PuzzleCard title="Sudoku" desc="High-density numeral constraint grid placement." iconName="grid.sharp" isHard={sudokuHard} onToggleDifficulty={() => setSudokuHard(!sudokuHard)} />
-          <PuzzleCard title="Cross Math" desc="Systemic intersecting arithmetic expression pathways." iconName="plus.square.fill" isHard={crossMathHard} onToggleDifficulty={() => setCrossMathHard(!crossMathHard)} />
-          <PuzzleCard title="KenKen" desc="Segmented constraint group calculations." iconName="atom" isHard={kenKenHard} onToggleDifficulty={() => setKenKenHard(!kenKenHard)} />
-          <PuzzleCard title="Math Maze" desc="Step-sequence directional arithmetic routing." iconName="arrow.triangle.path" isHard={mazeHard} onToggleDifficulty={() => setMazeHard(!mazeHard)} />
+          <PuzzleCard title="Sudoku" desc="Complete the classic grid challenge." iconName="grid.sharp" isHard={sudokuHard} onToggleDifficulty={() => setSudokuHard(!sudokuHard)} />
+          <PuzzleCard title="Cross Math" desc="Solve intersecting equation paths." iconName="plus.square.fill" isHard={crossMathHard} onToggleDifficulty={() => setCrossMathHard(!crossMathHard)} />
+          <PuzzleCard title="KenKen" desc="Segmented calculations grid." iconName="atom" isHard={kenKenHard} onToggleDifficulty={() => setKenKenHard(!kenKenHard)} />
+          <PuzzleCard title="Math Maze" desc="Find the arithmetic route." iconName="arrow.triangle.path" isHard={mazeHard} onToggleDifficulty={() => setMazeHard(!mazeHard)} />
         </View>
       </ScrollView>
     </Screen>
