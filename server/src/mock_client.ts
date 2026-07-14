@@ -1,7 +1,7 @@
 import { elo } from "./proto/elo_proto.js";
 
-const ClientAction = elo.v2.ClientAction;
-const ServerGameStateUpdate = elo.v2.ServerGameStateUpdate;
+const ClientAction = elo.v3.ClientAction;
+const ServerGameStateUpdate = elo.v3.ServerGameStateUpdate;
 
 const serverUrl = "ws://localhost:8080/ws?playerId=mock_player";
 console.log(`Connecting to: ${serverUrl}`);

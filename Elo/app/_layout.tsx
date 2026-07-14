@@ -1,7 +1,7 @@
 import { DarkTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { Palette } from '@/constants/design';
@@ -17,19 +17,21 @@ const INTRO_KEY = 'elo_intro_seen';
 function IntroGate({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const segments = useSegments();
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    if (!segments || segments.length === 0) return;
+
     const seen = appStorage.getString(INTRO_KEY) === 'true';
     const onIntro = segments[0] === 'intro';
 
     if (!seen && !onIntro) {
-      router.replace('/intro');
+      const timer = setTimeout(() => {
+        router.replace('/intro');
+      }, 0);
+      return () => clearTimeout(timer);
     }
-    setReady(true);
-  }, []);
+  }, [segments]);
 
-  if (!ready) return null;
   return <>{children}</>;
 }
 

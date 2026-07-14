@@ -244,7 +244,7 @@ export class GameRoom {
     setTimeout(runBotTurn, 1500 + Math.random() * 1000);
   }
 
-  handleClientAction(playerId: string, action: elo.v2.IClientAction) {
+  handleClientAction(playerId: string, action: elo.v3.IClientAction) {
     if (this.state !== MatchState.MATCH_STATE_ACTIVE) return;
 
     const player = this.playerOne.id === playerId ? this.playerOne : this.playerTwo;
