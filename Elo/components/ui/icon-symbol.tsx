@@ -29,6 +29,7 @@ const MAPPING = {
   'lock.fill': 'lock',
   'bolt': 'flash-on',
   'psychology': 'psychology',
+  'dollarsign.circle.fill': 'monetization-on',
 } as IconMapping;
 
 /**

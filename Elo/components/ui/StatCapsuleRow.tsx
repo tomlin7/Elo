@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Radius, Spacing } from "@/constants/design";
 import { useThemeStore } from "@/src/store/themeStore";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 type Stat = { icon: string; value: string };
 
@@ -22,7 +23,7 @@ export function StatCapsuleRow({ stats }: StatCapsuleRowProps) {
             { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
           ]}
         >
-          <Text style={[styles.icon, { color: colors.primary }]}>{stat.icon}</Text>
+          <IconSymbol name={stat.icon as any} size={14} color={colors.primary} style={{ marginRight: 6 }} />
           <Text style={[styles.value, { color: colors.text }]}>{stat.value}</Text>
         </View>
       ))}
@@ -44,12 +45,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     alignItems: "center",
-    borderWidth: 1,
-  },
-  icon: {
-    fontSize: 14,
-    fontWeight: "800",
-    marginRight: 6,
+    borderWidth: 2,
   },
   value: {
     fontSize: 12,

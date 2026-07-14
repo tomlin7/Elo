@@ -78,7 +78,7 @@ export function Card({ style, variant = "default", onPress, children, ...props }
             borderStyle: variant === "dashed" ? "dashed" : "solid",
           },
           innerStyle,
-          isPressed && { transform: [{ translateX: 5 }, { translateY: 5 }] },
+          isPressed && { transform: [{ translateX: 7 }, { translateY: 7 }] },
         ]}
         {...cardProps}
         {...props}
@@ -92,19 +92,19 @@ export function Card({ style, variant = "default", onPress, children, ...props }
 const styles = StyleSheet.create({
   shadowContainer: {
     position: "relative",
-    marginBottom: 5,
-    marginRight: 5,
+    marginBottom: 7,
+    marginRight: 7,
   },
   shadowBlock: {
     position: "absolute",
-    top: 5,
-    left: 5,
-    right: -5,
-    bottom: -5,
+    top: 7,
+    left: 7,
+    right: -7,
+    bottom: -7,
     borderRadius: Radius.lg,
   },
   card: {
-    borderWidth: 2,
+    borderWidth: 3,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
   },

@@ -4,20 +4,20 @@
  */
 
 export const Palette = {
-  charcoal: "#18181B",
-  charcoalDeep: "#09090B",
-  surface: "#27272A",
+  charcoal: "#252538",
+  charcoalDeep: "#1E1E2E",
+  surface: "#313244",
   border: "#000000",
-  blue: "#2563EB",
-  blueDark: "#1D4ED8",
-  emerald: "#10B981",
-  emeraldDark: "#047857",
-  amber: "#F59E0B",
-  white: "#FFFFFF",
-  muted: "#71717A",
+  blue: "#89B4FA",
+  blueDark: "#5897F7",
+  emerald: "#A6E3A1",
+  emeraldDark: "#85D57E",
+  amber: "#F9E2AF",
+  white: "#CDD6F4",
+  muted: "#A6ADC8",
   black: "#000000",
-  danger: "#EF4444",
-  success: "#10B981",
+  danger: "#F38BA8",
+  success: "#A6E3A1",
 } as const;
 
 export const Spacing = {

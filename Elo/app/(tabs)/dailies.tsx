@@ -80,9 +80,9 @@ export default function DailiesScreen() {
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <StatCapsuleRow
           stats={[
-            { icon: "PI", value: `${profile?.credits ?? 0} Pies` },
-            { icon: "STRK", value: `${profile?.dailyStreak ?? 0} Streaks` },
-            { icon: "XP", value: `${profile?.xp ?? 0} XP` },
+            { icon: "dollarsign.circle.fill", value: `${profile?.credits ?? 0} Pies` },
+            { icon: "bolt", value: `${profile?.dailyStreak ?? 0} Streaks` },
+            { icon: "star", value: `${profile?.xp ?? 0} XP` },
           ]}
         />
 

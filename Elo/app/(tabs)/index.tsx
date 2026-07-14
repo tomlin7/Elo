@@ -238,9 +238,9 @@ export default function HomeScreen() {
 
         <StatCapsuleRow
           stats={[
-            { icon: "PI", value: `${profile.credits} Pies` },
-            { icon: "STRK", value: `${profile.dailyStreak} Streaks` },
-            { icon: "XP", value: `${profile.xp} XP` },
+            { icon: "dollarsign.circle.fill", value: `${profile.credits} Pies` },
+            { icon: "bolt", value: `${profile.dailyStreak} Streaks` },
+            { icon: "star", value: `${profile.xp} XP` },
           ]}
         />
 

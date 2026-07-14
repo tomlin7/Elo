@@ -121,11 +121,11 @@ export function Button({
             borderRadius: borderRadius,
             backgroundColor: palette.bg,
             borderColor: palette.border,
-            borderWidth: 2,
+            borderWidth: 3,
             opacity: disabled || loading ? 0.6 : 1,
           },
           innerStyle,
-          isPressed && { transform: [{ translateX: 4 }, { translateY: 4 }] },
+          isPressed && { transform: [{ translateX: 6 }, { translateY: 6 }] },
         ]}
         onPressIn={() => setIsPressed(true)}
         onPressOut={() => setIsPressed(false)}
@@ -146,15 +146,15 @@ export function Button({
 const styles = StyleSheet.create({
   shadowContainer: {
     position: "relative",
-    marginBottom: 4,
-    marginRight: 4,
+    marginBottom: 6,
+    marginRight: 6,
   },
   shadowBlock: {
     position: "absolute",
-    top: 4,
-    left: 4,
-    right: -4,
-    bottom: -4,
+    top: 6,
+    left: 6,
+    right: -6,
+    bottom: -6,
   },
   base: {
     justifyContent: "center",
