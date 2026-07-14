@@ -1,21 +1,23 @@
 /**
- * Elo design system — Matte Charcoal & Electric Lime
+ * Elo design system — Neo-Brutalist 3D style
  * Shared spacing, typography, radii, and semantic palette tokens.
  */
 
 export const Palette = {
-  charcoal: "#161616",
-  charcoalDeep: "#0A0A0C",
-  surface: "#262626",
-  border: "#333333",
-  lime: "#8AFF29",
-  limeDark: "#6BD41F",
-  amber: "#FFD400",
+  charcoal: "#18181B",
+  charcoalDeep: "#09090B",
+  surface: "#27272A",
+  border: "#000000",
+  blue: "#2563EB",
+  blueDark: "#1D4ED8",
+  emerald: "#10B981",
+  emeraldDark: "#047857",
+  amber: "#F59E0B",
   white: "#FFFFFF",
-  muted: "#8E8E93",
+  muted: "#71717A",
   black: "#000000",
   danger: "#EF4444",
-  success: "#00E676",
+  success: "#10B981",
 } as const;
 
 export const Spacing = {
@@ -29,10 +31,10 @@ export const Spacing = {
 } as const;
 
 export const Radius = {
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
+  sm: 6,
+  md: 10,
+  lg: 14,
+  xl: 18,
   pill: 999,
 } as const;
 

@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
   type TouchableOpacityProps,
 } from "react-native";
 import { Layout, Radius, Typography } from "@/constants/design";
@@ -30,49 +31,130 @@ export function Button({
   const { colors } = useThemeStore();
 
   const palette = {
-    primary: { bg: colors.primary, text: colors.onPrimary, border: colors.primary },
-    secondary: { bg: colors.cardBg, text: colors.text, border: colors.cardBorder },
-    destructive: { bg: colors.danger, text: colors.onPrimary, border: colors.danger },
-    ghost: { bg: "transparent", text: colors.textMuted, border: colors.cardBorder },
+    primary: { bg: colors.primary, text: colors.onPrimary, border: "#000000" },
+    secondary: { bg: colors.cardBg, text: colors.text, border: "#000000" },
+    destructive: { bg: colors.danger, text: colors.onPrimary, border: "#000000" },
+    ghost: { bg: "transparent", text: colors.textMuted, border: "transparent" },
   }[variant];
 
+  const buttonHeight = compact ? 38 : Layout.buttonHeight;
+  const borderRadius = compact ? Radius.sm : Radius.md;
+
+  if (variant === "ghost") {
+    return (
+      <TouchableOpacity
+        style={[
+          styles.base,
+          {
+            height: buttonHeight,
+            borderRadius: borderRadius,
+            backgroundColor: palette.bg,
+            borderColor: palette.border,
+            borderWidth: 1,
+            opacity: disabled || loading ? 0.6 : 1,
+          },
+          style,
+        ]}
+        disabled={disabled || loading}
+        activeOpacity={0.8}
+        {...props}
+      >
+        {loading ? (
+          <ActivityIndicator color={palette.text} />
+        ) : (
+          <Text style={[styles.label, { color: palette.text }]}>{label}</Text>
+        )}
+      </TouchableOpacity>
+    );
+  }
+
+  // Extract layout-related properties from style
+  const flattenedStyle = StyleSheet.flatten(style) || {};
+  const {
+    margin,
+    marginHorizontal,
+    marginVertical,
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+    flex,
+    width,
+    alignSelf,
+    position,
+    top,
+    left,
+    right,
+    bottom,
+    ...innerStyle
+  } = flattenedStyle;
+
+  const containerStyle = {
+    margin,
+    marginHorizontal,
+    marginVertical,
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+    flex,
+    width,
+    alignSelf,
+    position,
+    top,
+    left,
+    right,
+    bottom,
+  };
+
   return (
-    <TouchableOpacity
-      style={[
-        styles.base,
-        compact && styles.compact,
-        {
-          backgroundColor: palette.bg,
-          borderColor: palette.border,
-          opacity: disabled || loading ? 0.6 : 1,
-        },
-        style,
-      ]}
-      disabled={disabled || loading}
-      activeOpacity={0.8}
-      {...props}
-    >
-      {loading ? (
-        <ActivityIndicator color={palette.text} />
-      ) : (
-        <Text style={[styles.label, { color: palette.text }]}>{label}</Text>
-      )}
-    </TouchableOpacity>
+    <View style={[styles.shadowContainer, containerStyle]}>
+      <View style={[styles.shadowBlock, { borderRadius: borderRadius, backgroundColor: "#000000" }]} />
+      <TouchableOpacity
+        style={[
+          styles.base,
+          {
+            height: buttonHeight,
+            borderRadius: borderRadius,
+            backgroundColor: palette.bg,
+            borderColor: palette.border,
+            borderWidth: 2,
+            opacity: disabled || loading ? 0.6 : 1,
+          },
+          innerStyle,
+        ]}
+        disabled={disabled || loading}
+        activeOpacity={0.8}
+        {...props}
+      >
+        {loading ? (
+          <ActivityIndicator color={palette.text} />
+        ) : (
+          <Text style={[styles.label, { color: palette.text }]}>{label}</Text>
+        )}
+      </TouchableOpacity>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  shadowContainer: {
+    position: "relative",
+    marginBottom: 4,
+    marginRight: 4,
+  },
+  shadowBlock: {
+    position: "absolute",
+    top: 4,
+    left: 4,
+    right: -4,
+    bottom: -4,
+  },
   base: {
-    height: Layout.buttonHeight,
-    borderRadius: Radius.md,
-    borderWidth: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 16,
-  },
-  compact: {
-    height: 38,
-    borderRadius: Radius.sm,
+    width: "100%",
   },
   label: {
     ...Typography.button,
