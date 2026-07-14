@@ -1,0 +1,70 @@
+---
+title: "Zero-Trust Security: Hardware Attestation, Silent Sandboxes & Honeypots"
+description: "A deep dive into Elo's multi-layered security infrastructure—combining Google Play Integrity checks, B2B federation, keystroke heuristics, silent sandboxing, and impossible question traps."
+date: "2026-07-14"
+author: "Elo Engineering Team"
+---
+
+As competitive math duels grow, maintaining fair play is our top priority. In this blog post, we discuss Elo's multi-layered anti-cheat and security framework—covering Google Play Integrity, B2B partner tournament auth, keystroke heuristics, silent sandboxing, and honey-pot validation traps.
+
+---
+
+## 1. Hardware Attestation via Google Play Integrity
+
+To ensure that the client software has not been decompiled, modified, or loaded inside a virtual environment, the Elo app performs hardware-level attestation:
+
+* **Attestation Handshake**: When upgrading a client connection to WebSockets, the React Native client sends a signed hardware attestation token obtained from Google Play Integrity.
+* **Under 8ms Verification**: The server decrypts and verifies the integrity token using our regional security validator in under an **8ms window**, avoiding match start delays.
+* **Tamper Mitigation**: Any presence of root tools (Magisk, Xposed), emulator frameworks, or custom-compiled APKs results in immediate connection termination with a `400 Bad Request` status.
+
+---
+
+## 2. B2B Corporate Federation Portal
+
+For partner tournaments hosted by e-sports federations, Elo provides a secure corporate federation gateway:
+
+* **B2B API Key Registry**: Authorized partner systems register unique cryptographic keys via `registerB2BPartner`.
+* **Verification & Provisioning**: Partner platforms authenticate their API requests through `verifyB2BPartnerKey` to provision dedicated tournament lobbies, modify gameplay rulesets, and fetch real-time tournament standings for external broadcasts.
+
+---
+
+## 3. Keystroke Cadence Heuristics & Silent Sandboxing
+
+Bots can solve mathematical equations instantly. To prevent bots from ruining the leaderboard while keeping our detection signatures hidden, we implement silent sandboxing:
+
+* **Keystroke Timers**: The server calculates the exact elapsed time between consecutive inputs sent via the WebSocket.
+* **Anomalous Cadence Detection**: Any player submitting consecutive keystrokes under **120ms** more than 4 times is flagged as a potential bot.
+* **Silent Sandbox Routing**: Flagged players are not kicked or shown an error screen. Instead, the server silently redirects their WebSocket connection to a isolated sandboxed environment. They play out the match against sandboxed opponents without realizing they have been quarantined, leaving our global ranked database untouched.
+
+```
+                  [Client Inputs]
+                         │
+              [Cadence Heuristics]
+               /                \
+      (Normal) /                  \ (Below 120ms)
+              ▼                    ▼
+     [Global Ranked ELO]    [Silent Sandbox]
+                            (Honeypot Trapped)
+```
+
+---
+
+## 4. Honey-Pot Question Traps
+
+Once quarantined inside the silent sandbox, players are subjected to impossible mathematical honey-pots:
+
+* **Trap Generation**: The server injects unsolvable division-by-zero or non-invertible matrix questions (e.g. `999/0 = ?` or `det(A)=0`) into the question pipeline.
+* **Catching Bots**: Human players get stuck on the unsolvable question. However, bots reading raw memory values might bypass the display representation and attempt to solve the *original* hidden question index.
+* **Permanent Hardware Ban**: If a player submits the correct answer to the hidden question while the display shows an unsolvable honey-pot, they are immediately banned. The incident is logged in the `security_violations` ledger, and the device ID is blacklisted.
+
+---
+
+## 5. Security Success Indicators
+
+| Security Metric | Target | Verification Method |
+| --- | --- | --- |
+| **Attestation Decryption Speed** | `< 8ms` | Server timing logs for connection upgrades. |
+| **Bot Detection Rate** | $100\%$ | Testing sandboxed bots against honey-pot questions in staging. |
+| **False Positive Rate** | $0.00\%$ | Keystroke analysis logs from human playtests. |
+
+With client security locked down, we are looking at our season engagement mechanics, progressive leveling, and live ops. Stay tuned!

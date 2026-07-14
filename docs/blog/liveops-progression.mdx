@@ -1,0 +1,72 @@
+---
+title: "Live-Ops Systems: Designing the Seasonal Combat Pass & Daily Challenge Engine"
+description: "A technical overview of Elo's engagement architecture—featuring bitmasked rewards tracking, dynamic 24hr objective rotations, global event multipliers, and season rollovers."
+date: "2026-07-14"
+author: "Elo Engineering Team"
+---
+
+With the competitive multiplayer loop and security architecture in place, building long-term player engagement is key. This update outlines our Live-Ops systems—covering the Combat Pass star economy, bitmasked reward claiming, dynamic daily challenge rotations, stacked global events, and our end-of-season rollover engine.
+
+---
+
+## 1. The Combat Pass Star Economy & Bitmask Ledger
+
+Elo players progress through the seasonal **Combat Pass** by earning **Combat Stars (CS)**:
+
+* **Earning Stars**: Players earn Combat Stars dynamically. Match completions award 3 stars for wins and 1 star for losses. Additional stars are awarded for completing daily challenges.
+* **50-Tier Progression**: The Combat Pass spans 50 individual tiers, requiring **10 Combat Stars** to unlock the next level.
+* **Bitmasked Claim Ledger**: To prevent players from double-claiming rewards, we track claimed items transactionally on the server using a bitmask integer. Claiming tier $N$ updates the bitmask at bit position $N$:
+  ```ts
+  // Example bitmask update in TypeScript
+  const updatedMask = currentMask | (1n << BigInt(tierId));
+  ```
+* **Cosmetics Vault Unlocks**: Rewards alternate between free Credits and premium theme files (such as Neon Ghost, Cyberpunk, or Spectral Aura) loaded from the cosmetics vault.
+
+---
+
+## 2. Dynamic 24-Hour Daily Challenges
+
+Every day at 00:00:00 UTC, the server rotates three unique challenge slots for each player:
+
+1. **Speed Slot**: Solve a specific number of math equations in under a certain millisecond threshold (e.g., solve 5 matrix problems in under 600ms).
+2. **Endurance Slot**: Maintain an active correct answer streak in ranked duels.
+3. **Volume Slot**: Clear a target number of ranked wins or win a Blitz tournament.
+
+### Milestone Tracking & Auto-Awards
+
+Post-match calculations update player challenge records asynchronously. Once a challenge is completed, the server updates the database status and automatically adds the bonus Combat Stars directly to the player's active Combat Pass progression ledger.
+
+---
+
+## 3. Global Live-Ops Event Modifiers
+
+To run special events like Double-XP weekends or holiday promotions, the server supports active modifier overlays:
+
+* **Stacked Event Multipliers**: The game loop checks for active event rules (e.g. `DOUBLE_XP`, `DOUBLE_CREDITS`).
+* **Dynamic Calculations**: Multipliers stack dynamically on the server during match settlement, multiplying base XP and credits rewards before saving the transaction.
+* **Real-time Broadcaster**: The server announces active events to connected clients, rendering active event banners across home screens.
+
+---
+
+## 4. End-of-Season Rollover & Soft ELO Reset
+
+Elo runs on a 30-day seasonal competitive cycle. When a season ends, the rollover engine executes the following steps:
+
+1. **Archive Standings**: Compiles final rankings and records players' peak ratings in the `season_archives` database table.
+2. **Normalise Ratings**: Applies a soft-reset rating compression formula to players above the ELO 1200 mean. This prevents rating inflation while maintaining player skill hierarchy:
+
+$$\text{Elo}_{\text{New}} = 1200 + \left( \frac{\text{Elo}_{\text{Current}} - 1200}{2} \right)$$
+
+3. **Reset Progression**: Resets Combat Pass experience tiers and registers the new season seed in the game server state.
+
+---
+
+## 5. Live-Ops Target Metrics
+
+| Metric | Target Goal | Verification Method |
+| --- | --- | --- |
+| **Bitmask Settlement Speed** | Under 2ms | Transaction logs tracking bitmask updates. |
+| **Rollover Runtime** | `< 2.0s` | Running the rollover database migration script under simulation. |
+| **Modifier Overhead** | Zero latency impact | Verifying that active event multipliers do not delay WebSocket match resolution times. |
+
+With the progression and Live-Ops frameworks complete, Elo is now a fully featured, competitive e-sports platform. Stay tuned for future design and feature updates!
