@@ -193,7 +193,7 @@ export default function AnalyticsDashboardScreen() {
               <Text style={[styles.detailTitle, { color: colors.text }]}>
                 VS {selectedMatch.opponentUsername}
               </Text>
-              <Text style={[styles.detailStatus, { color: selectedMatch.isVictory ? colors.accent : "#EF4444" }]}>
+              <Text style={[styles.detailStatus, { color: selectedMatch.isVictory ? colors.accent : colors.danger }]}>
                 {selectedMatch.isVictory ? "VICTORY" : "DEFEAT"} ({selectedMatch.eloDelta >= 0 ? `+${selectedMatch.eloDelta}` : selectedMatch.eloDelta} Elo)
               </Text>
 
@@ -229,7 +229,7 @@ export default function AnalyticsDashboardScreen() {
                     <Text style={{ color: colors.textMuted, fontSize: 11 }}>{dateStr}</Text>
                   </View>
                   <View style={{ alignItems: "flex-end" }}>
-                    <Text style={[styles.statusText, { color: item.isVictory ? colors.accent : "#EF4444" }]}>
+                    <Text style={[styles.statusText, { color: item.isVictory ? colors.accent : colors.danger }]}>
                       {item.isVictory ? "WIN" : "LOSS"}
                     </Text>
                     <Text style={{ color: colors.text, fontSize: 12, fontWeight: "700" }}>

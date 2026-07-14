@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
   Alert,
   FlatList,
-  SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from "react-native";
 import { useProfileStore } from "../../src/store/profileStore.ts";
-import { useThemeStore, ThemeId, THEMES } from "../../src/store/themeStore.ts";
+import { useThemeStore, ThemeId } from "../../src/store/themeStore.ts";
 import { getBackendUrls } from "../../src/utils/auth.ts";
-import { StatusBar } from "expo-status-bar";
-import Svg, { Circle, Rect } from "react-native-svg";
 import * as Haptics from "expo-haptics";
+import { Screen } from "@/components/ui/Screen";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Spacing, Radius, Typography } from "@/constants/design";
 
 interface ShopItem {
   id: string;
@@ -165,7 +164,7 @@ export default function CosmeticsVault() {
       });
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (err: any) {
+    } catch (err) {
       Alert.alert("Error", "Failed to select item");
     } finally {
       setLoadingItemId(null);
@@ -185,10 +184,10 @@ export default function CosmeticsVault() {
       : profile.activeTitle === item.name;
 
     return (
-      <View style={[styles.card, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+      <Card style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={[styles.itemName, { color: colors.text }]}>{item.name}</Text>
-          <View style={styles.badge}>
+          <View style={[styles.badge, { backgroundColor: colors.cardBorder }]}>
             <Text style={[styles.badgeText, { color: colors.primary }]}>{item.type.toUpperCase()}</Text>
           </View>
         </View>
@@ -197,43 +196,33 @@ export default function CosmeticsVault() {
 
         <View style={styles.cardFooter}>
           {isUnlocked ? (
-            <TouchableOpacity
-              style={[
-                styles.actionBtn,
-                isActive ? { backgroundColor: colors.accentMuted, borderColor: colors.accent } : { backgroundColor: "rgba(255,255,255,0.05)", borderColor: colors.cardBorder }
-              ]}
+            <Button
+              label={isActive ? "ACTIVE" : "EQUIP"}
+              variant={isActive ? "ghost" : "secondary"}
               onPress={() => handleSelect(item)}
+              loading={loadingItemId === item.id}
               disabled={loadingItemId !== null || isActive}
-            >
-              {loadingItemId === item.id ? (
-                <ActivityIndicator size="small" color={colors.primary} />
-              ) : (
-                <Text style={[styles.actionText, { color: isActive ? colors.accent : colors.text }]}>
-                  {isActive ? "ACTIVE" : "EQUIP"}
-                </Text>
-              )}
-            </TouchableOpacity>
+              compact
+              style={styles.actionBtn}
+            />
           ) : (
-            <TouchableOpacity
-              style={[styles.buyBtn, { backgroundColor: colors.primary }]}
+            <Button
+              label={`BUY - ${item.cost} CREDITS`}
+              variant="primary"
               onPress={() => handlePurchase(item)}
+              loading={loadingItemId === item.id}
               disabled={loadingItemId !== null}
-            >
-              {loadingItemId === item.id ? (
-                <ActivityIndicator size="small" color="#FFF" />
-              ) : (
-                <Text style={styles.buyBtnText}>BUY - {item.cost} CREDITS</Text>
-              )}
-            </TouchableOpacity>
+              compact
+              style={styles.buyBtn}
+            />
           )}
         </View>
-      </View>
+      </Card>
     );
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <StatusBar style={themeId === "light" ? "dark" : "light"} />
+    <Screen>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={[styles.title, { color: colors.primary }]}>COSMETICS VAULT</Text>
@@ -253,37 +242,33 @@ export default function CosmeticsVault() {
           showsVerticalScrollIndicator={false}
         />
       </View>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 16,
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.lg,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
-    marginTop: 12,
+    marginBottom: Spacing.xl,
+    marginTop: Spacing.md,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "900",
-    letterSpacing: 1.5,
+    ...Typography.title,
+    fontSize: 22,
   },
   creditsBox: {
     flexDirection: "row",
     alignItems: "baseline",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 14,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 8,
+    borderRadius: Radius.md,
     borderWidth: 1,
   },
   creditsText: {
@@ -291,72 +276,48 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   creditsLabel: {
+    ...Typography.caption,
     fontSize: 10,
-    fontWeight: "700",
-    letterSpacing: 1,
+    textTransform: "uppercase",
   },
   list: {
-    paddingBottom: 24,
+    paddingBottom: Spacing.xxxl,
   },
   card: {
-    borderRadius: 20,
-    borderWidth: 1,
-    padding: 20,
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: Spacing.sm,
   },
   itemName: {
-    fontSize: 18,
-    fontWeight: "800",
+    ...Typography.heading,
   },
   badge: {
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: Radius.sm,
   },
   badgeText: {
+    ...Typography.caption,
     fontSize: 9,
-    fontWeight: "800",
-    letterSpacing: 0.5,
+    textTransform: "uppercase",
   },
   itemDesc: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 16,
+    ...Typography.body,
+    marginBottom: Spacing.lg,
   },
   cardFooter: {
     alignItems: "flex-end",
   },
   buyBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buyBtnText: {
-    color: "#FFFFFF",
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 0.5,
+    paddingHorizontal: Spacing.lg,
+    height: 38,
   },
   actionBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 12,
-    borderWidth: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  actionText: {
-    fontSize: 13,
-    fontWeight: "800",
-    letterSpacing: 0.5,
+    paddingHorizontal: Spacing.lg,
+    height: 38,
   },
 });

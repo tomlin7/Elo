@@ -8,8 +8,11 @@ export interface ThemeColors {
   text: string;
   textMuted: string;
   primary: string;
+  onPrimary: string;
   accent: string;
   accentMuted: string;
+  danger: string;
+  success: string;
   correctFlash: string;
   wrongFlash: string;
 }
@@ -24,8 +27,11 @@ export const THEMES: Record<ThemeId, ThemeColors> = {
     text: "#FFFFFF",
     textMuted: "#8E8E93",
     primary: "#8AFF29",
+    onPrimary: "#000000",
     accent: "#FFD400",
     accentMuted: "rgba(255, 212, 0, 0.2)",
+    danger: "#EF4444",
+    success: "#00E676",
     correctFlash: "rgba(0, 230, 118, 0.25)",
     wrongFlash: "rgba(239, 68, 68, 0.25)",
   },
@@ -35,9 +41,12 @@ export const THEMES: Record<ThemeId, ThemeColors> = {
     cardBorder: "rgba(189, 147, 249, 0.3)",
     text: "#F8F8F2",
     textMuted: "#6272A4",
-    primary: "#BD93F9", // Purple
-    accent: "#50FA7B", // Green
+    primary: "#BD93F9",
+    onPrimary: "#000000",
+    accent: "#50FA7B",
     accentMuted: "rgba(80, 250, 123, 0.2)",
+    danger: "#FF5555",
+    success: "#50FA7B",
     correctFlash: "rgba(80, 250, 123, 0.3)",
     wrongFlash: "rgba(255, 85, 85, 0.3)",
   },
@@ -47,9 +56,12 @@ export const THEMES: Record<ThemeId, ThemeColors> = {
     cardBorder: "rgba(136, 192, 208, 0.2)",
     text: "#ECEFF4",
     textMuted: "#D8DEE9",
-    primary: "#88C0D0", // Frost Blue
-    accent: "#A3BE8C", // Sage Green
+    primary: "#88C0D0",
+    onPrimary: "#2E3440",
+    accent: "#A3BE8C",
     accentMuted: "rgba(163, 190, 140, 0.2)",
+    danger: "#BF616A",
+    success: "#A3BE8C",
     correctFlash: "rgba(163, 190, 140, 0.3)",
     wrongFlash: "rgba(191, 97, 106, 0.3)",
   },
@@ -59,9 +71,12 @@ export const THEMES: Record<ThemeId, ThemeColors> = {
     cardBorder: "rgba(0, 240, 255, 0.4)",
     text: "#FFFFFF",
     textMuted: "rgba(0, 240, 255, 0.5)",
-    primary: "#FF007F", // Neon Pink
-    accent: "#00F0FF", // Neon Cyan
+    primary: "#FF007F",
+    onPrimary: "#000000",
+    accent: "#00F0FF",
     accentMuted: "rgba(0, 240, 255, 0.2)",
+    danger: "#FF007F",
+    success: "#00F0FF",
     correctFlash: "rgba(0, 240, 255, 0.3)",
     wrongFlash: "rgba(255, 0, 127, 0.3)",
   },
@@ -71,9 +86,12 @@ export const THEMES: Record<ThemeId, ThemeColors> = {
     cardBorder: "#E2E8F0",
     text: "#0F172A",
     textMuted: "#64748B",
-    primary: "#4F46E5", // Indigo
-    accent: "#059669", // Emerald Green
+    primary: "#4F46E5",
+    onPrimary: "#FFFFFF",
+    accent: "#059669",
     accentMuted: "rgba(5, 150, 105, 0.15)",
+    danger: "#DC2626",
+    success: "#059669",
     correctFlash: "rgba(5, 150, 105, 0.2)",
     wrongFlash: "rgba(220, 38, 38, 0.2)",
   }

@@ -18,7 +18,8 @@ import Animated, {
   withSequence,
   withTiming
 } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+import { useThemeStore } from "../src/store/themeStore.ts";
+import { Palette } from "@/constants/design";
 
 export default function BattleScreen() {
   const router = useRouter();
@@ -368,7 +369,7 @@ export default function BattleScreen() {
             </View>
 
             <View style={styles.timerBlock}>
-              <Text style={[styles.timerText, { color: colors.text }, timeRemaining <= 10 && styles.lowTimerText]}>
+              <Text style={[styles.timerText, { color: colors.text }, timeRemaining <= 10 && { color: colors.danger }]}>
                 {timeRemaining}s
               </Text>
             </View>
@@ -385,7 +386,7 @@ export default function BattleScreen() {
 
           {/* Time Progress Bar */}
           <View style={[styles.progressBarContainer, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-            <View style={[styles.progressBar, { width: `${(timeRemaining / (gameState.durationSeconds || 60)) * 100}%`, backgroundColor: timeRemaining <= 10 ? "#EF4444" : colors.primary }]} />
+            <View style={[styles.progressBar, { width: `${(timeRemaining / (gameState.durationSeconds || 60)) * 100}%`, backgroundColor: timeRemaining <= 10 ? colors.danger : colors.primary }]} />
           </View>
 
           {/* Telemetry Control Panel */}
@@ -503,7 +504,7 @@ export default function BattleScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#0A0A0C",
+    backgroundColor: Palette.charcoalDeep,
   },
   telemetryControlsRow: {
     flexDirection: "row",
@@ -537,7 +538,7 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#0A0A0C",
+    backgroundColor: Palette.charcoalDeep,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -605,7 +606,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   reconnectBtn: {
-    backgroundColor: "#6366F1",
+    backgroundColor: Palette.lime,
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 12,
@@ -617,7 +618,7 @@ const styles = StyleSheet.create({
   },
   countdownContainer: {
     flex: 1,
-    backgroundColor: "#0A0A0C",
+    backgroundColor: Palette.charcoalDeep,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -631,7 +632,7 @@ const styles = StyleSheet.create({
   countdownNum: {
     fontSize: 120,
     fontWeight: "900",
-    color: "#6366F1",
+    color: Palette.lime,
   },
   battleContainer: {
     flex: 1,
@@ -660,7 +661,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   battleStreak: {
-    color: "#10B981",
+    color: Palette.success,
     fontSize: 11,
     fontWeight: "600",
     marginTop: 1,
@@ -713,7 +714,7 @@ const styles = StyleSheet.create({
   currentInputText: {
     fontSize: 32,
     fontWeight: "700",
-    color: "#6366F1",
+    color: Palette.lime,
   },
   ghostProgressArea: {
     height: 24,
@@ -757,7 +758,7 @@ const styles = StyleSheet.create({
     marginBottom: 36,
   },
   winBanner: {
-    color: "#10B981",
+    color: Palette.success,
   },
   drawBanner: {
     color: "#F59E0B",
@@ -824,7 +825,7 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   eloPositive: {
-    color: "#10B981",
+    color: Palette.success,
   },
   eloNegative: {
     color: "#EF4444",
@@ -835,7 +836,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   doneBtn: {
-    backgroundColor: "#6366F1",
+    backgroundColor: Palette.lime,
     height: 56,
     width: "100%",
     borderRadius: 16,

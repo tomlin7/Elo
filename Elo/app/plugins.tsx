@@ -95,7 +95,7 @@ export default function PluginsScreen() {
                   style={[
                     styles.actionBtn,
                     {
-                      backgroundColor: isActive ? "#EF4444" : colors.primary
+                      backgroundColor: isActive ? colors.danger : colors.primary
                     }
                   ]}
                   onPress={() => handleTogglePlugin(plugin)}

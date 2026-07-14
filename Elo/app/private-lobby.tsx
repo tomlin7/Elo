@@ -278,7 +278,7 @@ export default function PrivateLobbyScreen() {
         return (
           <View style={styles.menuContainer}>
             <Text style={[styles.title, { color: colors.text }]}>JOIN ROOM</Text>
-            <Text style={[styles.subtitle, { color: colors.textMuted }]}>Enter your friend's 6-digit access code</Text>
+            <Text style={[styles.subtitle, { color: colors.textMuted }]}>{"Enter your friend's 6-digit access code"}</Text>
 
             <TextInput
               style={[styles.codeInput, { borderColor: colors.cardBorder, color: colors.text }]}
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
-    shadowColor: "#6366F1",
+    shadowColor: "#8AFF29",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,

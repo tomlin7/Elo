@@ -8,6 +8,11 @@ import {
   ActivityIndicator,
   Animated,
 } from "react-native";
+import { useRouter } from "expo-router";
+import { Screen } from "@/components/ui/Screen";
+import { ScreenHeader } from "@/components/ui/ScreenHeader";
+import { Radius, Spacing } from "@/constants/design";
+import { useThemeStore } from "@/src/store/themeStore";
 
 const SERVER = "http://10.0.2.2:8080";
 
@@ -33,11 +38,12 @@ const TIER_REWARDS: Record<number, string> = {
 };
 
 export default function BattlePassScreen() {
+  const router = useRouter();
+  const { colors } = useThemeStore();
   const [pass, setPass] = useState<CombatPass | null>(null);
   const [loading, setLoading] = useState(true);
   const [claiming, setClaiming] = useState<number | null>(null);
   const playerId = "guest_player";
-
   const starAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -78,37 +84,40 @@ export default function BattlePassScreen() {
   };
 
   const isReachable = (tier: number) => pass ? pass.current_tier >= tier : false;
-
   const starsToNextTier = pass ? (10 - (pass.current_stars % 10)) : 10;
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#818CF8" />
-        <Text style={styles.loadingText}>Loading Combat Pass…</Text>
-      </View>
+      <Screen>
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={[styles.loadingText, { color: colors.textMuted }]}>Loading Combat Pass…</Text>
+        </View>
+      </Screen>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>⚔️ Alpha Season Combat Pass</Text>
+    <Screen edges={false}>
+      <ScreenHeader title="⚔️ Alpha Season Combat Pass" onBack={() => router.replace("/(tabs)")} />
+
+      <View style={[styles.header, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
         <View style={styles.statsRow}>
           <Animated.View style={{ transform: [{ scale: starAnim }] }}>
-            <Text style={styles.statBadge}>Tier {pass?.current_tier ?? 1} / 50</Text>
+            <Text style={[styles.statBadge, { backgroundColor: colors.accentMuted, color: colors.accent }]}>
+              Tier {pass?.current_tier ?? 1} / 50
+            </Text>
           </Animated.View>
-          <Text style={styles.statBadge}>⭐ {pass?.current_stars ?? 0} Stars</Text>
+          <Text style={[styles.statBadge, { backgroundColor: colors.accentMuted, color: colors.accent }]}>
+            ⭐ {pass?.current_stars ?? 0} Stars
+          </Text>
         </View>
-        {/* Stars Progress bar */}
-        <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${((pass?.current_stars ?? 0) % 10) * 10}%` }]} />
+        <View style={[styles.progressTrack, { backgroundColor: colors.background }]}>
+          <View style={[styles.progressFill, { width: `${((pass?.current_stars ?? 0) % 10) * 10}%`, backgroundColor: colors.primary }]} />
         </View>
-        <Text style={styles.progressLabel}>{starsToNextTier} stars to next tier</Text>
+        <Text style={[styles.progressLabel, { color: colors.textMuted }]}>{starsToNextTier} stars to next tier</Text>
       </View>
 
-      {/* Tier Grid */}
       <ScrollView contentContainerStyle={styles.grid} showsVerticalScrollIndicator={false}>
         {Array.from({ length: 50 }, (_, i) => i + 1).map(tier => {
           const claimed = isClaimed(tier);
@@ -121,64 +130,55 @@ export default function BattlePassScreen() {
               key={tier}
               style={[
                 styles.tierCard,
-                claimed && styles.tierClaimed,
-                reachable && !claimed && styles.tierReachable,
-                isPremium && styles.tierPremium,
+                { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
+                claimed && { backgroundColor: colors.accentMuted, borderColor: colors.success },
+                reachable && !claimed && { borderColor: colors.primary },
+                isPremium && { borderColor: colors.accent },
               ]}
               onPress={() => claimTier(tier)}
               disabled={claimed || !reachable || claiming === tier}
               activeOpacity={0.75}
             >
-              <Text style={styles.tierNum}>T{tier}</Text>
-              {isPremium && <Text style={styles.premiumBadge}>★</Text>}
-              {reward && <Text style={styles.tierReward}>{reward}</Text>}
+              <Text style={[styles.tierNum, { color: colors.primary }]}>T{tier}</Text>
+              {isPremium && <Text style={[styles.premiumBadge, { color: colors.accent }]}>★</Text>}
+              {reward && <Text style={[styles.tierReward, { color: colors.textMuted }]}>{reward}</Text>}
               {claimed ? (
-                <Text style={styles.claimedTag}>✓ Claimed</Text>
+                <Text style={[styles.claimedTag, { color: colors.success }]}>✓ Claimed</Text>
               ) : reachable ? (
-                <Text style={styles.claimTag}>Claim</Text>
+                <Text style={[styles.claimTag, { backgroundColor: colors.primary, color: colors.onPrimary }]}>Claim</Text>
               ) : (
-                <Text style={styles.lockedTag}>🔒</Text>
+                <Text style={[styles.lockedTag, { color: colors.textMuted }]}>🔒</Text>
               )}
             </TouchableOpacity>
           );
         })}
       </ScrollView>
-    </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#0F0F1A" },
-  center: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#0F0F1A" },
-  loadingText: { color: "#818CF8", marginTop: 12, fontFamily: "monospace" },
-  header: { paddingHorizontal: 20, paddingTop: 56, paddingBottom: 16, backgroundColor: "#1A1A2E" },
-  title: { color: "#E0E7FF", fontSize: 20, fontWeight: "700", marginBottom: 12 },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
+  loadingText: { marginTop: 12, fontFamily: "monospace" },
+  header: { marginHorizontal: Spacing.xl, borderRadius: Radius.lg, padding: Spacing.lg, borderWidth: 1, marginBottom: Spacing.lg },
   statsRow: { flexDirection: "row", gap: 10, marginBottom: 10 },
-  statBadge: {
-    backgroundColor: "#312E81", color: "#A5B4FC", fontSize: 12,
-    fontWeight: "600", paddingHorizontal: 10, paddingVertical: 4,
-    borderRadius: 20,
-  },
-  progressTrack: { height: 6, backgroundColor: "#312E81", borderRadius: 3, overflow: "hidden" },
-  progressFill: { height: "100%", backgroundColor: "#818CF8", borderRadius: 3 },
-  progressLabel: { color: "#6B7280", fontSize: 11, marginTop: 6 },
-  grid: { padding: 16, flexDirection: "row", flexWrap: "wrap", gap: 10, justifyContent: "space-between" },
+  statBadge: { fontSize: 12, fontWeight: "600", paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  progressTrack: { height: 6, borderRadius: 3, overflow: "hidden" },
+  progressFill: { height: "100%", borderRadius: 3 },
+  progressLabel: { fontSize: 11, marginTop: 6 },
+  grid: { padding: Spacing.lg, flexDirection: "row", flexWrap: "wrap", gap: 10, justifyContent: "space-between", paddingBottom: Spacing.xxxl },
   tierCard: {
-    width: "30%", backgroundColor: "#1E1B4B", borderRadius: 10,
-    padding: 10, alignItems: "center", borderWidth: 1, borderColor: "#312E81",
+    width: "30%",
+    borderRadius: Radius.sm + 2,
+    padding: 10,
+    alignItems: "center",
+    borderWidth: 1,
     minHeight: 90,
   },
-  tierClaimed: { backgroundColor: "#1A2E1A", borderColor: "#22C55E" },
-  tierReachable: { borderColor: "#818CF8", backgroundColor: "#1E1B4B" },
-  tierPremium: { borderColor: "#F59E0B" },
-  tierNum: { color: "#6366F1", fontSize: 13, fontWeight: "700", marginBottom: 2 },
-  premiumBadge: { color: "#F59E0B", fontSize: 10, fontWeight: "800" },
-  tierReward: { color: "#C7D2FE", fontSize: 9, textAlign: "center", marginTop: 2, marginBottom: 4 },
-  claimedTag: { color: "#22C55E", fontSize: 10, fontWeight: "700" },
-  claimTag: {
-    backgroundColor: "#4F46E5", color: "#fff", fontSize: 10,
-    fontWeight: "700", paddingHorizontal: 8, paddingVertical: 3,
-    borderRadius: 8, marginTop: 4,
-  },
-  lockedTag: { color: "#4B5563", fontSize: 12, marginTop: 4 },
+  tierNum: { fontSize: 13, fontWeight: "700", marginBottom: 2 },
+  premiumBadge: { fontSize: 10, fontWeight: "800" },
+  tierReward: { fontSize: 9, textAlign: "center", marginTop: 2, marginBottom: 4 },
+  claimedTag: { fontSize: 10, fontWeight: "700" },
+  claimTag: { fontSize: 10, fontWeight: "700", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8, marginTop: 4, overflow: "hidden" },
+  lockedTag: { fontSize: 12, marginTop: 4 },
 });

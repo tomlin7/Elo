@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -12,14 +11,16 @@ import { useThemeStore } from "../src/store/themeStore.ts";
 import { useProfileStore } from "../src/store/profileStore.ts";
 import { getBackendUrls } from "../src/utils/auth.ts";
 import { decodeServerState, encodeClientAction, MatchState } from "../src/utils/protobuf.ts";
-import { StatusBar } from "expo-status-bar";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSequence,
   withTiming
 } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
+import { Screen } from "@/components/ui/Screen";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Spacing, Radius, Typography, Layout } from "@/constants/design";
 
 interface FloatingEmoji {
   id: string;
@@ -29,7 +30,7 @@ interface FloatingEmoji {
 
 export default function SpectatorScreen() {
   const router = useRouter();
-  const { colors, themeId } = useThemeStore();
+  const { colors } = useThemeStore();
   const { profile } = useProfileStore();
   const { roomId } = useLocalSearchParams<{ roomId: string }>();
 
@@ -130,7 +131,7 @@ export default function SpectatorScreen() {
   const renderCompetitor = (player: any, questionText: string, align: "left" | "right") => {
     if (!player) return null;
     return (
-      <View style={[styles.playerCol, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+      <Card style={styles.playerCol}>
         <Text style={[styles.competitorName, { color: colors.text }]} numberOfLines={1}>{player.username}</Text>
         <Text style={[styles.competitorTitle, { color: colors.primary }]}>{player.activeTitle || `LVL ${player.level || 1}`}</Text>
         
@@ -146,24 +147,23 @@ export default function SpectatorScreen() {
 
         <View style={styles.ghostSection}>
           <Text style={[styles.ghostLabel, { color: colors.textMuted }]}>GHOST TYPING</Text>
-          <View style={[styles.ghostBox, { backgroundColor: "rgba(0,0,0,0.2)", borderColor: colors.cardBorder }]}>
+          <View style={[styles.ghostBox, { backgroundColor: colors.background, borderColor: colors.cardBorder }]}>
             <Text style={[styles.ghostText, { color: colors.primary }]}>{player.ghostInput || "?"}</Text>
           </View>
         </View>
-      </View>
+      </Card>
     );
   };
 
   if (status === "connecting") {
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-        <StatusBar style={themeId === "light" ? "dark" : "light"} />
+      <Screen>
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[styles.statusText, { color: colors.textMuted }]}>Buffering live streams...</Text>
           {errorMsg ? <Text style={styles.error}>{errorMsg}</Text> : null}
         </View>
-      </SafeAreaView>
+      </Screen>
     );
   }
 
@@ -171,17 +171,17 @@ export default function SpectatorScreen() {
   const p2Q = gameState ? (gameState.nextQuestionText || "").split("|")[1] : "";
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <StatusBar style={themeId === "light" ? "dark" : "light"} />
+    <Screen>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={[styles.logoText, { color: colors.primary }]}>SPECTATING HUB</Text>
-          <TouchableOpacity
-            style={[styles.exitBtn, { borderColor: colors.cardBorder }]}
+          <Button
+            label="LEAVE HUB"
+            variant="secondary"
+            compact
             onPress={() => router.replace("/tournament-lobby")}
-          >
-            <Text style={[styles.exitText, { color: colors.text }]}>LEAVE HUB</Text>
-          </TouchableOpacity>
+            style={styles.exitBtn}
+          />
         </View>
 
         {/* Global Timer */}
@@ -193,7 +193,7 @@ export default function SpectatorScreen() {
         {/* Side-by-side Competitors Display */}
         <View style={styles.streamRow}>
           {renderCompetitor(gameState?.playerOne, p1Q, "left")}
-          <View style={{ width: 12 }} />
+          <View style={{ width: Spacing.md }} />
           {renderCompetitor(gameState?.playerTwo, p2Q, "right")}
         </View>
 
@@ -217,7 +217,7 @@ export default function SpectatorScreen() {
           ))}
         </View>
       </View>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
@@ -247,12 +247,9 @@ function EmojiFloatBubble({ emoji, startX }: { emoji: string; startX: number }) 
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
     flex: 1,
-    paddingTop: 16,
+    paddingTop: Spacing.lg,
   },
   centerContainer: {
     flex: 1,
@@ -260,94 +257,78 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   statusText: {
-    marginTop: 12,
-    fontSize: 14,
-    fontWeight: "600",
+    marginTop: Spacing.md,
+    ...Typography.bodyBold,
   },
   error: {
     color: "#EF4444",
-    marginTop: 12,
+    marginTop: Spacing.md,
     fontWeight: "700",
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 16,
+    paddingHorizontal: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   logoText: {
+    ...Typography.heading,
     fontSize: 20,
-    fontWeight: "900",
-    letterSpacing: 1,
   },
   exitBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  exitText: {
-    fontSize: 11,
-    fontWeight: "700",
+    height: 34,
+    paddingHorizontal: Spacing.md,
   },
   timerBar: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: Spacing.xl,
   },
   timerLabel: {
-    fontSize: 11,
-    fontWeight: "800",
+    ...Typography.label,
   },
   timerVal: {
     fontSize: 14,
     fontWeight: "900",
+    marginLeft: 4,
   },
   streamRow: {
     flexDirection: "row",
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.lg,
     flex: 1,
   },
   playerCol: {
     flex: 1,
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 16,
   },
   competitorName: {
+    ...Typography.heading,
     fontSize: 16,
-    fontWeight: "800",
   },
   competitorTitle: {
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 0.5,
+    ...Typography.label,
     marginTop: 2,
   },
   scoreRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "baseline",
-    marginTop: 12,
-    marginBottom: 20,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.xl,
   },
   scoreVal: {
     fontSize: 36,
     fontWeight: "900",
   },
   streakVal: {
-    fontSize: 11,
-    fontWeight: "700",
+    ...Typography.caption,
   },
   questionSection: {
-    marginBottom: 16,
+    marginBottom: Spacing.lg,
   },
   qLabel: {
-    fontSize: 9,
-    fontWeight: "800",
-    letterSpacing: 0.5,
+    ...Typography.label,
     marginBottom: 6,
   },
   qText: {
@@ -359,15 +340,13 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   ghostLabel: {
-    fontSize: 9,
-    fontWeight: "800",
-    letterSpacing: 0.5,
+    ...Typography.label,
     marginBottom: 6,
   },
   ghostBox: {
     height: 48,
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: Radius.md,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -392,12 +371,13 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   reactionContainer: {
-    height: 96,
+    height: Layout.tabBarHeight + 30,
     borderTopWidth: 1,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: Spacing.xl,
+    paddingBottom: Spacing.lg,
   },
   reactBtn: {
     width: 48,
