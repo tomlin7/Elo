@@ -575,6 +575,13 @@ const server = Bun.serve<{ playerId?: string; roomId?: string; region?: string }
             });
             ws.send(ServerGameStateUpdate.encode(responseUpdate).finish());
           }
+        } else if (action.payload === "joinMatchmaking" && action.joinMatchmaking) {
+          const ticket = action.joinMatchmaking;
+          const pId = ticket.playerId || action.playerId;
+          const mode = ticket.disciplineMode || "MATH";
+          console.log(`Join Matchmaking Request for ${pId} in mode ${mode}`);
+          Matchmaker.join(pId, ws, mode);
+          ws.data.playerId = pId;
         } else if (action.joinQueuePlayerId || action.payload === "joinQueuePlayerId") {
           const pId = action.joinQueuePlayerId || action.playerId;
           console.log(`Join Queue Request for ${pId}`);

@@ -109,6 +109,7 @@ export class GameRoom {
   winnerId: string | null = null;
   playerOneReconToken: string = "";
   playerTwoReconToken: string = "";
+  questionSeed: string = "";
 
   constructor(
     id: string,
@@ -123,6 +124,7 @@ export class GameRoom {
     this.id = id;
     this.playerOne = p1;
     this.playerTwo = p2;
+    this.questionSeed = `seed_${Math.random().toString(36).substring(2, 7)}`;
     this.roomType = roomType;
     this.spectators = [];
     this.privateRoomCode = privateRoomCode;

@@ -24,7 +24,7 @@ import { Palette } from "@/constants/design";
 
 export default function BattleScreen() {
   const router = useRouter();
-  const { playerId } = useLocalSearchParams<{ playerId: string }>();
+  const { playerId, roomId } = useLocalSearchParams<{ playerId: string; roomId?: string }>();
 
   const [status, setStatus] = useState<"connecting" | "queue" | "countdown" | "active" | "finished" | "disconnected">("connecting");
   const [countdown, setCountdown] = useState(3);
@@ -105,14 +105,14 @@ export default function BattleScreen() {
       return;
     }
 
-    connectWebSocket();
+    connectWebSocket(roomId);
 
     return () => {
       if (wsRef.current) {
         wsRef.current.close();
       }
     };
-  }, [playerId]);
+  }, [playerId, roomId]);
 
   const connectWebSocket = (roomIdToRejoin?: string) => {
     setStatus("connecting");

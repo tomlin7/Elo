@@ -4101,6 +4101,7 @@ export const elo = $root.elo = (() => {
              * @property {elo.v3.ISocialRelationshipAction|null} [relationshipAction] ClientAction relationshipAction
              * @property {elo.v3.IDirectMessage|null} [sendDirectMessage] ClientAction sendDirectMessage
              * @property {string|null} [sendMatchChat] ClientAction sendMatchChat
+             * @property {elo.v3.IMatchmakingTicket|null} [joinMatchmaking] ClientAction joinMatchmaking
              */
 
             /**
@@ -4262,17 +4263,25 @@ export const elo = $root.elo = (() => {
              */
             ClientAction.prototype.sendMatchChat = null;
 
+            /**
+             * ClientAction joinMatchmaking.
+             * @member {elo.v3.IMatchmakingTicket|null|undefined} joinMatchmaking
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.joinMatchmaking = null;
+
             // OneOf field names bound to virtual getters and setters
             let $oneOfFields;
 
             /**
              * ClientAction payload.
-             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride"|"updatePresence"|"relationshipAction"|"sendDirectMessage"|"sendMatchChat"|undefined} payload
+             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride"|"updatePresence"|"relationshipAction"|"sendDirectMessage"|"sendMatchChat"|"joinMatchmaking"|undefined} payload
              * @memberof elo.v3.ClientAction
              * @instance
              */
             Object.defineProperty(ClientAction.prototype, "payload", {
-                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst", "connectionHandshake", "regionalOverride", "updatePresence", "relationshipAction", "sendDirectMessage", "sendMatchChat"]),
+                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst", "connectionHandshake", "regionalOverride", "updatePresence", "relationshipAction", "sendDirectMessage", "sendMatchChat", "joinMatchmaking"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -4340,6 +4349,8 @@ export const elo = $root.elo = (() => {
                     $root.elo.v3.DirectMessage.encode(message.sendDirectMessage, writer.uint32(/* id 17, wireType 2 =*/138).fork(), q + 1).ldelim();
                 if (message.sendMatchChat != null && Object.hasOwnProperty.call(message, "sendMatchChat"))
                     writer.uint32(/* id 18, wireType 2 =*/146).string(message.sendMatchChat);
+                if (message.joinMatchmaking != null && Object.hasOwnProperty.call(message, "joinMatchmaking"))
+                    $root.elo.v3.MatchmakingTicket.encode(message.joinMatchmaking, writer.uint32(/* id 19, wireType 2 =*/154).fork(), q + 1).ldelim();
                 return writer;
             };
 
@@ -4450,6 +4461,10 @@ export const elo = $root.elo = (() => {
                         }
                     case 18: {
                             message.sendMatchChat = reader.string();
+                            break;
+                        }
+                    case 19: {
+                            message.joinMatchmaking = $root.elo.v3.MatchmakingTicket.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     default:
@@ -4631,6 +4646,16 @@ export const elo = $root.elo = (() => {
                     if (!$util.isString(message.sendMatchChat))
                         return "sendMatchChat: string expected";
                 }
+                if (message.joinMatchmaking != null && Object.hasOwnProperty.call(message, "joinMatchmaking")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    {
+                        let error = $root.elo.v3.MatchmakingTicket.verify(message.joinMatchmaking, long + 1);
+                        if (error)
+                            return "joinMatchmaking." + error;
+                    }
+                }
                 return null;
             };
 
@@ -4734,6 +4759,11 @@ export const elo = $root.elo = (() => {
                 }
                 if (object.sendMatchChat != null)
                     message.sendMatchChat = String(object.sendMatchChat);
+                if (object.joinMatchmaking != null) {
+                    if (!$util.isObject(object.joinMatchmaking))
+                        throw TypeError(".elo.v3.ClientAction.joinMatchmaking: object expected");
+                    message.joinMatchmaking = $root.elo.v3.MatchmakingTicket.fromObject(object.joinMatchmaking, long + 1);
+                }
                 return message;
             };
 
@@ -4848,6 +4878,11 @@ export const elo = $root.elo = (() => {
                     object.sendMatchChat = message.sendMatchChat;
                     if (options.oneofs)
                         object.payload = "sendMatchChat";
+                }
+                if (message.joinMatchmaking != null && Object.hasOwnProperty.call(message, "joinMatchmaking")) {
+                    object.joinMatchmaking = $root.elo.v3.MatchmakingTicket.toObject(message.joinMatchmaking, options, q + 1);
+                    if (options.oneofs)
+                        object.payload = "joinMatchmaking";
                 }
                 return object;
             };
@@ -6226,6 +6261,7 @@ export const elo = $root.elo = (() => {
              * @property {elo.v3.IRelationshipUpdate|null} [relationshipUpdate] ServerGameStateUpdate relationshipUpdate
              * @property {elo.v3.IDirectMessage|null} [directMessage] ServerGameStateUpdate directMessage
              * @property {string|null} [receiveMatchChat] ServerGameStateUpdate receiveMatchChat
+             * @property {elo.v3.IMatchReadySignal|null} [matchReady] ServerGameStateUpdate matchReady
              */
 
             /**
@@ -6420,6 +6456,14 @@ export const elo = $root.elo = (() => {
             ServerGameStateUpdate.prototype.receiveMatchChat = "";
 
             /**
+             * ServerGameStateUpdate matchReady.
+             * @member {elo.v3.IMatchReadySignal|null|undefined} matchReady
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.matchReady = null;
+
+            /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.
              * @function create
              * @memberof elo.v3.ServerGameStateUpdate
@@ -6491,6 +6535,8 @@ export const elo = $root.elo = (() => {
                     $root.elo.v3.DirectMessage.encode(message.directMessage, writer.uint32(/* id 21, wireType 2 =*/170).fork(), q + 1).ldelim();
                 if (message.receiveMatchChat != null && Object.hasOwnProperty.call(message, "receiveMatchChat"))
                     writer.uint32(/* id 22, wireType 2 =*/178).string(message.receiveMatchChat);
+                if (message.matchReady != null && Object.hasOwnProperty.call(message, "matchReady"))
+                    $root.elo.v3.MatchReadySignal.encode(message.matchReady, writer.uint32(/* id 23, wireType 2 =*/186).fork(), q + 1).ldelim();
                 return writer;
             };
 
@@ -6617,6 +6663,10 @@ export const elo = $root.elo = (() => {
                         }
                     case 22: {
                             message.receiveMatchChat = reader.string();
+                            break;
+                        }
+                    case 23: {
+                            message.matchReady = $root.elo.v3.MatchReadySignal.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     default:
@@ -6762,6 +6812,11 @@ export const elo = $root.elo = (() => {
                 if (message.receiveMatchChat != null && Object.hasOwnProperty.call(message, "receiveMatchChat"))
                     if (!$util.isString(message.receiveMatchChat))
                         return "receiveMatchChat: string expected";
+                if (message.matchReady != null && Object.hasOwnProperty.call(message, "matchReady")) {
+                    let error = $root.elo.v3.MatchReadySignal.verify(message.matchReady, long + 1);
+                    if (error)
+                        return "matchReady." + error;
+                }
                 return null;
             };
 
@@ -6921,6 +6976,11 @@ export const elo = $root.elo = (() => {
                 }
                 if (object.receiveMatchChat != null)
                     message.receiveMatchChat = String(object.receiveMatchChat);
+                if (object.matchReady != null) {
+                    if (!$util.isObject(object.matchReady))
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.matchReady: object expected");
+                    message.matchReady = $root.elo.v3.MatchReadySignal.fromObject(object.matchReady, long + 1);
+                }
                 return message;
             };
 
@@ -6964,6 +7024,7 @@ export const elo = $root.elo = (() => {
                     object.relationshipUpdate = null;
                     object.directMessage = null;
                     object.receiveMatchChat = "";
+                    object.matchReady = null;
                 }
                 if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
                     object.roomId = message.roomId;
@@ -7009,6 +7070,8 @@ export const elo = $root.elo = (() => {
                     object.directMessage = $root.elo.v3.DirectMessage.toObject(message.directMessage, options, q + 1);
                 if (message.receiveMatchChat != null && Object.hasOwnProperty.call(message, "receiveMatchChat"))
                     object.receiveMatchChat = message.receiveMatchChat;
+                if (message.matchReady != null && Object.hasOwnProperty.call(message, "matchReady"))
+                    object.matchReady = $root.elo.v3.MatchReadySignal.toObject(message.matchReady, options, q + 1);
                 return object;
             };
 
@@ -7428,6 +7491,639 @@ export const elo = $root.elo = (() => {
             })();
 
             return ServerGameStateUpdate;
+        })();
+
+        v3.MatchmakingTicket = (function() {
+
+            /**
+             * Properties of a MatchmakingTicket.
+             * @memberof elo.v3
+             * @interface IMatchmakingTicket
+             * @property {string|null} [playerId] MatchmakingTicket playerId
+             * @property {number|null} [currentElo] MatchmakingTicket currentElo
+             * @property {string|null} [disciplineMode] MatchmakingTicket disciplineMode
+             * @property {number|Long|null} [ticketTimestamp] MatchmakingTicket ticketTimestamp
+             */
+
+            /**
+             * Constructs a new MatchmakingTicket.
+             * @memberof elo.v3
+             * @classdesc Represents a MatchmakingTicket.
+             * @implements IMatchmakingTicket
+             * @constructor
+             * @param {elo.v3.IMatchmakingTicket=} [properties] Properties to set
+             */
+            function MatchmakingTicket(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * MatchmakingTicket playerId.
+             * @member {string} playerId
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             */
+            MatchmakingTicket.prototype.playerId = "";
+
+            /**
+             * MatchmakingTicket currentElo.
+             * @member {number} currentElo
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             */
+            MatchmakingTicket.prototype.currentElo = 0;
+
+            /**
+             * MatchmakingTicket disciplineMode.
+             * @member {string} disciplineMode
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             */
+            MatchmakingTicket.prototype.disciplineMode = "";
+
+            /**
+             * MatchmakingTicket ticketTimestamp.
+             * @member {number|Long} ticketTimestamp
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             */
+            MatchmakingTicket.prototype.ticketTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new MatchmakingTicket instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {elo.v3.IMatchmakingTicket=} [properties] Properties to set
+             * @returns {elo.v3.MatchmakingTicket} MatchmakingTicket instance
+             */
+            MatchmakingTicket.create = function create(properties) {
+                return new MatchmakingTicket(properties);
+            };
+
+            /**
+             * Encodes the specified MatchmakingTicket message. Does not implicitly {@link elo.v3.MatchmakingTicket.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {elo.v3.IMatchmakingTicket} message MatchmakingTicket message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            MatchmakingTicket.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.playerId);
+                if (message.currentElo != null && Object.hasOwnProperty.call(message, "currentElo"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.currentElo);
+                if (message.disciplineMode != null && Object.hasOwnProperty.call(message, "disciplineMode"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.disciplineMode);
+                if (message.ticketTimestamp != null && Object.hasOwnProperty.call(message, "ticketTimestamp"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int64(message.ticketTimestamp);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified MatchmakingTicket message, length delimited. Does not implicitly {@link elo.v3.MatchmakingTicket.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {elo.v3.IMatchmakingTicket} message MatchmakingTicket message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            MatchmakingTicket.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a MatchmakingTicket message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.MatchmakingTicket} MatchmakingTicket
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            MatchmakingTicket.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.MatchmakingTicket();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.playerId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.currentElo = reader.int32();
+                            break;
+                        }
+                    case 3: {
+                            message.disciplineMode = reader.string();
+                            break;
+                        }
+                    case 4: {
+                            message.ticketTimestamp = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a MatchmakingTicket message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.MatchmakingTicket} MatchmakingTicket
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            MatchmakingTicket.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a MatchmakingTicket message.
+             * @function verify
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            MatchmakingTicket.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    if (!$util.isString(message.playerId))
+                        return "playerId: string expected";
+                if (message.currentElo != null && Object.hasOwnProperty.call(message, "currentElo"))
+                    if (!$util.isInteger(message.currentElo))
+                        return "currentElo: integer expected";
+                if (message.disciplineMode != null && Object.hasOwnProperty.call(message, "disciplineMode"))
+                    if (!$util.isString(message.disciplineMode))
+                        return "disciplineMode: string expected";
+                if (message.ticketTimestamp != null && Object.hasOwnProperty.call(message, "ticketTimestamp"))
+                    if (!$util.isInteger(message.ticketTimestamp) && !(message.ticketTimestamp && $util.isInteger(message.ticketTimestamp.low) && $util.isInteger(message.ticketTimestamp.high)))
+                        return "ticketTimestamp: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates a MatchmakingTicket message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.MatchmakingTicket} MatchmakingTicket
+             */
+            MatchmakingTicket.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.MatchmakingTicket)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.MatchmakingTicket: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.MatchmakingTicket();
+                if (object.playerId != null)
+                    message.playerId = String(object.playerId);
+                if (object.currentElo != null)
+                    message.currentElo = object.currentElo | 0;
+                if (object.disciplineMode != null)
+                    message.disciplineMode = String(object.disciplineMode);
+                if (object.ticketTimestamp != null)
+                    if ($util.Long)
+                        message.ticketTimestamp = $util.Long.fromValue(object.ticketTimestamp, false);
+                    else if (typeof object.ticketTimestamp === "string")
+                        message.ticketTimestamp = parseInt(object.ticketTimestamp, 10);
+                    else if (typeof object.ticketTimestamp === "number")
+                        message.ticketTimestamp = object.ticketTimestamp;
+                    else if (typeof object.ticketTimestamp === "object")
+                        message.ticketTimestamp = new $util.LongBits(object.ticketTimestamp.low >>> 0, object.ticketTimestamp.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a MatchmakingTicket message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {elo.v3.MatchmakingTicket} message MatchmakingTicket
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            MatchmakingTicket.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.playerId = "";
+                    object.currentElo = 0;
+                    object.disciplineMode = "";
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.ticketTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.ticketTimestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    object.playerId = message.playerId;
+                if (message.currentElo != null && Object.hasOwnProperty.call(message, "currentElo"))
+                    object.currentElo = message.currentElo;
+                if (message.disciplineMode != null && Object.hasOwnProperty.call(message, "disciplineMode"))
+                    object.disciplineMode = message.disciplineMode;
+                if (message.ticketTimestamp != null && Object.hasOwnProperty.call(message, "ticketTimestamp"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.ticketTimestamp = typeof message.ticketTimestamp === "number" ? BigInt(message.ticketTimestamp) : $util.Long.fromBits(message.ticketTimestamp.low >>> 0, message.ticketTimestamp.high >>> 0, false).toBigInt();
+                    else if (typeof message.ticketTimestamp === "number")
+                        object.ticketTimestamp = options.longs === String ? String(message.ticketTimestamp) : message.ticketTimestamp;
+                    else
+                        object.ticketTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.ticketTimestamp) : options.longs === Number ? new $util.LongBits(message.ticketTimestamp.low >>> 0, message.ticketTimestamp.high >>> 0).toNumber() : message.ticketTimestamp;
+                return object;
+            };
+
+            /**
+             * Converts this MatchmakingTicket to JSON.
+             * @function toJSON
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            MatchmakingTicket.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for MatchmakingTicket
+             * @function getTypeUrl
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            MatchmakingTicket.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.MatchmakingTicket";
+            };
+
+            return MatchmakingTicket;
+        })();
+
+        v3.MatchReadySignal = (function() {
+
+            /**
+             * Properties of a MatchReadySignal.
+             * @memberof elo.v3
+             * @interface IMatchReadySignal
+             * @property {string|null} [roomId] MatchReadySignal roomId
+             * @property {string|null} [opponentName] MatchReadySignal opponentName
+             * @property {string|null} [opponentAvatarUrl] MatchReadySignal opponentAvatarUrl
+             * @property {number|null} [opponentElo] MatchReadySignal opponentElo
+             * @property {string|null} [seed] MatchReadySignal seed
+             */
+
+            /**
+             * Constructs a new MatchReadySignal.
+             * @memberof elo.v3
+             * @classdesc Represents a MatchReadySignal.
+             * @implements IMatchReadySignal
+             * @constructor
+             * @param {elo.v3.IMatchReadySignal=} [properties] Properties to set
+             */
+            function MatchReadySignal(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * MatchReadySignal roomId.
+             * @member {string} roomId
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.roomId = "";
+
+            /**
+             * MatchReadySignal opponentName.
+             * @member {string} opponentName
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.opponentName = "";
+
+            /**
+             * MatchReadySignal opponentAvatarUrl.
+             * @member {string} opponentAvatarUrl
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.opponentAvatarUrl = "";
+
+            /**
+             * MatchReadySignal opponentElo.
+             * @member {number} opponentElo
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.opponentElo = 0;
+
+            /**
+             * MatchReadySignal seed.
+             * @member {string} seed
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.seed = "";
+
+            /**
+             * Creates a new MatchReadySignal instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {elo.v3.IMatchReadySignal=} [properties] Properties to set
+             * @returns {elo.v3.MatchReadySignal} MatchReadySignal instance
+             */
+            MatchReadySignal.create = function create(properties) {
+                return new MatchReadySignal(properties);
+            };
+
+            /**
+             * Encodes the specified MatchReadySignal message. Does not implicitly {@link elo.v3.MatchReadySignal.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {elo.v3.IMatchReadySignal} message MatchReadySignal message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            MatchReadySignal.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.roomId);
+                if (message.opponentName != null && Object.hasOwnProperty.call(message, "opponentName"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.opponentName);
+                if (message.opponentAvatarUrl != null && Object.hasOwnProperty.call(message, "opponentAvatarUrl"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.opponentAvatarUrl);
+                if (message.opponentElo != null && Object.hasOwnProperty.call(message, "opponentElo"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int32(message.opponentElo);
+                if (message.seed != null && Object.hasOwnProperty.call(message, "seed"))
+                    writer.uint32(/* id 5, wireType 2 =*/42).string(message.seed);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified MatchReadySignal message, length delimited. Does not implicitly {@link elo.v3.MatchReadySignal.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {elo.v3.IMatchReadySignal} message MatchReadySignal message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            MatchReadySignal.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a MatchReadySignal message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.MatchReadySignal} MatchReadySignal
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            MatchReadySignal.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.MatchReadySignal();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.roomId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.opponentName = reader.string();
+                            break;
+                        }
+                    case 3: {
+                            message.opponentAvatarUrl = reader.string();
+                            break;
+                        }
+                    case 4: {
+                            message.opponentElo = reader.int32();
+                            break;
+                        }
+                    case 5: {
+                            message.seed = reader.string();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a MatchReadySignal message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.MatchReadySignal} MatchReadySignal
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            MatchReadySignal.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a MatchReadySignal message.
+             * @function verify
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            MatchReadySignal.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    if (!$util.isString(message.roomId))
+                        return "roomId: string expected";
+                if (message.opponentName != null && Object.hasOwnProperty.call(message, "opponentName"))
+                    if (!$util.isString(message.opponentName))
+                        return "opponentName: string expected";
+                if (message.opponentAvatarUrl != null && Object.hasOwnProperty.call(message, "opponentAvatarUrl"))
+                    if (!$util.isString(message.opponentAvatarUrl))
+                        return "opponentAvatarUrl: string expected";
+                if (message.opponentElo != null && Object.hasOwnProperty.call(message, "opponentElo"))
+                    if (!$util.isInteger(message.opponentElo))
+                        return "opponentElo: integer expected";
+                if (message.seed != null && Object.hasOwnProperty.call(message, "seed"))
+                    if (!$util.isString(message.seed))
+                        return "seed: string expected";
+                return null;
+            };
+
+            /**
+             * Creates a MatchReadySignal message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.MatchReadySignal} MatchReadySignal
+             */
+            MatchReadySignal.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.MatchReadySignal)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.MatchReadySignal: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.MatchReadySignal();
+                if (object.roomId != null)
+                    message.roomId = String(object.roomId);
+                if (object.opponentName != null)
+                    message.opponentName = String(object.opponentName);
+                if (object.opponentAvatarUrl != null)
+                    message.opponentAvatarUrl = String(object.opponentAvatarUrl);
+                if (object.opponentElo != null)
+                    message.opponentElo = object.opponentElo | 0;
+                if (object.seed != null)
+                    message.seed = String(object.seed);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a MatchReadySignal message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {elo.v3.MatchReadySignal} message MatchReadySignal
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            MatchReadySignal.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.roomId = "";
+                    object.opponentName = "";
+                    object.opponentAvatarUrl = "";
+                    object.opponentElo = 0;
+                    object.seed = "";
+                }
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    object.roomId = message.roomId;
+                if (message.opponentName != null && Object.hasOwnProperty.call(message, "opponentName"))
+                    object.opponentName = message.opponentName;
+                if (message.opponentAvatarUrl != null && Object.hasOwnProperty.call(message, "opponentAvatarUrl"))
+                    object.opponentAvatarUrl = message.opponentAvatarUrl;
+                if (message.opponentElo != null && Object.hasOwnProperty.call(message, "opponentElo"))
+                    object.opponentElo = message.opponentElo;
+                if (message.seed != null && Object.hasOwnProperty.call(message, "seed"))
+                    object.seed = message.seed;
+                return object;
+            };
+
+            /**
+             * Converts this MatchReadySignal to JSON.
+             * @function toJSON
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            MatchReadySignal.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for MatchReadySignal
+             * @function getTypeUrl
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            MatchReadySignal.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.MatchReadySignal";
+            };
+
+            return MatchReadySignal;
         })();
 
         return v3;

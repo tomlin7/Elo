@@ -10,12 +10,14 @@ import {
   Text,
   TextInput,
   View,
-  Share
+  Share,
+  Modal
 } from "react-native";
 import { useRouter } from "expo-router";
 import { authService } from "../../src/utils/auth.ts";
 import { useProfileStore, ProfileData } from "../../src/store/profileStore.ts";
 import { useThemeStore } from "../../src/store/themeStore.ts";
+import { useMatchmakingStore } from "../../src/store/matchmakingStore.ts";
 import { StatusBar } from "expo-status-bar";
 import * as Haptics from "expo-haptics";
 import { SectionLabel } from "@/components/ui/SectionLabel";
@@ -65,6 +67,32 @@ export default function HomeScreen() {
   const [activeEvents, setActiveEvents] = useState<string[]>([]);
   const [activeDisc, setActiveDisc] = useState("MATH");
   const bannerPulse = useRef(new Animated.Value(1)).current;
+
+  const { isQueued, queueTime, disciplineMode, matchReadyData, startQueue, cancelQueue } = useMatchmakingStore();
+  const [showMatchReadyModal, setShowMatchReadyModal] = useState(false);
+  const [matchInfo, setMatchInfo] = useState<any>(null);
+
+  useEffect(() => {
+    if (matchReadyData) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      setMatchInfo(matchReadyData);
+      setShowMatchReadyModal(true);
+
+      const navTimer = setTimeout(() => {
+        router.replace({
+          pathname: "/battle",
+          params: {
+            playerId: profile?.id,
+            roomId: matchReadyData.roomId
+          }
+        });
+        setShowMatchReadyModal(false);
+        cancelQueue();
+      }, 1500);
+
+      return () => clearTimeout(navTimer);
+    }
+  }, [matchReadyData, profile]);
 
   useEffect(() => {
     checkAuth();
@@ -157,10 +185,7 @@ export default function HomeScreen() {
   const handleFindMatch = () => {
     if (!profile) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push({
-      pathname: "/battle",
-      params: { playerId: profile.id }
-    });
+    startQueue(profile.id, activeDisc);
   };
 
   const handlePrivateMatch = () => {
@@ -326,6 +351,65 @@ export default function HomeScreen() {
           <Button style={styles.optionBtn} label="SETTINGS & OPTIONS" onPress={() => router.push("/settings")} />
         </View>
       </ScrollView>
+
+      {/* Matchmaking Search Overlay */}
+      <Modal transparent visible={isQueued} animationType="slide">
+        <View style={styles.modalOverlay}>
+          <Card style={styles.matchmakingCard}>
+            <ActivityIndicator size="large" color={colors.primary} style={{ marginBottom: 16 }} />
+            <Text style={[styles.queueTitle, { color: colors.text }]}>SEARCHING FOR OPPONENT</Text>
+            <Text style={[styles.queueSubtitle, { color: colors.textMuted }]}>Discipline: {disciplineMode}</Text>
+            <Text style={[styles.queueTimerText, { color: colors.primary }]}>{queueTime}s</Text>
+            <Button
+              label="CANCEL SEARCH"
+              onPress={cancelQueue}
+              style={{ marginTop: 24, backgroundColor: colors.danger, width: "100%" }}
+            />
+          </Card>
+        </View>
+      </Modal>
+
+      {/* Match Ready Ingress Viewport */}
+      <Modal transparent visible={showMatchReadyModal} animationType="fade">
+        <View style={[styles.modalOverlay, { backgroundColor: "#161616" }]}>
+          {matchInfo && (
+            <View style={styles.ingressContainer}>
+              <Text style={[styles.ingressTitle, { color: colors.primary }]}>MATCH FOUND</Text>
+              
+              <View style={styles.vsContainer}>
+                {/* Player Profile */}
+                <View style={styles.profileBox}>
+                  <View style={[styles.avatarCircle, { backgroundColor: colors.cardBg, borderColor: colors.primary }]}>
+                    <Text style={[styles.avatarText, { color: colors.text }]}>
+                      {profile?.username ? profile.username.slice(0, 2).toUpperCase() : "ME"}
+                    </Text>
+                  </View>
+                  <Text style={[styles.profileName, { color: colors.text }]}>{profile?.username || "You"}</Text>
+                  <Text style={[styles.profileElo, { color: colors.textMuted }]}>{profile?.elo || 1000} ELO</Text>
+                </View>
+
+                <Text style={[styles.vsText, { color: colors.accent }]}>VS</Text>
+
+                {/* Opponent Profile */}
+                <View style={styles.profileBox}>
+                  <View style={[styles.avatarCircle, { backgroundColor: colors.cardBg, borderColor: colors.accent }]}>
+                    <Text style={[styles.avatarText, { color: colors.text }]}>
+                      {matchInfo.opponentName ? matchInfo.opponentName.slice(0, 2).toUpperCase() : "OP"}
+                    </Text>
+                  </View>
+                  <Text style={[styles.profileName, { color: colors.text }]}>{matchInfo.opponentName}</Text>
+                  <Text style={[styles.profileElo, { color: colors.textMuted }]}>{matchInfo.opponentElo} ELO</Text>
+                </View>
+              </View>
+
+              <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: 40 }} />
+              <Text style={[styles.ingressLoadingText, { color: colors.textMuted }]}>
+                Synchronizing battle state engines...
+              </Text>
+            </View>
+          )}
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -383,5 +467,20 @@ const styles = StyleSheet.create({
   referralTitle: { fontSize: 14, fontWeight: "800", marginBottom: 4 },
   referralDesc: { fontSize: 12 },
   navBlock: { paddingHorizontal: Spacing.lg },
-  optionBtn: { width: "100%", height: 52, marginBottom: Spacing.md }
+  optionBtn: { width: "100%", height: 52, marginBottom: Spacing.md },
+  modalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.85)" },
+  matchmakingCard: { width: "80%", padding: 24, alignItems: "center" },
+  queueTitle: { fontSize: 16, fontWeight: "800", marginBottom: 8, letterSpacing: 1 },
+  queueSubtitle: { fontSize: 12, marginBottom: 12 },
+  queueTimerText: { fontSize: 28, fontWeight: "900" },
+  ingressContainer: { alignItems: "center", padding: 24 },
+  ingressTitle: { fontSize: 24, fontWeight: "900", letterSpacing: 3, marginBottom: 40 },
+  vsContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", width: "100%" },
+  profileBox: { alignItems: "center", width: 120 },
+  avatarCircle: { width: 70, height: 70, borderRadius: 35, borderWidth: 3, justifyContent: "center", alignItems: "center", marginBottom: 12 },
+  avatarText: { fontSize: 20, fontWeight: "800" },
+  profileName: { fontSize: 14, fontWeight: "700", textAlign: "center", marginBottom: 4 },
+  profileElo: { fontSize: 11, fontWeight: "600" },
+  vsText: { fontSize: 24, fontWeight: "900", fontStyle: "italic", marginHorizontal: 20 },
+  ingressLoadingText: { fontSize: 12, marginTop: 12 }
 });

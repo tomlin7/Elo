@@ -230,6 +230,15 @@ db.run(`
   )
 `);
 
+db.run(`
+  CREATE TABLE IF NOT EXISTS active_matchmaking_logs (
+    player_id TEXT PRIMARY KEY,
+    discipline_mode TEXT NOT NULL,
+    entered_at INTEGER NOT NULL,
+    status TEXT NOT NULL
+  )
+`);
+
 // Run Migrations dynamically for Phase 2, 4 & 6 columns
 const addColumn = (col: string, defVal: string) => {
   try {
@@ -807,6 +816,14 @@ export const dbService = {
       LIMIT $limit
     `);
     return query.all({ $p1: playerId1, $p2: playerId2, $limit: limit }) as any[];
+  },
+
+  logMatchmakingStatus(playerId: string, disciplineMode: string, status: string): void {
+    const query = db.query(`
+      INSERT OR REPLACE INTO active_matchmaking_logs (player_id, discipline_mode, entered_at, status)
+      VALUES ($playerId, $disciplineMode, $now, $status)
+    `);
+    query.run({ $playerId: playerId, $disciplineMode: disciplineMode, $now: Date.now(), $status: status });
   }
 };
 

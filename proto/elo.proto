@@ -156,6 +156,9 @@ message ClientAction {
     SocialRelationshipAction relationship_action = 16;
     DirectMessage send_direct_message = 17;
     string send_match_chat = 18;
+
+    // Phase 12 Extensions
+    MatchmakingTicket join_matchmaking = 19;
   }
 }
 
@@ -246,5 +249,23 @@ message ServerGameStateUpdate {
   RelationshipUpdate relationship_update = 20;
   DirectMessage direct_message = 21;
   string receive_match_chat = 22;
+
+  // Phase 12 Extensions
+  MatchReadySignal match_ready = 23;
+}
+
+message MatchmakingTicket {
+  string player_id = 1;
+  int32 current_elo = 2;
+  string discipline_mode = 3;
+  int64 ticket_timestamp = 4;
+}
+
+message MatchReadySignal {
+  string room_id = 1;
+  string opponent_name = 2;
+  string opponent_avatar_url = 3;
+  int32 opponent_elo = 4;
+  string seed = 5;
 }
 

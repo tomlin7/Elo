@@ -1527,6 +1527,9 @@ export namespace elo {
 
             /** ClientAction sendMatchChat */
             sendMatchChat?: (string|null);
+
+            /** ClientAction joinMatchmaking */
+            joinMatchmaking?: (elo.v3.IMatchmakingTicket|null);
         }
 
         /** Represents a ClientAction. */
@@ -1592,8 +1595,11 @@ export namespace elo {
             /** ClientAction sendMatchChat. */
             public sendMatchChat?: (string|null);
 
+            /** ClientAction joinMatchmaking. */
+            public joinMatchmaking?: (elo.v3.IMatchmakingTicket|null);
+
             /** ClientAction payload. */
-            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride"|"updatePresence"|"relationshipAction"|"sendDirectMessage"|"sendMatchChat");
+            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride"|"updatePresence"|"relationshipAction"|"sendDirectMessage"|"sendMatchChat"|"joinMatchmaking");
 
             /**
              * Creates a new ClientAction instance using the specified properties.
@@ -2211,6 +2217,9 @@ export namespace elo {
 
             /** ServerGameStateUpdate receiveMatchChat */
             receiveMatchChat?: (string|null);
+
+            /** ServerGameStateUpdate matchReady */
+            matchReady?: (elo.v3.IMatchReadySignal|null);
         }
 
         /** Represents a ServerGameStateUpdate. */
@@ -2287,6 +2296,9 @@ export namespace elo {
 
             /** ServerGameStateUpdate receiveMatchChat. */
             public receiveMatchChat: string;
+
+            /** ServerGameStateUpdate matchReady. */
+            public matchReady?: (elo.v3.IMatchReadySignal|null);
 
             /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.
@@ -2506,6 +2518,242 @@ export namespace elo {
                  */
                 public static getTypeUrl(typeUrlPrefix?: string): string;
             }
+        }
+
+        /** Properties of a MatchmakingTicket. */
+        interface IMatchmakingTicket {
+
+            /** MatchmakingTicket playerId */
+            playerId?: (string|null);
+
+            /** MatchmakingTicket currentElo */
+            currentElo?: (number|null);
+
+            /** MatchmakingTicket disciplineMode */
+            disciplineMode?: (string|null);
+
+            /** MatchmakingTicket ticketTimestamp */
+            ticketTimestamp?: (number|Long|null);
+        }
+
+        /** Represents a MatchmakingTicket. */
+        class MatchmakingTicket implements IMatchmakingTicket {
+
+            /**
+             * Constructs a new MatchmakingTicket.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IMatchmakingTicket);
+
+            /** MatchmakingTicket playerId. */
+            public playerId: string;
+
+            /** MatchmakingTicket currentElo. */
+            public currentElo: number;
+
+            /** MatchmakingTicket disciplineMode. */
+            public disciplineMode: string;
+
+            /** MatchmakingTicket ticketTimestamp. */
+            public ticketTimestamp: (number|Long);
+
+            /**
+             * Creates a new MatchmakingTicket instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns MatchmakingTicket instance
+             */
+            public static create(properties?: elo.v3.IMatchmakingTicket): elo.v3.MatchmakingTicket;
+
+            /**
+             * Encodes the specified MatchmakingTicket message. Does not implicitly {@link elo.v3.MatchmakingTicket.verify|verify} messages.
+             * @param message MatchmakingTicket message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IMatchmakingTicket, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified MatchmakingTicket message, length delimited. Does not implicitly {@link elo.v3.MatchmakingTicket.verify|verify} messages.
+             * @param message MatchmakingTicket message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IMatchmakingTicket, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a MatchmakingTicket message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns MatchmakingTicket
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.MatchmakingTicket;
+
+            /**
+             * Decodes a MatchmakingTicket message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns MatchmakingTicket
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.MatchmakingTicket;
+
+            /**
+             * Verifies a MatchmakingTicket message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a MatchmakingTicket message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns MatchmakingTicket
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.MatchmakingTicket;
+
+            /**
+             * Creates a plain object from a MatchmakingTicket message. Also converts values to other types if specified.
+             * @param message MatchmakingTicket
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.MatchmakingTicket, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this MatchmakingTicket to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for MatchmakingTicket
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a MatchReadySignal. */
+        interface IMatchReadySignal {
+
+            /** MatchReadySignal roomId */
+            roomId?: (string|null);
+
+            /** MatchReadySignal opponentName */
+            opponentName?: (string|null);
+
+            /** MatchReadySignal opponentAvatarUrl */
+            opponentAvatarUrl?: (string|null);
+
+            /** MatchReadySignal opponentElo */
+            opponentElo?: (number|null);
+
+            /** MatchReadySignal seed */
+            seed?: (string|null);
+        }
+
+        /** Represents a MatchReadySignal. */
+        class MatchReadySignal implements IMatchReadySignal {
+
+            /**
+             * Constructs a new MatchReadySignal.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IMatchReadySignal);
+
+            /** MatchReadySignal roomId. */
+            public roomId: string;
+
+            /** MatchReadySignal opponentName. */
+            public opponentName: string;
+
+            /** MatchReadySignal opponentAvatarUrl. */
+            public opponentAvatarUrl: string;
+
+            /** MatchReadySignal opponentElo. */
+            public opponentElo: number;
+
+            /** MatchReadySignal seed. */
+            public seed: string;
+
+            /**
+             * Creates a new MatchReadySignal instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns MatchReadySignal instance
+             */
+            public static create(properties?: elo.v3.IMatchReadySignal): elo.v3.MatchReadySignal;
+
+            /**
+             * Encodes the specified MatchReadySignal message. Does not implicitly {@link elo.v3.MatchReadySignal.verify|verify} messages.
+             * @param message MatchReadySignal message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IMatchReadySignal, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified MatchReadySignal message, length delimited. Does not implicitly {@link elo.v3.MatchReadySignal.verify|verify} messages.
+             * @param message MatchReadySignal message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IMatchReadySignal, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a MatchReadySignal message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns MatchReadySignal
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.MatchReadySignal;
+
+            /**
+             * Decodes a MatchReadySignal message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns MatchReadySignal
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.MatchReadySignal;
+
+            /**
+             * Verifies a MatchReadySignal message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a MatchReadySignal message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns MatchReadySignal
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.MatchReadySignal;
+
+            /**
+             * Creates a plain object from a MatchReadySignal message. Also converts values to other types if specified.
+             * @param message MatchReadySignal
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.MatchReadySignal, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this MatchReadySignal to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for MatchReadySignal
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
         }
     }
 }
