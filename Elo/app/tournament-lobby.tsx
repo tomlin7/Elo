@@ -16,6 +16,7 @@ import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Spacing, Typography } from "@/constants/design";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 interface TournamentNode {
   nodeId: string;
@@ -175,7 +176,7 @@ export default function TournamentLobbyScreen() {
     return (
       <Screen>
         <View style={styles.centerContainer}>
-          <Text style={[styles.trophy, { color: colors.accent }]}>🏆</Text>
+          <IconSymbol name="star" size={72} color={colors.accent} style={{ marginBottom: Spacing.xl }} />
           <Text style={[styles.title, { color: colors.text }]}>TOURNAMENT COMPLETE</Text>
           <Text style={[styles.winnerLabel, { color: colors.accent }]}>WINNER: {winnerUsername || "Champion"}</Text>
           <Button

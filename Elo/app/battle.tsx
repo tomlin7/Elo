@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +11,8 @@ import { StatusBar } from "expo-status-bar";
 import { getBackendUrls } from "../src/utils/auth.ts";
 import { decodeServerState, encodeClientAction, MatchState } from "../src/utils/protobuf.ts";
 import { Keypad } from "../components/Keypad.tsx";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -287,13 +288,12 @@ export default function BattleScreen() {
           <Text style={[styles.matchmakingTitle, { color: colors.text }]}>SEARCHING FOR DUEL</Text>
           <Text style={[styles.matchmakingSubtitle, { color: colors.textMuted }]}>Looking for opponent in your Elo rating...</Text>
           <Text style={[styles.matchmakingTip, { color: colors.textMuted }]}>Matches fall back to an adaptive bot after 20s</Text>
-          <TouchableOpacity
-            style={[styles.cancelBtn, { borderColor: colors.cardBorder }]}
+          <Button
+            label="CANCEL"
             onPress={handleBackToMenu}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.cancelBtnText, { color: colors.text }]}>CANCEL</Text>
-          </TouchableOpacity>
+            variant="secondary"
+            style={styles.cancelBtn}
+          />
         </View>
       </SafeAreaView>
     );
@@ -309,20 +309,17 @@ export default function BattleScreen() {
           <Text style={[styles.disconnectedText, { color: colors.textMuted }]}>
             You have disconnected from the server.
           </Text>
-          <TouchableOpacity
-            style={[styles.reconnectBtn, { backgroundColor: colors.primary }]}
+          <Button
+            label="RECONNECT TO DUEL"
             onPress={handleReconnectPress}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.reconnectBtnText}>RECONNECT TO DUEL</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.cancelBtn, { marginTop: 12, borderColor: colors.cardBorder }]}
+            style={styles.reconnectBtn}
+          />
+          <Button
+            label="EXIT TO MENU"
             onPress={handleBackToMenu}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.cancelBtnText, { color: colors.text }]}>EXIT TO MENU</Text>
-          </TouchableOpacity>
+            variant="secondary"
+            style={[styles.cancelBtn, { marginTop: 12 }]}
+          />
         </View>
       </SafeAreaView>
     );
@@ -391,14 +388,13 @@ export default function BattleScreen() {
 
           {/* Telemetry Control Panel */}
           <View style={styles.telemetryControlsRow}>
-            <TouchableOpacity
-              style={[styles.telemetryToggleBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
+            <Button
+              label={showTelemetry ? "HIDE METRICS" : "SHOW METRICS"}
               onPress={() => setShowTelemetry(!showTelemetry)}
-            >
-              <Text style={[styles.telemetryToggleText, { color: colors.textMuted }]}>
-                {showTelemetry ? "HIDE METRICS" : "SHOW METRICS"}
-              </Text>
-            </TouchableOpacity>
+              variant="secondary"
+              compact
+              style={styles.telemetryToggleBtn}
+            />
 
             {showTelemetry && (
               <View style={[styles.telemetryPill, { backgroundColor: colors.cardBg, borderColor: colors.accentMuted }]}>
@@ -448,7 +444,7 @@ export default function BattleScreen() {
             {isWinner ? "VICTORY" : isDraw ? "DRAW" : "DEFEAT"}
           </Text>
 
-          <View style={[styles.resultsCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+          <Card style={styles.resultsCard}>
             <View style={styles.resultRow}>
               <View style={styles.resultCol}>
                 <Text style={[styles.resultUsername, { color: colors.textMuted }]}>{me.username}</Text>
@@ -484,15 +480,13 @@ export default function BattleScreen() {
                 +{myXpChange} XP
               </Text>
             </View>
-          </View>
+          </Card>
 
-          <TouchableOpacity
-            style={[styles.doneBtn, { backgroundColor: colors.primary }]}
+          <Button
+            label="EXIT TO MENU"
             onPress={handleBackToMenu}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.doneBtnText}>EXIT TO MENU</Text>
-          </TouchableOpacity>
+            style={styles.doneBtn}
+          />
         </View>
       </SafeAreaView>
     );

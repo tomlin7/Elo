@@ -1,14 +1,17 @@
-import React from "react";
-import { StyleSheet, View, type ViewProps } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, TouchableOpacity, type ViewProps } from "react-native";
 import { Radius, Spacing } from "@/constants/design";
 import { useThemeStore } from "@/src/store/themeStore";
 
 type CardProps = ViewProps & {
   variant?: "default" | "dashed";
+  onPress?: () => void;
+  activeOpacity?: number;
 };
 
-export function Card({ style, variant = "default", children, ...props }: CardProps) {
+export function Card({ style, variant = "default", onPress, children, ...props }: CardProps) {
   const { colors } = useThemeStore();
+  const [isPressed, setIsPressed] = useState(false);
 
   // Extract layout-related properties from style
   const flattenedStyle = StyleSheet.flatten(style) || {};
@@ -51,10 +54,22 @@ export function Card({ style, variant = "default", children, ...props }: CardPro
     bottom,
   };
 
+  const CardComponent = onPress ? TouchableOpacity : View;
+  const cardProps = onPress
+    ? {
+        onPress,
+        onPressIn: () => setIsPressed(true),
+        onPressOut: () => setIsPressed(false),
+        activeOpacity: 1,
+      }
+    : {};
+
   return (
     <View style={[styles.shadowContainer, containerStyle]}>
-      <View style={[styles.shadowBlock, { backgroundColor: "#000000" }]} />
-      <View
+      {!isPressed && (
+        <View style={[styles.shadowBlock, { backgroundColor: "#000000" }]} />
+      )}
+      <CardComponent
         style={[
           styles.card,
           {
@@ -63,11 +78,13 @@ export function Card({ style, variant = "default", children, ...props }: CardPro
             borderStyle: variant === "dashed" ? "dashed" : "solid",
           },
           innerStyle,
+          isPressed && { transform: [{ translateX: 5 }, { translateY: 5 }] },
         ]}
+        {...cardProps}
         {...props}
       >
         {children}
-      </View>
+      </CardComponent>
     </View>
   );
 }

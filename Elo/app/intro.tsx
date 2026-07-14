@@ -15,6 +15,7 @@ import { Screen } from "@/components/ui/Screen";
 import { Layout, Radius, Spacing, Typography } from "@/constants/design";
 import { appStorage } from "@/src/utils/storage";
 import { useThemeStore } from "@/src/store/themeStore";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 const INTRO_KEY = "elo_intro_seen";
 const { width } = Dimensions.get("window");
@@ -22,19 +23,19 @@ const { width } = Dimensions.get("window");
 const SLIDES = [
   {
     id: "1",
-    emoji: "⚡",
+    iconName: "bolt" as const,
     title: "Welcome to Elo",
     body: "1v1 mental math duels. Out-calculate opponents in real time and climb the global rankings.",
   },
   {
     id: "2",
-    emoji: "🧠",
+    iconName: "psychology" as const,
     title: "Train & Compete",
     body: "Complete daily puzzles, enter tournaments, and sharpen your speed across math, memory, and logic.",
   },
   {
     id: "3",
-    emoji: "🏆",
+    iconName: "star" as const,
     title: "Earn & Customize",
     body: "Stack Pies, unlock themes in the Vault, and flex your rank on the leaderboard.",
   },
@@ -84,7 +85,7 @@ export default function IntroScreen() {
           renderItem={({ item }) => (
             <View style={[styles.slide, { width }]}>
               <View style={[styles.emojiRing, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-                <Text style={styles.emoji}>{item.emoji}</Text>
+                <IconSymbol name={item.iconName} size={44} color={colors.primary} />
               </View>
               <Text style={[styles.title, { color: colors.text }]}>{item.title}</Text>
               <Text style={[styles.body, { color: colors.textMuted }]}>{item.body}</Text>
@@ -144,12 +145,11 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: Radius.pill,
-    borderWidth: 1,
+    borderWidth: 2,
     justifyContent: "center",
     alignItems: "center",
     marginBottom: Spacing.xl,
   },
-  emoji: { fontSize: 44 },
   title: {
     ...Typography.title,
     fontSize: 24,

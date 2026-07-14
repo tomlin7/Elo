@@ -9,7 +9,6 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
   Share
 } from "react-native";
@@ -22,6 +21,9 @@ import * as Haptics from "expo-haptics";
 import { SectionLabel } from "@/components/ui/SectionLabel";
 import { StatCapsuleRow } from "@/components/ui/StatCapsuleRow";
 import { Spacing, Radius, Typography } from "@/constants/design";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 interface ModeProps {
   label: string;
@@ -31,14 +33,12 @@ interface ModeProps {
 
 const DisciplineCard: React.FC<ModeProps & { colors: ReturnType<typeof useThemeStore.getState>["colors"] }> = ({ label, isActive, onPress, colors }) => {
   return (
-    <TouchableOpacity 
+    <Card 
       onPress={onPress}
       style={[
         styles.discCard,
-        { backgroundColor: colors.cardBg },
         isActive && { borderColor: colors.primary }
       ]}
-      activeOpacity={0.8}
     >
       <Text style={[styles.discLabelText, { color: colors.textMuted }, isActive && { color: colors.primary }]}>
         {label}
@@ -48,7 +48,7 @@ const DisciplineCard: React.FC<ModeProps & { colors: ReturnType<typeof useThemeS
           <Text style={[styles.pointsText, { color: colors.onPrimary }]}>+100</Text>
         </View>
       )}
-    </TouchableOpacity>
+    </Card>
   );
 };
 
@@ -195,7 +195,7 @@ export default function HomeScreen() {
             <Text style={[styles.brandTitle, { color: colors.primary }]}>ELO</Text>
             <Text style={[styles.brandSubtitle, { color: colors.textMuted }]}>1v1 MENTAL MATH DUEL</Text>
 
-            <View style={[styles.card, { backgroundColor: colors.cardBg }]}>
+            <Card style={styles.card}>
               <Text style={[styles.onboardLabel, { color: colors.text }]}>Choose your username</Text>
               <Text style={[styles.onboardDesc, { color: colors.textMuted }]}>
                 This username will be visible on the global leaderboard. Max 14 characters.
@@ -214,19 +214,14 @@ export default function HomeScreen() {
 
               {errorMsg ? <Text style={[styles.errorText, { color: colors.accent }]}>{errorMsg}</Text> : null}
 
-              <TouchableOpacity
-                style={[styles.submitBtn, { backgroundColor: colors.primary }]}
+              <Button
+                label="CLAIM USERNAME"
                 onPress={handleOnboard}
                 disabled={submitting}
-                activeOpacity={0.8}
-              >
-                {submitting ? (
-                  <ActivityIndicator color={colors.onPrimary} />
-                ) : (
-                  <Text style={[styles.submitBtnText, { color: colors.onPrimary }]}>CLAIM USERNAME</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+                loading={submitting}
+                style={styles.submitBtn}
+              />
+            </Card>
           </View>
         </SafeAreaView>
       </KeyboardAvoidingView>
@@ -238,14 +233,14 @@ export default function HomeScreen() {
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={[styles.streakWarning, { backgroundColor: colors.accent }]}>
-          <Text style={[styles.streakWarningText, { color: colors.onPrimary }]}>⚠️ Turn on alerts to preserve your daily streaks!</Text>
+          <Text style={[styles.streakWarningText, { color: colors.onPrimary }]}>ALERTS: Turn on alerts to preserve your daily streaks!</Text>
         </View>
 
         <StatCapsuleRow
           stats={[
-            { icon: "π", value: `${profile.credits} Pies` },
-            { icon: "🔥", value: `${profile.dailyStreak} Streaks` },
-            { icon: "⬡", value: `${profile.xp} XP` },
+            { icon: "PI", value: `${profile.credits} Pies` },
+            { icon: "STRK", value: `${profile.dailyStreak} Streaks` },
+            { icon: "XP", value: `${profile.xp} XP` },
           ]}
         />
 
@@ -271,7 +266,7 @@ export default function HomeScreen() {
           </View>
         </ScrollView>
 
-        <View style={[styles.questEngine, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+        <Card style={styles.questEngine}>
           <Text style={[styles.questEngineTitle, { color: colors.textMuted }]}>Starter Quest</Text>
           <View style={styles.stepsHorizon}>
             <Text style={[styles.activeQuestStep, { color: colors.primary }]}>Puzzle</Text>
@@ -279,9 +274,9 @@ export default function HomeScreen() {
             <Text style={[styles.inactiveQuestStep, { color: colors.textMuted }]}>Memory</Text>
             <View style={[styles.inactiveQuestLine, { backgroundColor: colors.cardBorder }]} />
             <Text style={[styles.inactiveQuestStep, { color: colors.textMuted }]}>Math</Text>
-            <Text style={styles.rewardCrateIcon}>🎁</Text>
+            <IconSymbol name="card-giftcard" size={16} color={colors.primary} style={{ marginLeft: 8 }} />
           </View>
-        </View>
+        </Card>
 
         <SectionLabel>DUEL DISCIPLINE</SectionLabel>
         <View style={styles.discGrid}>
@@ -298,7 +293,7 @@ export default function HomeScreen() {
 
         <SectionLabel>CHALLENGE DUELS</SectionLabel>
         <View style={styles.duelCardContainer}>
-          <TouchableOpacity style={[styles.duelVariantCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]} onPress={handleFindMatch}>
+          <Card style={styles.duelVariantCard} onPress={handleFindMatch}>
             <View style={styles.variantHeader}>
               <Text style={[styles.variantTitle, { color: colors.text }]}>Sprint Duels</Text>
               <View style={[styles.badgeAmber, { backgroundColor: colors.accent }]}>
@@ -308,33 +303,27 @@ export default function HomeScreen() {
             <Text style={[styles.variantDescription, { color: colors.textMuted }]}>
               High-velocity race to solve mathematical anomalies in under 60 seconds.
             </Text>
-          </TouchableOpacity>
+          </Card>
 
-          <TouchableOpacity style={[styles.duelVariantCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]} onPress={() => router.push("/tournament-lobby")}>
+          <Card style={styles.duelVariantCard} onPress={() => router.push("/tournament-lobby")}>
             <View style={styles.variantHeader}>
               <Text style={[styles.variantTitle, { color: colors.text }]}>Fast & First Duels</Text>
             </View>
             <Text style={[styles.variantDescription, { color: colors.textMuted }]}>
               Synchronized matches where the first response captures point dominance.
             </Text>
-          </TouchableOpacity>
+          </Card>
         </View>
 
-        <TouchableOpacity style={[styles.referralCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]} onPress={triggerReferral}>
-          <Text style={[styles.referralTitle, { color: colors.primary }]}>⚡ Invite Friends — Claim 50 Pies</Text>
+        <Card style={styles.referralCard} onPress={triggerReferral} variant="dashed">
+          <Text style={[styles.referralTitle, { color: colors.primary }]}>Invite Friends — Claim 50 Pies</Text>
           <Text style={[styles.referralDesc, { color: colors.textMuted }]}>Share your custom link to boost e-sport credentials.</Text>
-        </TouchableOpacity>
+        </Card>
 
         <View style={styles.navBlock}>
-          <TouchableOpacity style={[styles.optionBtn, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]} onPress={() => router.push("/battle-pass")}>
-            <Text style={[styles.optionText, { color: colors.text }]}>⚔️ COMBAT PASS</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.optionBtn, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]} onPress={() => router.push("/analytics")}>
-            <Text style={[styles.optionText, { color: colors.text }]}>📊 ANALYTICS HUD</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.optionBtn, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]} onPress={() => router.push("/settings")}>
-            <Text style={[styles.optionText, { color: colors.text }]}>⚙️ SETTINGS & OPTIONS</Text>
-          </TouchableOpacity>
+          <Button style={styles.optionBtn} label="COMBAT PASS" onPress={() => router.push("/battle-pass")} />
+          <Button style={styles.optionBtn} label="ANALYTICS HUD" onPress={() => router.push("/analytics")} />
+          <Button style={styles.optionBtn} label="SETTINGS & OPTIONS" onPress={() => router.push("/settings")} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -351,17 +340,16 @@ const styles = StyleSheet.create({
   onboardContent: { flex: 1, paddingHorizontal: Spacing.xl, justifyContent: "center", alignItems: "center" },
   brandTitle: { ...Typography.hero },
   brandSubtitle: { fontSize: 12, fontWeight: "700", letterSpacing: 4, marginBottom: Spacing.xxl },
-  card: { width: "100%", borderRadius: Radius.xl, padding: Spacing.xl },
+  card: { width: "100%", padding: Spacing.xl },
   onboardLabel: { fontSize: 18, fontWeight: "700", marginBottom: 8 },
   onboardDesc: { fontSize: 13, lineHeight: 18, marginBottom: 20 },
   input: {
-    width: "100%", height: 50, borderWidth: 1,
+    width: "100%", height: 50, borderWidth: 2,
     borderRadius: Radius.md, paddingHorizontal: Spacing.lg, fontSize: 15,
     marginBottom: Spacing.lg
   },
   errorText: { fontSize: 13, marginBottom: Spacing.lg },
-  submitBtn: { width: "100%", height: 50, borderRadius: Radius.md, justifyContent: "center", alignItems: "center" },
-  submitBtnText: { fontSize: 15, fontWeight: "800", letterSpacing: 1 },
+  submitBtn: { width: "100%", height: 50 },
   streakWarning: { paddingVertical: 8, paddingHorizontal: Spacing.lg, alignItems: "center" },
   streakWarningText: { fontSize: 11, fontWeight: "800" },
   onlineTray: { paddingLeft: Spacing.lg, marginBottom: Spacing.xl, flexDirection: "row" },
@@ -369,33 +357,31 @@ const styles = StyleSheet.create({
   onlineRing: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, justifyContent: "center", alignItems: "center" },
   onlineInitial: { fontSize: 14, fontWeight: "700" },
   onlineUsername: { fontSize: 10, fontWeight: "600", marginTop: 4 },
-  questEngine: { marginHorizontal: Spacing.lg, borderRadius: Radius.lg, padding: Spacing.lg, borderWidth: 1, marginBottom: Spacing.xl },
+  questEngine: { marginHorizontal: Spacing.lg, marginBottom: Spacing.xl },
   questEngineTitle: { fontSize: 11, fontWeight: "800", textTransform: "uppercase", marginBottom: Spacing.md },
   stepsHorizon: { flexDirection: "row", alignItems: "center" },
   activeQuestStep: { fontSize: 13, fontWeight: "800" },
   inactiveQuestStep: { fontSize: 13, fontWeight: "700" },
   activeQuestLine: { flex: 1, height: 2, marginHorizontal: 8 },
   inactiveQuestLine: { flex: 1, height: 2, marginHorizontal: 8 },
-  rewardCrateIcon: { fontSize: 16, marginLeft: 8 },
   discGrid: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: Spacing.lg, marginBottom: Spacing.xl },
   discCard: {
-    width: "22%", height: 85, borderRadius: Radius.lg,
-    justifyContent: "center", alignItems: "center", borderWidth: 2, borderColor: "transparent"
+    width: "23%", height: 85,
+    justifyContent: "center", alignItems: "center"
   },
   discLabelText: { fontSize: 11, fontWeight: "800" },
   pointsBadge: { position: "absolute", bottom: -6, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 6 },
   pointsText: { fontSize: 8, fontWeight: "900" },
   duelCardContainer: { paddingHorizontal: Spacing.lg, marginBottom: 20 },
-  duelVariantCard: { borderRadius: Radius.lg, padding: Spacing.lg, borderWidth: 1, marginBottom: Spacing.md },
+  duelVariantCard: { marginBottom: Spacing.md },
   variantHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
   variantTitle: { fontSize: 15, fontWeight: "700" },
   badgeAmber: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
   badgeAmberText: { fontSize: 9, fontWeight: "900" },
   variantDescription: { fontSize: 12, lineHeight: 16 },
-  referralCard: { marginHorizontal: Spacing.lg, padding: Spacing.lg, borderRadius: Radius.lg, borderWidth: 1, borderStyle: "dashed", marginBottom: Spacing.xl },
+  referralCard: { marginHorizontal: Spacing.lg, marginBottom: Spacing.xl },
   referralTitle: { fontSize: 14, fontWeight: "800", marginBottom: 4 },
   referralDesc: { fontSize: 12 },
   navBlock: { paddingHorizontal: Spacing.lg },
-  optionBtn: { width: "100%", height: 52, borderWidth: 1, borderRadius: Radius.lg, justifyContent: "center", alignItems: "center", marginBottom: Spacing.md },
-  optionText: { fontSize: 13, fontWeight: "800", letterSpacing: 0.5 }
+  optionBtn: { width: "100%", height: 52, marginBottom: Spacing.md }
 });

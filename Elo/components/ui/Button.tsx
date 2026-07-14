@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   StyleSheet,
@@ -29,6 +29,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const { colors } = useThemeStore();
+  const [isPressed, setIsPressed] = useState(false);
 
   const palette = {
     primary: { bg: colors.primary, text: colors.onPrimary, border: "#000000" },
@@ -109,7 +110,9 @@ export function Button({
 
   return (
     <View style={[styles.shadowContainer, containerStyle]}>
-      <View style={[styles.shadowBlock, { borderRadius: borderRadius, backgroundColor: "#000000" }]} />
+      {!isPressed && (
+        <View style={[styles.shadowBlock, { borderRadius: borderRadius, backgroundColor: "#000000" }]} />
+      )}
       <TouchableOpacity
         style={[
           styles.base,
@@ -122,9 +125,12 @@ export function Button({
             opacity: disabled || loading ? 0.6 : 1,
           },
           innerStyle,
+          isPressed && { transform: [{ translateX: 4 }, { translateY: 4 }] },
         ]}
+        onPressIn={() => setIsPressed(true)}
+        onPressOut={() => setIsPressed(false)}
+        activeOpacity={1}
         disabled={disabled || loading}
-        activeOpacity={0.8}
         {...props}
       >
         {loading ? (

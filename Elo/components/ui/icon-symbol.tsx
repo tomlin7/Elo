@@ -21,6 +21,14 @@ const MAPPING = {
   'list.number': 'leaderboard',
   'checkmark.circle.fill': 'check-circle',
   'bag.fill': 'shopping-bag',
+  'grid.sharp': 'grid-on',
+  'plus.square.fill': 'add-box',
+  'atom': 'science',
+  'arrow.triangle.path': 'map',
+  'star': 'star',
+  'lock.fill': 'lock',
+  'bolt': 'flash-on',
+  'psychology': 'psychology',
 } as IconMapping;
 
 /**

@@ -209,8 +209,9 @@ export default function SpectatorScreen() {
           {["🔥", "🤯", "⚡", "👑", "🎯"].map((emoji) => (
             <TouchableOpacity
               key={emoji}
-              style={[styles.reactBtn, { backgroundColor: "rgba(255,255,255,0.05)" }]}
+              style={[styles.reactBtn, { backgroundColor: colors.background, borderColor: colors.cardBorder, borderWidth: 2 }]}
               onPress={() => handleSendReaction(emoji)}
+              activeOpacity={0.8}
             >
               <Text style={styles.reactEmoji}>{emoji}</Text>
             </TouchableOpacity>

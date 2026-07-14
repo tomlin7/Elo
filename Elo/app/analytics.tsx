@@ -6,7 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -16,6 +15,8 @@ import { getBackendUrls } from "../src/utils/auth.ts";
 import { StatusBar } from "expo-status-bar";
 import Svg, { Circle, Line, Path } from "react-native-svg";
 import * as Haptics from "expo-haptics";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 interface TelemetryStats {
   operationType: string;
@@ -70,8 +71,6 @@ export default function AnalyticsDashboardScreen() {
   };
 
   const renderSVGChart = (stats: TelemetryStats[]) => {
-    // Generate SVG path coordinate strings using average solve times
-    // Fallback coordinates if no stats are tracked yet
     const dataPoints = stats.length > 0
       ? stats.map(s => Math.min(2200, Math.max(200, s.averageSolveTimeMs)))
       : [800, 1200, 600, 1500, 700, 1100];
@@ -79,7 +78,6 @@ export default function AnalyticsDashboardScreen() {
     const chartHeight = 120;
     const chartWidth = 280;
     
-    // Normalize coordinates: map 200ms -> height 10, 2200ms -> height 110
     const points = dataPoints.map((val, idx) => {
       const x = (idx / (dataPoints.length - 1)) * chartWidth;
       const y = chartHeight - ((val - 200) / 2000) * (chartHeight - 20) - 10;
@@ -95,15 +93,12 @@ export default function AnalyticsDashboardScreen() {
       <View style={styles.chartWrapper}>
         <Text style={[styles.chartTitle, { color: colors.textMuted }]}>RESPONSE TIME CURVE (ms)</Text>
         <Svg height={chartHeight} width={chartWidth} style={styles.svg}>
-          {/* Horizontal Grid lines */}
           <Line x1="0" y1="20" x2={chartWidth} y2="20" stroke={colors.cardBorder} strokeWidth="1" strokeDasharray="4 4" />
           <Line x1="0" y1="60" x2={chartWidth} y2="60" stroke={colors.cardBorder} strokeWidth="1" strokeDasharray="4 4" />
           <Line x1="0" y1="100" x2={chartWidth} y2="100" stroke={colors.cardBorder} strokeWidth="1" strokeDasharray="4 4" />
 
-          {/* Trend Line */}
           <Path d={pathD} fill="none" stroke={colors.primary} strokeWidth="3" />
 
-          {/* Data Nodes */}
           {points.map((p, i) => (
             <Circle key={i} cx={p.x} cy={p.y} r="4" fill={colors.accent} />
           ))}
@@ -128,14 +123,12 @@ export default function AnalyticsDashboardScreen() {
       <View style={styles.matrixContainer}>
         <Text style={[styles.chartTitle, { color: colors.textMuted, marginBottom: 12 }]}>MATHEMATICAL OPERATION MATRIX</Text>
         
-        {/* Table Headers */}
         <View style={[styles.matrixRow, styles.matrixHeader, { borderBottomColor: colors.cardBorder }]}>
           <Text style={[styles.cell, styles.cellLabel, { color: colors.text }]}>OP TYPE</Text>
           <Text style={[styles.cell, { color: colors.text, textAlign: "center" }]}>ACCURACY</Text>
           <Text style={[styles.cell, { color: colors.text, textAlign: "right" }]}>SOLVE TIME</Text>
         </View>
 
-        {/* Rows */}
         {finalStats.map((item, idx) => {
           const accuracy = item.totalPresented > 0
             ? Math.round((item.totalCorrect / item.totalPresented) * 100)
@@ -175,21 +168,19 @@ export default function AnalyticsDashboardScreen() {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <StatusBar style={themeId === "light" ? "dark" : "light"} />
       <View style={styles.container}>
-        {/* Header */}
         <View style={styles.header}>
           <Text style={[styles.headerTitle, { color: colors.primary }]}>PERFORMANCE DASHBOARD</Text>
-          <TouchableOpacity
-            style={[styles.backBtn, { borderColor: colors.cardBorder }]}
+          <Button
+            label="BACK"
             onPress={() => router.replace("/(tabs)")}
-          >
-            <Text style={[styles.backBtnText, { color: colors.text }]}>BACK</Text>
-          </TouchableOpacity>
+            compact
+            style={styles.backBtn}
+          />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          {/* Diagnostic charts for selected match */}
           {selectedMatch ? (
-            <View style={[styles.analyticsCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+            <Card style={styles.analyticsCard}>
               <Text style={[styles.detailTitle, { color: colors.text }]}>
                 VS {selectedMatch.opponentUsername}
               </Text>
@@ -199,14 +190,13 @@ export default function AnalyticsDashboardScreen() {
 
               {renderSVGChart(selectedMatch.stats)}
               {renderStatsMatrix(selectedMatch.stats)}
-            </View>
+            </Card>
           ) : (
-            <View style={[styles.analyticsCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder, padding: 30, alignItems: "center" }]}>
+            <Card style={[styles.analyticsCard, { padding: 30, alignItems: "center" }]}>
               <Text style={{ color: colors.textMuted, fontSize: 13 }}>No duel histories logged yet.</Text>
-            </View>
+            </Card>
           )}
 
-          {/* Historical match list feed */}
           <Text style={[styles.feedTitle, { color: colors.text }]}>LAST 50 MATCHES</Text>
           <FlatList
             data={history}
@@ -217,10 +207,10 @@ export default function AnalyticsDashboardScreen() {
               const dateStr = new Date(Number(item.matchTimestamp)).toLocaleDateString();
 
               return (
-                <TouchableOpacity
+                <Card
                   style={[
                     styles.historyItem,
-                    { backgroundColor: colors.cardBg, borderColor: isSelected ? colors.primary : colors.cardBorder }
+                    isSelected && { borderColor: colors.primary }
                   ]}
                   onPress={() => handleSelectMatch(item)}
                 >
@@ -236,7 +226,7 @@ export default function AnalyticsDashboardScreen() {
                       {item.eloDelta >= 0 ? `+${item.eloDelta}` : item.eloDelta} Elo
                     </Text>
                   </View>
-                </TouchableOpacity>
+                </Card>
               );
             }}
           />
@@ -272,23 +262,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   backBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  backBtnText: {
-    fontSize: 12,
-    fontWeight: "700",
+    width: 80,
   },
   scrollContent: {
     paddingHorizontal: 24,
     paddingBottom: 40,
   },
   analyticsCard: {
-    borderWidth: 1,
-    borderRadius: 24,
-    padding: 20,
     marginBottom: 32,
   },
   detailTitle: {
@@ -354,9 +334,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 14,
     marginBottom: 12,
   },
   opponentName: {
