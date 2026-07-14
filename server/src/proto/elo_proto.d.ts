@@ -1515,6 +1515,18 @@ export namespace elo {
 
             /** ClientAction regionalOverride */
             regionalOverride?: (elo.v3.IRegionalHandshakeOverride|null);
+
+            /** ClientAction updatePresence */
+            updatePresence?: (elo.v3.PresenceStatus|null);
+
+            /** ClientAction relationshipAction */
+            relationshipAction?: (elo.v3.ISocialRelationshipAction|null);
+
+            /** ClientAction sendDirectMessage */
+            sendDirectMessage?: (elo.v3.IDirectMessage|null);
+
+            /** ClientAction sendMatchChat */
+            sendMatchChat?: (string|null);
         }
 
         /** Represents a ClientAction. */
@@ -1568,8 +1580,20 @@ export namespace elo {
             /** ClientAction regionalOverride. */
             public regionalOverride?: (elo.v3.IRegionalHandshakeOverride|null);
 
+            /** ClientAction updatePresence. */
+            public updatePresence?: (elo.v3.PresenceStatus|null);
+
+            /** ClientAction relationshipAction. */
+            public relationshipAction?: (elo.v3.ISocialRelationshipAction|null);
+
+            /** ClientAction sendDirectMessage. */
+            public sendDirectMessage?: (elo.v3.IDirectMessage|null);
+
+            /** ClientAction sendMatchChat. */
+            public sendMatchChat?: (string|null);
+
             /** ClientAction payload. */
-            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride");
+            public payload?: ("currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride"|"updatePresence"|"relationshipAction"|"sendDirectMessage"|"sendMatchChat");
 
             /**
              * Creates a new ClientAction instance using the specified properties.
@@ -1649,6 +1673,476 @@ export namespace elo {
             public static getTypeUrl(typeUrlPrefix?: string): string;
         }
 
+        /** PresenceStatus enum. */
+        enum PresenceStatus {
+            PRESENCE_ONLINE = 0,
+            PRESENCE_IN_MATCH = 1,
+            PRESENCE_OFFLINE = 2
+        }
+
+        /** RelationshipState enum. */
+        enum RelationshipState {
+            RELATION_NONE = 0,
+            RELATION_PENDING_A = 1,
+            RELATION_FRIENDS = 2,
+            RELATION_BLOCKED = 3
+        }
+
+        /** RelationshipAction enum. */
+        enum RelationshipAction {
+            ACTION_SEND_REQUEST = 0,
+            ACTION_ACCEPT_REQUEST = 1,
+            ACTION_BLOCK_USER = 2
+        }
+
+        /** Properties of a SocialRelationshipAction. */
+        interface ISocialRelationshipAction {
+
+            /** SocialRelationshipAction targetPlayerId */
+            targetPlayerId?: (string|null);
+
+            /** SocialRelationshipAction action */
+            action?: (elo.v3.RelationshipAction|null);
+        }
+
+        /** Represents a SocialRelationshipAction. */
+        class SocialRelationshipAction implements ISocialRelationshipAction {
+
+            /**
+             * Constructs a new SocialRelationshipAction.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.ISocialRelationshipAction);
+
+            /** SocialRelationshipAction targetPlayerId. */
+            public targetPlayerId: string;
+
+            /** SocialRelationshipAction action. */
+            public action: elo.v3.RelationshipAction;
+
+            /**
+             * Creates a new SocialRelationshipAction instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns SocialRelationshipAction instance
+             */
+            public static create(properties?: elo.v3.ISocialRelationshipAction): elo.v3.SocialRelationshipAction;
+
+            /**
+             * Encodes the specified SocialRelationshipAction message. Does not implicitly {@link elo.v3.SocialRelationshipAction.verify|verify} messages.
+             * @param message SocialRelationshipAction message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.ISocialRelationshipAction, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified SocialRelationshipAction message, length delimited. Does not implicitly {@link elo.v3.SocialRelationshipAction.verify|verify} messages.
+             * @param message SocialRelationshipAction message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.ISocialRelationshipAction, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a SocialRelationshipAction message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns SocialRelationshipAction
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.SocialRelationshipAction;
+
+            /**
+             * Decodes a SocialRelationshipAction message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns SocialRelationshipAction
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.SocialRelationshipAction;
+
+            /**
+             * Verifies a SocialRelationshipAction message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a SocialRelationshipAction message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns SocialRelationshipAction
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.SocialRelationshipAction;
+
+            /**
+             * Creates a plain object from a SocialRelationshipAction message. Also converts values to other types if specified.
+             * @param message SocialRelationshipAction
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.SocialRelationshipAction, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this SocialRelationshipAction to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for SocialRelationshipAction
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a PresenceUpdate. */
+        interface IPresenceUpdate {
+
+            /** PresenceUpdate playerId */
+            playerId?: (string|null);
+
+            /** PresenceUpdate status */
+            status?: (elo.v3.PresenceStatus|null);
+
+            /** PresenceUpdate timestamp */
+            timestamp?: (number|Long|null);
+        }
+
+        /** Represents a PresenceUpdate. */
+        class PresenceUpdate implements IPresenceUpdate {
+
+            /**
+             * Constructs a new PresenceUpdate.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IPresenceUpdate);
+
+            /** PresenceUpdate playerId. */
+            public playerId: string;
+
+            /** PresenceUpdate status. */
+            public status: elo.v3.PresenceStatus;
+
+            /** PresenceUpdate timestamp. */
+            public timestamp: (number|Long);
+
+            /**
+             * Creates a new PresenceUpdate instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns PresenceUpdate instance
+             */
+            public static create(properties?: elo.v3.IPresenceUpdate): elo.v3.PresenceUpdate;
+
+            /**
+             * Encodes the specified PresenceUpdate message. Does not implicitly {@link elo.v3.PresenceUpdate.verify|verify} messages.
+             * @param message PresenceUpdate message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IPresenceUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified PresenceUpdate message, length delimited. Does not implicitly {@link elo.v3.PresenceUpdate.verify|verify} messages.
+             * @param message PresenceUpdate message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IPresenceUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a PresenceUpdate message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns PresenceUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.PresenceUpdate;
+
+            /**
+             * Decodes a PresenceUpdate message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns PresenceUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.PresenceUpdate;
+
+            /**
+             * Verifies a PresenceUpdate message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a PresenceUpdate message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns PresenceUpdate
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.PresenceUpdate;
+
+            /**
+             * Creates a plain object from a PresenceUpdate message. Also converts values to other types if specified.
+             * @param message PresenceUpdate
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.PresenceUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this PresenceUpdate to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for PresenceUpdate
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a RelationshipUpdate. */
+        interface IRelationshipUpdate {
+
+            /** RelationshipUpdate initiatorId */
+            initiatorId?: (string|null);
+
+            /** RelationshipUpdate targetId */
+            targetId?: (string|null);
+
+            /** RelationshipUpdate state */
+            state?: (elo.v3.RelationshipState|null);
+
+            /** RelationshipUpdate timestamp */
+            timestamp?: (number|Long|null);
+        }
+
+        /** Represents a RelationshipUpdate. */
+        class RelationshipUpdate implements IRelationshipUpdate {
+
+            /**
+             * Constructs a new RelationshipUpdate.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IRelationshipUpdate);
+
+            /** RelationshipUpdate initiatorId. */
+            public initiatorId: string;
+
+            /** RelationshipUpdate targetId. */
+            public targetId: string;
+
+            /** RelationshipUpdate state. */
+            public state: elo.v3.RelationshipState;
+
+            /** RelationshipUpdate timestamp. */
+            public timestamp: (number|Long);
+
+            /**
+             * Creates a new RelationshipUpdate instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns RelationshipUpdate instance
+             */
+            public static create(properties?: elo.v3.IRelationshipUpdate): elo.v3.RelationshipUpdate;
+
+            /**
+             * Encodes the specified RelationshipUpdate message. Does not implicitly {@link elo.v3.RelationshipUpdate.verify|verify} messages.
+             * @param message RelationshipUpdate message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IRelationshipUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified RelationshipUpdate message, length delimited. Does not implicitly {@link elo.v3.RelationshipUpdate.verify|verify} messages.
+             * @param message RelationshipUpdate message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IRelationshipUpdate, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a RelationshipUpdate message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns RelationshipUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.RelationshipUpdate;
+
+            /**
+             * Decodes a RelationshipUpdate message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns RelationshipUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.RelationshipUpdate;
+
+            /**
+             * Verifies a RelationshipUpdate message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a RelationshipUpdate message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns RelationshipUpdate
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.RelationshipUpdate;
+
+            /**
+             * Creates a plain object from a RelationshipUpdate message. Also converts values to other types if specified.
+             * @param message RelationshipUpdate
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.RelationshipUpdate, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this RelationshipUpdate to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for RelationshipUpdate
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
+        /** Properties of a DirectMessage. */
+        interface IDirectMessage {
+
+            /** DirectMessage id */
+            id?: (string|null);
+
+            /** DirectMessage senderId */
+            senderId?: (string|null);
+
+            /** DirectMessage receiverId */
+            receiverId?: (string|null);
+
+            /** DirectMessage messageText */
+            messageText?: (string|null);
+
+            /** DirectMessage timestamp */
+            timestamp?: (number|Long|null);
+        }
+
+        /** Represents a DirectMessage. */
+        class DirectMessage implements IDirectMessage {
+
+            /**
+             * Constructs a new DirectMessage.
+             * @param [properties] Properties to set
+             */
+            constructor(properties?: elo.v3.IDirectMessage);
+
+            /** DirectMessage id. */
+            public id: string;
+
+            /** DirectMessage senderId. */
+            public senderId: string;
+
+            /** DirectMessage receiverId. */
+            public receiverId: string;
+
+            /** DirectMessage messageText. */
+            public messageText: string;
+
+            /** DirectMessage timestamp. */
+            public timestamp: (number|Long);
+
+            /**
+             * Creates a new DirectMessage instance using the specified properties.
+             * @param [properties] Properties to set
+             * @returns DirectMessage instance
+             */
+            public static create(properties?: elo.v3.IDirectMessage): elo.v3.DirectMessage;
+
+            /**
+             * Encodes the specified DirectMessage message. Does not implicitly {@link elo.v3.DirectMessage.verify|verify} messages.
+             * @param message DirectMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encode(message: elo.v3.IDirectMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Encodes the specified DirectMessage message, length delimited. Does not implicitly {@link elo.v3.DirectMessage.verify|verify} messages.
+             * @param message DirectMessage message or plain object to encode
+             * @param [writer] Writer to encode to
+             * @returns Writer
+             */
+            public static encodeDelimited(message: elo.v3.IDirectMessage, writer?: $protobuf.Writer): $protobuf.Writer;
+
+            /**
+             * Decodes a DirectMessage message from the specified reader or buffer.
+             * @param reader Reader or buffer to decode from
+             * @param [length] Message length if known beforehand
+             * @returns DirectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): elo.v3.DirectMessage;
+
+            /**
+             * Decodes a DirectMessage message from the specified reader or buffer, length delimited.
+             * @param reader Reader or buffer to decode from
+             * @returns DirectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): elo.v3.DirectMessage;
+
+            /**
+             * Verifies a DirectMessage message.
+             * @param message Plain object to verify
+             * @returns `null` if valid, otherwise the reason why it is not
+             */
+            public static verify(message: { [k: string]: any }): (string|null);
+
+            /**
+             * Creates a DirectMessage message from a plain object. Also converts values to their respective internal types.
+             * @param object Plain object
+             * @returns DirectMessage
+             */
+            public static fromObject(object: { [k: string]: any }): elo.v3.DirectMessage;
+
+            /**
+             * Creates a plain object from a DirectMessage message. Also converts values to other types if specified.
+             * @param message DirectMessage
+             * @param [options] Conversion options
+             * @returns Plain object
+             */
+            public static toObject(message: elo.v3.DirectMessage, options?: $protobuf.IConversionOptions): { [k: string]: any };
+
+            /**
+             * Converts this DirectMessage to JSON.
+             * @returns JSON object
+             */
+            public toJSON(): { [k: string]: any };
+
+            /**
+             * Gets the default type url for DirectMessage
+             * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns The default type url
+             */
+            public static getTypeUrl(typeUrlPrefix?: string): string;
+        }
+
         /** Properties of a ServerGameStateUpdate. */
         interface IServerGameStateUpdate {
 
@@ -1705,6 +2199,18 @@ export namespace elo {
 
             /** ServerGameStateUpdate standbyOverride */
             standbyOverride?: (elo.v3.IRegionalHandshakeOverride|null);
+
+            /** ServerGameStateUpdate presenceUpdate */
+            presenceUpdate?: (elo.v3.IPresenceUpdate|null);
+
+            /** ServerGameStateUpdate relationshipUpdate */
+            relationshipUpdate?: (elo.v3.IRelationshipUpdate|null);
+
+            /** ServerGameStateUpdate directMessage */
+            directMessage?: (elo.v3.IDirectMessage|null);
+
+            /** ServerGameStateUpdate receiveMatchChat */
+            receiveMatchChat?: (string|null);
         }
 
         /** Represents a ServerGameStateUpdate. */
@@ -1769,6 +2275,18 @@ export namespace elo {
 
             /** ServerGameStateUpdate standbyOverride. */
             public standbyOverride?: (elo.v3.IRegionalHandshakeOverride|null);
+
+            /** ServerGameStateUpdate presenceUpdate. */
+            public presenceUpdate?: (elo.v3.IPresenceUpdate|null);
+
+            /** ServerGameStateUpdate relationshipUpdate. */
+            public relationshipUpdate?: (elo.v3.IRelationshipUpdate|null);
+
+            /** ServerGameStateUpdate directMessage. */
+            public directMessage?: (elo.v3.IDirectMessage|null);
+
+            /** ServerGameStateUpdate receiveMatchChat. */
+            public receiveMatchChat: string;
 
             /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.

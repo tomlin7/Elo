@@ -13,6 +13,35 @@ const ServerGameStateUpdate = elo.v3.ServerGameStateUpdate;
 const MatchState = elo.v3.MatchState;
 const RoomType = elo.v3.RoomType;
 
+const PresenceStatus = elo.v3.PresenceStatus;
+const RelationshipState = elo.v3.RelationshipState;
+const RelationshipAction = elo.v3.RelationshipAction;
+
+export const playerConnections = new Map<string, any>();
+
+function broadcastPresence(playerId: string | undefined, status: number) {
+  if (!playerId) return;
+  const friends = dbService.getFriends(playerId);
+  const start = performance.now();
+  friends.forEach(f => {
+    const friendWs = playerConnections.get(f.id);
+    if (friendWs) {
+      const update = ServerGameStateUpdate.create({
+        presenceUpdate: {
+          playerId: playerId,
+          status: status,
+          timestamp: BigInt(Date.now())
+        }
+      });
+      friendWs.send(ServerGameStateUpdate.encode(update).finish());
+    }
+  });
+  const elapsed = performance.now() - start;
+  if (elapsed > 0.8) {
+    console.log(`[PERFORMANCE WARNING] Presence broadcast took ${elapsed.toFixed(3)}ms`);
+  }
+}
+
 // Start cluster hot-standby replication
 ClusterManager.start();
 
@@ -28,7 +57,7 @@ Matchmaker.start();
 
 const PORT = process.env.PORT || 8080;
 
-const server = Bun.serve<{ playerId?: string; roomId?: string }>({
+const server = Bun.serve<{ playerId?: string; roomId?: string; region?: string }>({
   port: PORT,
   fetch(req, server) {
     const url = new URL(req.url);
@@ -67,6 +96,40 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
     if (url.pathname === "/api/metrics" && req.method === "GET") {
       return new Response(MetricsExporter.getPrometheusMetrics(), {
         headers: { ...corsHeaders, "Content-Type": "text/plain; version=0.0.4; charset=utf-8" }
+      });
+    }
+
+    if (url.pathname === "/api/social/friends" && req.method === "GET") {
+      const playerId = url.searchParams.get("playerId");
+      if (!playerId) {
+        return new Response(JSON.stringify({ error: "Missing playerId" }), { status: 400, headers: corsHeaders });
+      }
+      const friends = dbService.getFriends(playerId);
+      return new Response(JSON.stringify({ friends }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    if (url.pathname === "/api/social/pending" && req.method === "GET") {
+      const playerId = url.searchParams.get("playerId");
+      if (!playerId) {
+        return new Response(JSON.stringify({ error: "Missing playerId" }), { status: 400, headers: corsHeaders });
+      }
+      const pending = dbService.getPendingRequests(playerId);
+      return new Response(JSON.stringify({ pending }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
+    }
+
+    if (url.pathname === "/api/social/messages" && req.method === "GET") {
+      const p1 = url.searchParams.get("playerId1");
+      const p2 = url.searchParams.get("playerId2");
+      if (!p1 || !p2) {
+        return new Response(JSON.stringify({ error: "Missing playerId1 or playerId2" }), { status: 400, headers: corsHeaders });
+      }
+      const messages = dbService.getDirectMessages(p1, p2);
+      return new Response(JSON.stringify({ messages }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
     }
 
@@ -374,7 +437,8 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
       const upgraded = server.upgrade(req, {
         data: {
           playerId: url.searchParams.get("playerId") || undefined,
-          roomId: url.searchParams.get("roomId") || undefined
+          roomId: url.searchParams.get("roomId") || undefined,
+          region: url.searchParams.get("region") || "us"
         }
       });
       if (upgraded) return;
@@ -389,8 +453,10 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
       const playerId = ws.data.playerId;
       console.log(`WebSocket open. PlayerId: ${playerId}`);
       
-      // If reconnecting player had an active game, rejoin them
       if (playerId) {
+        playerConnections.set(playerId, ws);
+        broadcastPresence(playerId, PresenceStatus.PRESENCE_ONLINE);
+
         const roomId = ws.data.roomId;
         if (roomId) {
           const room = GameManager.getRoom(roomId);
@@ -411,6 +477,87 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
         const buffer = message as Buffer;
         const action = ClientAction.decode(new Uint8Array(buffer));
         console.log("Decoded Action:", JSON.stringify(action));
+
+        if (action.payload === "updatePresence" && action.updatePresence !== undefined) {
+          const status = action.updatePresence;
+          broadcastPresence(ws.data.playerId, status);
+          return;
+        } else if (action.payload === "relationshipAction" && action.relationshipAction) {
+          const targetPlayerId = action.relationshipAction.targetPlayerId;
+          const relAction = action.relationshipAction.action;
+          const playerId = ws.data.playerId;
+          if (playerId && targetPlayerId) {
+            let success = false;
+            let state = RelationshipState.RELATION_NONE;
+
+            if (relAction === RelationshipAction.ACTION_SEND_REQUEST) {
+              success = dbService.sendFriendRequest(playerId, targetPlayerId);
+              state = RelationshipState.RELATION_PENDING_A;
+            } else if (relAction === RelationshipAction.ACTION_ACCEPT_REQUEST) {
+              success = dbService.acceptFriendRequest(playerId, targetPlayerId);
+              state = RelationshipState.RELATION_FRIENDS;
+            } else if (relAction === RelationshipAction.ACTION_BLOCK_USER) {
+              dbService.blockUser(playerId, targetPlayerId);
+              success = true;
+              state = RelationshipState.RELATION_BLOCKED;
+            }
+
+            if (success) {
+              const updateInitiator = ServerGameStateUpdate.create({
+                relationshipUpdate: {
+                  initiatorId: playerId,
+                  targetId: targetPlayerId,
+                  state: state,
+                  timestamp: BigInt(Date.now())
+                }
+              });
+              ws.send(ServerGameStateUpdate.encode(updateInitiator).finish());
+
+              const targetWs = playerConnections.get(targetPlayerId);
+              if (targetWs) {
+                const updateTarget = ServerGameStateUpdate.create({
+                  relationshipUpdate: {
+                    initiatorId: playerId,
+                    targetId: targetPlayerId,
+                    state: state,
+                    timestamp: BigInt(Date.now())
+                  }
+                });
+                targetWs.send(ServerGameStateUpdate.encode(updateTarget).finish());
+              }
+              
+              if (state === RelationshipState.RELATION_FRIENDS) {
+                broadcastPresence(playerId, PresenceStatus.PRESENCE_ONLINE);
+                broadcastPresence(targetPlayerId, PresenceStatus.PRESENCE_ONLINE);
+              }
+            }
+          }
+          return;
+        } else if (action.payload === "sendDirectMessage" && action.sendDirectMessage) {
+          const dm = action.sendDirectMessage;
+          const senderId = ws.data.playerId;
+          const receiverId = dm.receiverId;
+          const text = dm.messageText;
+          if (senderId && receiverId && text) {
+            const region = ws.data.region || "us";
+            dbService.saveDirectMessage(senderId, receiverId, text, region);
+
+            const targetWs = playerConnections.get(receiverId);
+            if (targetWs) {
+              const messageUpdate = ServerGameStateUpdate.create({
+                directMessage: {
+                  id: dm.id || `dm_${senderId}_${receiverId}_${Date.now()}`,
+                  senderId: senderId,
+                  receiverId: receiverId,
+                  messageText: text,
+                  timestamp: BigInt(Date.now())
+                }
+              });
+              targetWs.send(ServerGameStateUpdate.encode(messageUpdate).finish());
+            }
+          }
+          return;
+        }
 
         if (action.payload === "connectionHandshake" && action.connectionHandshake) {
           const token = action.connectionHandshake.reconnectionToken;
@@ -506,6 +653,9 @@ const server = Bun.serve<{ playerId?: string; roomId?: string }>({
       console.log(`WebSocket closed. PlayerId: ${playerId}, Code: ${code}`);
 
       if (playerId) {
+        playerConnections.delete(playerId);
+        broadcastPresence(playerId, PresenceStatus.PRESENCE_OFFLINE);
+
         Matchmaker.leave(playerId);
         
         if (roomId) {

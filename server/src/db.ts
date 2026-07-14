@@ -205,6 +205,31 @@ db.run(`
   )
 `);
 
+db.run(`
+  CREATE TABLE IF NOT EXISTS user_relationships (
+    id TEXT PRIMARY KEY,
+    initiator_id TEXT NOT NULL,
+    target_id TEXT NOT NULL,
+    relationship_state TEXT NOT NULL,
+    updated_at INTEGER NOT NULL,
+    FOREIGN KEY(initiator_id) REFERENCES players(id) ON DELETE CASCADE,
+    FOREIGN KEY(target_id) REFERENCES players(id) ON DELETE CASCADE,
+    UNIQUE(initiator_id, target_id)
+  )
+`);
+
+db.run(`
+  CREATE TABLE IF NOT EXISTS direct_messages (
+    id TEXT PRIMARY KEY,
+    sender_id TEXT NOT NULL,
+    receiver_id TEXT NOT NULL,
+    encrypted_payload TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    FOREIGN KEY(sender_id) REFERENCES players(id) ON DELETE CASCADE,
+    FOREIGN KEY(receiver_id) REFERENCES players(id) ON DELETE CASCADE
+  )
+`);
+
 // Run Migrations dynamically for Phase 2, 4 & 6 columns
 const addColumn = (col: string, defVal: string) => {
   try {
@@ -712,6 +737,76 @@ export const dbService = {
   updatePlayerBanStatus(playerId: string, isBanned: number): void {
     const query = db.query("UPDATE players SET is_banned = $ban WHERE id = $id");
     query.run({ $ban: isBanned, $id: playerId });
+  },
+
+  sendFriendRequest(initiatorId: string, targetId: string): boolean {
+    const existing = db.query("SELECT * FROM user_relationships WHERE (initiator_id = $p1 AND target_id = $p2) OR (initiator_id = $p2 AND target_id = $p1)")
+      .get({ $p1: initiatorId, $p2: targetId }) as any;
+    if (existing) {
+      return false;
+    }
+    db.query("INSERT INTO user_relationships (id, initiator_id, target_id, relationship_state, updated_at) VALUES ($id, $initiator, $target, 'PENDING_A', $now)")
+      .run({ $id: `${initiatorId}_${targetId}`, $initiator: initiatorId, $target: targetId, $now: Date.now() });
+    return true;
+  },
+
+  acceptFriendRequest(initiatorId: string, targetId: string): boolean {
+    const res = db.query("UPDATE user_relationships SET relationship_state = 'FRIENDS', updated_at = $now WHERE initiator_id = $target AND target_id = $initiator AND relationship_state = 'PENDING_A'")
+      .run({ $initiator: initiatorId, $target: targetId, $now: Date.now() });
+    return res.changes > 0;
+  },
+
+  blockUser(initiatorId: string, targetId: string): void {
+    db.query("DELETE FROM user_relationships WHERE (initiator_id = $p1 AND target_id = $p2) OR (initiator_id = $p2 AND target_id = $p1)")
+      .run({ $p1: initiatorId, $p2: targetId });
+    db.query("INSERT INTO user_relationships (id, initiator_id, target_id, relationship_state, updated_at) VALUES ($id, $initiator, $target, 'BLOCKED', $now)")
+      .run({ $id: `${initiatorId}_${targetId}_block`, $initiator: initiatorId, $target: targetId, $now: Date.now() });
+  },
+
+  getFriends(playerId: string): any[] {
+    const query = db.query(`
+      SELECT p.* FROM players p
+      JOIN user_relationships r ON (r.initiator_id = p.id OR r.target_id = p.id)
+      WHERE (r.initiator_id = $playerId OR r.target_id = $playerId)
+        AND r.relationship_state = 'FRIENDS'
+        AND p.id != $playerId
+    `);
+    return query.all({ $playerId: playerId }) as any[];
+  },
+
+  getPendingRequests(playerId: string): any[] {
+    const query = db.query(`
+      SELECT p.* FROM players p
+      JOIN user_relationships r ON r.initiator_id = p.id
+      WHERE r.target_id = $playerId AND r.relationship_state = 'PENDING_A'
+    `);
+    return query.all({ $playerId: playerId }) as any[];
+  },
+
+  saveDirectMessage(senderId: string, receiverId: string, text: string, region: string): void {
+    const id = `dm_${senderId}_${receiverId}_${Date.now()}`;
+    // Write through global db
+    db.query("INSERT INTO direct_messages (id, sender_id, receiver_id, encrypted_payload, created_at) VALUES ($id, $sender, $receiver, $payload, $now)")
+      .run({ $id: id, $sender: senderId, $receiver: receiverId, $payload: text, $now: Date.now() });
+    
+    // Write through shard db
+    try {
+      const sDb = ShardRouter.getShardDb(region);
+      sDb.query("INSERT INTO direct_messages (id, sender_id, receiver_id, encrypted_payload, created_at) VALUES ($id, $sender, $receiver, $payload, $now)")
+        .run({ $id: id, $sender: senderId, $receiver: receiverId, $payload: text, $now: Date.now() });
+    } catch (e) {
+      console.log(`Failed to write DM to shard ${region}:`, e);
+    }
+  },
+
+  getDirectMessages(playerId1: string, playerId2: string, limit = 50): any[] {
+    const query = db.query(`
+      SELECT * FROM direct_messages
+      WHERE (sender_id = $p1 AND receiver_id = $p2) OR (sender_id = $p2 AND receiver_id = $p1)
+      ORDER BY created_at DESC
+      LIMIT $limit
+    `);
+    return query.all({ $p1: playerId1, $p2: playerId2, $limit: limit }) as any[];
   }
 };
 
@@ -728,6 +823,25 @@ export class ShardRouter {
         username TEXT NOT NULL,
         elo INTEGER NOT NULL,
         created_at TEXT NOT NULL
+      )
+    `);
+    shardDb.run(`
+      CREATE TABLE IF NOT EXISTS user_relationships (
+        id TEXT PRIMARY KEY,
+        initiator_id TEXT NOT NULL,
+        target_id TEXT NOT NULL,
+        relationship_state TEXT NOT NULL,
+        updated_at INTEGER NOT NULL,
+        UNIQUE(initiator_id, target_id)
+      )
+    `);
+    shardDb.run(`
+      CREATE TABLE IF NOT EXISTS direct_messages (
+        id TEXT PRIMARY KEY,
+        sender_id TEXT NOT NULL,
+        receiver_id TEXT NOT NULL,
+        encrypted_payload TEXT NOT NULL,
+        created_at INTEGER NOT NULL
       )
     `);
     return shardDb;

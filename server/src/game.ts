@@ -269,6 +269,23 @@ export class GameRoom {
       player.lastKeystrokeTime = clientTime;
     }
 
+    if (action.payload === "sendMatchChat" && action.sendMatchChat) {
+      const chatMsg = action.sendMatchChat;
+      const update = elo.v3.ServerGameStateUpdate.create({
+        roomId: this.id,
+        state: this.state,
+        receiveMatchChat: `${player.username}: ${chatMsg}`
+      });
+      const buffer = elo.v3.ServerGameStateUpdate.encode(update).finish();
+      if (this.playerOne.socket && !this.playerOne.isBot) {
+        this.playerOne.socket.send(buffer);
+      }
+      if (this.playerTwo.socket && !this.playerTwo.isBot) {
+        this.playerTwo.socket.send(buffer);
+      }
+      return;
+    }
+
     if (action.payload === "currentInput") {
       player.ghostInput = action.currentInput || "";
       this.broadcastState();

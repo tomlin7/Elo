@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { appStorage } from "../utils/storage.ts";
+import { widgetSync } from "../utils/widgetSync.ts";
 
 export interface ProfileData {
   id: string;
@@ -29,6 +30,7 @@ export const useProfileStore = create<ProfileState>((set) => ({
   profile: cached,
   setProfile: (profile) => {
     appStorage.set(CACHE_KEY, profile);
+    widgetSync.triggerSync(profile);
     set({ profile });
   },
   updateStats: (updates) => {
@@ -36,6 +38,7 @@ export const useProfileStore = create<ProfileState>((set) => ({
       if (!state.profile) return {};
       const updated = { ...state.profile, ...updates };
       appStorage.set(CACHE_KEY, updated);
+      widgetSync.triggerSync(updated);
       return { profile: updated };
     });
   },
