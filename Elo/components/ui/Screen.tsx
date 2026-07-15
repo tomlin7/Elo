@@ -1,5 +1,5 @@
 import React from "react";
-import { SafeAreaView, StyleSheet, View, type ViewProps } from "react-native";
+import { SafeAreaView, StyleSheet, View, type ViewProps, Platform, StatusBar as RNStatusBar } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useThemeStore } from "@/src/store/themeStore";
 
@@ -35,6 +35,9 @@ export function Screen({
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1 },
+  root: {
+    flex: 1,
+    paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
+  },
   inner: { flex: 1 },
 });

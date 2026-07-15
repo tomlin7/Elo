@@ -251,7 +251,6 @@ export default function CosmeticsVault() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.lg,
   },
   header: {
@@ -260,10 +259,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: Spacing.xl,
     marginTop: Spacing.md,
+    paddingHorizontal: Spacing.lg,
   },
   title: {
-    ...Typography.title,
-    fontSize: 22,
+    fontSize: 20,
+    fontWeight: "900",
+    letterSpacing: 0.5,
   },
   creditsBox: {
     flexDirection: "row",
@@ -284,6 +285,7 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: Spacing.xxxl,
+    paddingHorizontal: Spacing.lg,
   },
   card: {
     marginBottom: Spacing.lg,

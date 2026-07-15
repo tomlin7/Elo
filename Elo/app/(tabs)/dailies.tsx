@@ -105,7 +105,7 @@ export default function DailiesScreen() {
 
         <StatCapsuleRow
           stats={[
-            { icon: "dollarsign.circle.fill", value: `${profile?.credits ?? 0} Pies` },
+            { icon: "dollarsign.circle.fill", value: `${profile?.credits ?? 0} Coins` },
             { icon: "bolt", value: `${profile?.dailyStreak ?? 0} Streaks` },
             { icon: "star", value: `${profile?.xp ?? 0} XP` },
           ]}
