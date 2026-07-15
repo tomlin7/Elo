@@ -34,6 +34,7 @@ const MAPPING = {
   'square.stack.3d.down.right': 'layers',
   'logic.circles': 'group-work',
   'person.crop.circle': 'account-circle',
+  'bell.fill': 'notifications',
 } as IconMapping;
 
 /**

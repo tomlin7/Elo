@@ -35,19 +35,13 @@ export function Keypad({ onPress }: KeypadProps) {
             return (
               <TouchableOpacity
                 key={key}
-                activeOpacity={0.65}
+                activeOpacity={0.7}
                 style={[
                   styles.button,
                   {
                     backgroundColor: colors.cardBg,
                     borderColor: colors.cardBorder,
-                  },
-                  isDelete && {
-                    backgroundColor: `${colors.danger}26`,
-                    borderColor: `${colors.danger}33`,
-                  },
-                  isMinus && {
-                    backgroundColor: colors.cardBorder,
+                    borderWidth: 2,
                   },
                 ]}
                 onPress={() => handlePress(key)}
@@ -56,8 +50,6 @@ export function Keypad({ onPress }: KeypadProps) {
                   style={[
                     styles.buttonText,
                     { color: colors.text },
-                    isDelete && { color: colors.danger },
-                    isMinus && { color: colors.textMuted },
                   ]}
                 >
                   {display}

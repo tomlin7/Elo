@@ -10,7 +10,7 @@ import {
 import { Layout, Radius, Typography } from "@/constants/design";
 import { useThemeStore } from "@/src/store/themeStore";
 
-type ButtonVariant = "primary" | "secondary" | "destructive" | "ghost";
+type ButtonVariant = "primary" | "secondary" | "destructive" | "ghost" | "success";
 
 type ButtonProps = TouchableOpacityProps & {
   label: string;
@@ -36,6 +36,7 @@ export function Button({
     secondary: { bg: colors.cardBg, text: colors.text, border: "#000000" },
     destructive: { bg: colors.danger, text: colors.onPrimary, border: "#000000" },
     ghost: { bg: "transparent", text: colors.textMuted, border: "transparent" },
+    success: { bg: colors.success, text: colors.onPrimary, border: "#000000" },
   }[variant];
 
   const buttonHeight = compact ? 38 : Layout.buttonHeight;

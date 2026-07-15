@@ -27,6 +27,7 @@ import { StatCapsuleRow } from "@/components/ui/StatCapsuleRow";
 import { Spacing, Radius, Typography } from "@/constants/design";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import Svg, { Path, Circle, Rect } from "react-native-svg";
 import { IconSymbol } from "@/components/ui/icon-symbol";
 import { StarburstShape, ShapesComposition } from "@/components/ui/Shapes";
 
@@ -83,6 +84,49 @@ const DisciplineCard: React.FC<ModeProps & { colors: ReturnType<typeof useThemeS
     </TouchableOpacity>
   );
 };
+
+const MascotIllustration = () => (
+  <Svg width={70} height={50} viewBox="0 0 100 60" style={{ marginRight: 8 }}>
+    <Path
+      d="M 30,10 C 35,5 37,5 42,10 C 46,15 48,22 52,25 C 58,26 65,24 70,28 C 75,32 75,35 70,40 C 65,45 58,45 52,48 C 48,53 46,58 42,60 C 37,60 35,58 30,53 C 25,48 18,48 12,45 C 7,42 7,38 12,34 C 18,30 25,32 30,26 Z"
+      fill="#CBA6F7"
+    />
+    <Circle cx="26" cy="30" r="2.5" fill="#000000" />
+    <Circle cx="38" cy="28" r="2.5" fill="#000000" />
+    <Circle cx="22" cy="34" r="3" fill="#F38BA8" opacity="0.6" />
+    <Circle cx="42" cy="32" r="3" fill="#F38BA8" opacity="0.6" />
+    <Path d="M 30,34 Q 32,37 34,34" fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" />
+    <Path d="M 48,38 Q 55,35 60,38" fill="none" stroke="#89B4FA" strokeWidth="4" strokeLinecap="round" />
+    <Path
+      d="M 60,40 C 60,25 78,25 78,40 Z"
+      fill="#F9E2AF"
+    />
+    <Rect x="58" y="40" width="22" height="4" rx="2" fill="#F9E2AF" />
+    <Circle cx="69" cy="45" r="3" fill="#EBA0B3" />
+  </Svg>
+);
+
+const NotificationBanner = ({ colors }: { colors: any }) => {
+  return (
+    <View style={[styles.bannerContainer, { backgroundColor: "#A6E3A1", borderColor: colors.cardBorder }]}>
+      <View style={styles.bannerLeft}>
+        <MascotIllustration />
+        <Text style={[styles.bannerText, { color: "#000000" }]}>
+          {"Don't miss notifications from Sero"}
+        </Text>
+      </View>
+
+      <View style={styles.allowBtnShadowContainer}>
+        <View style={[styles.allowBtnShadow, { backgroundColor: "#000000" }]} />
+        <TouchableOpacity activeOpacity={0.9} style={[styles.allowBtn, { backgroundColor: "#FFFFFF", borderColor: colors.cardBorder }]}>
+          <Text style={[styles.allowBtnText, { color: "#000000" }]}>Allow</Text>
+          <IconSymbol name="bell.fill" size={12} color="#F9E2AF" style={{ marginLeft: 6 }} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -311,9 +355,7 @@ export default function HomeScreen() {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <View style={[styles.streakWarning, { backgroundColor: colors.accent, borderBottomColor: colors.cardBorder, borderBottomWidth: 2 }]}>
-          <Text style={[styles.streakWarningText, { color: "#000000" }]}>ALERTS: Turn on alerts to preserve your daily streaks!</Text>
-        </View>
+        <NotificationBanner colors={colors} />
 
         <StatCapsuleRow
           stats={[
@@ -512,8 +554,52 @@ const styles = StyleSheet.create({
   },
   errorText: { fontSize: 13, marginBottom: Spacing.lg },
   submitBtn: { width: "100%", height: 50 },
-  streakWarning: { paddingVertical: 8, paddingHorizontal: Spacing.lg, alignItems: "center" },
-  streakWarningText: { fontSize: 11, fontWeight: "800" },
+  bannerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    borderBottomWidth: 3,
+  },
+  bannerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    paddingRight: Spacing.sm,
+  },
+  bannerText: {
+    fontSize: 12,
+    fontWeight: "900",
+    lineHeight: 16,
+    flex: 1,
+  },
+  allowBtnShadowContainer: {
+    position: "relative",
+    width: 80,
+    height: 34,
+  },
+  allowBtnShadow: {
+    position: "absolute",
+    top: 3,
+    left: 3,
+    width: 77,
+    height: 31,
+    borderRadius: Radius.sm,
+  },
+  allowBtn: {
+    width: 77,
+    height: 31,
+    borderWidth: 2,
+    borderRadius: Radius.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  allowBtnText: {
+    fontSize: 11,
+    fontWeight: "900",
+  },
   onlineTray: { paddingLeft: Spacing.lg, marginBottom: Spacing.xl, flexDirection: "row" },
   onlineUser: { alignItems: "center", marginRight: Spacing.lg + 4 },
   avatarShadowContainer: { position: "relative", width: 48, height: 48, marginBottom: 6 },
