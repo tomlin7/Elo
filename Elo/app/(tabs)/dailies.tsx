@@ -9,54 +9,57 @@ import {
 import { useProfileStore } from "../../src/store/profileStore.ts";
 import { useThemeStore } from "../../src/store/themeStore.ts";
 import { Screen } from "@/components/ui/Screen";
-import { SectionLabel } from "@/components/ui/SectionLabel";
 import { StatCapsuleRow } from "@/components/ui/StatCapsuleRow";
 import { Spacing, Radius } from "@/constants/design";
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { IconSymbol } from "@/components/ui/icon-symbol";
-import { ShapesComposition } from "@/components/ui/Shapes";
+import {
+  SudokuIllustration,
+  CrossMathIllustration,
+  KenKenIllustration,
+  MathMazeIllustration,
+} from "@/components/ui/Shapes";
 
 interface PuzzleCardProps {
   title: string;
-  desc: string;
-  iconName: "grid.sharp" | "plus.square.fill" | "atom" | "arrow.triangle.path";
+  illustration: React.ReactNode;
   isHard: boolean;
   onToggleDifficulty: () => void;
 }
 
-const PuzzleCard: React.FC<PuzzleCardProps> = ({ title, desc, iconName, isHard, onToggleDifficulty }) => {
+const PuzzleCard: React.FC<PuzzleCardProps> = ({ title, illustration, isHard, onToggleDifficulty }) => {
   const { colors } = useThemeStore();
 
   return (
-    <Card style={styles.card}>
-      <View style={styles.cardHeader}>
-        <IconSymbol name={iconName} size={24} color={colors.primary} style={styles.cardIcon} />
-        <View style={styles.titleBlock}>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "95%" }}>
-            <Text style={[styles.cardTitle, { color: colors.text }]}>{title}</Text>
-            <ShapesComposition type="miniDecor" />
-          </View>
-          <Text style={[styles.cardDesc, { color: colors.textMuted }]}>{desc}</Text>
+    <Card style={styles.puzzleCard}>
+      {/* Top half: Radios + Graphics */}
+      <View style={styles.cardHeaderArea}>
+        <View style={styles.difficultyRadioRow}>
+          <TouchableOpacity style={styles.radioOption} onPress={onToggleDifficulty}>
+            <Text style={[styles.radioLabel, { color: colors.textMuted }]}>Easy</Text>
+            <View style={[styles.radioCircle, { borderColor: colors.cardBorder }, !isHard && { backgroundColor: colors.primary }]} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.radioOption} onPress={onToggleDifficulty}>
+            <Text style={[styles.radioLabel, { color: colors.textMuted }]}>Hard</Text>
+            <View style={[styles.radioCircle, { borderColor: colors.cardBorder }, isHard && { backgroundColor: colors.primary }]}>
+              <IconSymbol name="lock.fill" size={8} color={isHard ? colors.onPrimary : colors.textMuted} />
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.illustrationContainer}>
+          {illustration}
         </View>
       </View>
 
-      <View style={[styles.toggleRow, { backgroundColor: colors.background, borderColor: colors.cardBorder, borderWidth: 2 }]}>
-        <TouchableOpacity
-          style={[styles.toggleBtn, !isHard && { backgroundColor: colors.cardBg }]}
-          onPress={() => isHard && onToggleDifficulty()}
-        >
-          <Text style={[styles.toggleBtnText, { color: colors.textMuted }, !isHard && { color: colors.primary, fontWeight: "900" }]}>EASY</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.toggleBtn, isHard && { backgroundColor: colors.cardBg }]}
-          onPress={() => !isHard && onToggleDifficulty()}
-        >
-          <Text style={[styles.toggleBtnText, { color: colors.textMuted }, isHard && { color: colors.primary, fontWeight: "900" }]}>HARD</Text>
-        </TouchableOpacity>
+      {/* Bottom half: Title + Action Trigger */}
+      <View style={[styles.cardTitleRow, { borderTopColor: colors.cardBorder }]}>
+        <Text style={[styles.puzzleTitleText, { color: colors.text }]}>{title.toUpperCase()}</Text>
+        <View style={[styles.chevronCircle, { backgroundColor: colors.primary, borderColor: colors.cardBorder }]}>
+          <IconSymbol name="chevron.right" size={12} color={colors.onPrimary} />
+        </View>
       </View>
-
-      <Button label="SOLVE PUZZLE" style={styles.solveBtn} compact />
     </Card>
   );
 };
@@ -64,24 +67,42 @@ const PuzzleCard: React.FC<PuzzleCardProps> = ({ title, desc, iconName, isHard, 
 export default function DailiesScreen() {
   const { profile } = useProfileStore();
   const { colors } = useThemeStore();
+
   const [sudokuHard, setSudokuHard] = useState(false);
   const [crossMathHard, setCrossMathHard] = useState(false);
   const [kenKenHard, setKenKenHard] = useState(false);
   const [mazeHard, setMazeHard] = useState(false);
-  const [challenges, setChallenges] = useState<any[]>([]);
+
+  const [timeLeft, setTimeLeft] = useState("12:00:00");
 
   useEffect(() => {
-    if (profile?.id) {
-      fetch(`http://10.0.2.2:8080/api/profile/challenges?playerId=${profile.id}`)
-        .then(r => r.json())
-        .then(data => setChallenges(Array.isArray(data) ? data : []))
-        .catch(() => {});
-    }
-  }, [profile?.id]);
+    const interval = setInterval(() => {
+      const now = new Date();
+      const night = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+      const diff = night.getTime() - now.getTime();
+      const h = Math.floor(diff / 3600000).toString().padStart(2, "0");
+      const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, "0");
+      const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, "0");
+      setTimeLeft(`${h}:${m}:${s}`);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const completedToday = profile?.completedTodayCount ?? 0;
+  const targetTotal = 4;
 
   return (
     <Screen>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        {/* Custom Screen Title Header with Ticker timer */}
+        <View style={styles.topHeader}>
+          <Text style={[styles.pageTitle, { color: colors.text }]}>Daily Challenges</Text>
+          <View style={[styles.timerPill, { backgroundColor: colors.accentMuted, borderColor: colors.accent }]}>
+            <IconSymbol name="star" size={12} color={colors.accent} style={{ marginRight: 4 }} />
+            <Text style={[styles.timerText, { color: colors.accent }]}>{timeLeft}</Text>
+          </View>
+        </View>
+
         <StatCapsuleRow
           stats={[
             { icon: "dollarsign.circle.fill", value: `${profile?.credits ?? 0} Pies` },
@@ -90,35 +111,79 @@ export default function DailiesScreen() {
           ]}
         />
 
-        <Card style={styles.trackerCard}>
-          <Text style={[styles.trackerTitle, { color: colors.text }]}>Daily Target Milestones</Text>
-          {challenges.map((ch: any) => (
-            <View key={ch.id} style={styles.trackerRow}>
-              <View style={styles.trackerInfo}>
-                <Text style={[styles.trackerName, { color: colors.textMuted }]}>{ch.challenge_type.replace(/_/g, " ")}</Text>
-                <Text style={[styles.trackerVal, { color: colors.primary }]}>
-                  {ch.current_value}/{ch.target_value} ({ch.is_completed ? "Completed" : `+${ch.reward_stars} CS`})
-                </Text>
-              </View>
-              <View style={[styles.barTrack, { backgroundColor: colors.background, borderColor: colors.cardBorder }]}>
-                <View style={[
-                  styles.barFill,
-                  { width: `${Math.min(100, (ch.current_value / ch.target_value) * 100)}%`, backgroundColor: ch.is_completed ? colors.success : colors.primary },
-                ]} />
+        {/* Milestone Road Tracker */}
+        <Card style={styles.timelineCard}>
+          <Text style={[styles.timelineMainVal, { color: colors.success }]}>
+            {completedToday}/{targetTotal}
+          </Text>
+          <Text style={[styles.timelineSubtitle, { color: colors.textMuted }]}>
+            Puzzle Completed
+          </Text>
+
+          <View style={styles.timelineTrackRow}>
+            {/* Step 1: Grid */}
+            <View style={[styles.timelineNode, completedToday >= 1 ? { borderColor: colors.success, backgroundColor: colors.success } : { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+              <IconSymbol name="grid.sharp" size={14} color={completedToday >= 1 ? colors.onPrimary : colors.textMuted} />
+            </View>
+
+            {/* Line 1 */}
+            <View style={[styles.timelineLine, { backgroundColor: completedToday >= 2 ? colors.success : colors.cardBorder }]} />
+
+            {/* Step 2: PI (5) */}
+            <View style={[styles.timelineNode, completedToday >= 2 ? { borderColor: colors.success, backgroundColor: colors.success } : { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+              <View style={styles.piBox}>
+                <Text style={[styles.piLabel, { color: completedToday >= 2 ? colors.onPrimary : colors.accent }]}>π</Text>
+                <Text style={[styles.piSub, { color: completedToday >= 2 ? colors.onPrimary : colors.accent }]}>5</Text>
               </View>
             </View>
-          ))}
-          {challenges.length === 0 && (
-            <Text style={[styles.noChallengesText, { color: colors.textMuted }]}>Solve matches in Arena Hub to clear targets!</Text>
-          )}
+
+            {/* Line 2 */}
+            <View style={[styles.timelineLine, { backgroundColor: completedToday >= 3 ? colors.success : colors.cardBorder }]} />
+
+            {/* Step 3: Grid */}
+            <View style={[styles.timelineNode, completedToday >= 3 ? { borderColor: colors.success, backgroundColor: colors.success } : { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+              <IconSymbol name="grid.sharp" size={14} color={completedToday >= 3 ? colors.onPrimary : colors.textMuted} />
+            </View>
+
+            {/* Line 3 */}
+            <View style={[styles.timelineLine, { backgroundColor: completedToday >= 4 ? colors.success : colors.cardBorder }]} />
+
+            {/* Step 4: PI (15) */}
+            <View style={[styles.timelineNode, completedToday >= 4 ? { borderColor: colors.success, backgroundColor: colors.success } : { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+              <View style={styles.piBox}>
+                <Text style={[styles.piLabel, { color: completedToday >= 4 ? colors.onPrimary : colors.accent }]}>π</Text>
+                <Text style={[styles.piSub, { color: completedToday >= 4 ? colors.onPrimary : colors.accent }]}>15</Text>
+              </View>
+            </View>
+          </View>
         </Card>
 
-        <SectionLabel>BRAIN-TRAINING PUZZLES</SectionLabel>
+        {/* Puzzle 2x2 Grid */}
         <View style={styles.puzzleGrid}>
-          <PuzzleCard title="Sudoku" desc="Complete the classic grid challenge." iconName="grid.sharp" isHard={sudokuHard} onToggleDifficulty={() => setSudokuHard(!sudokuHard)} />
-          <PuzzleCard title="Cross Math" desc="Solve intersecting equation paths." iconName="plus.square.fill" isHard={crossMathHard} onToggleDifficulty={() => setCrossMathHard(!crossMathHard)} />
-          <PuzzleCard title="KenKen" desc="Segmented calculations grid." iconName="atom" isHard={kenKenHard} onToggleDifficulty={() => setKenKenHard(!kenKenHard)} />
-          <PuzzleCard title="Math Maze" desc="Find the arithmetic route." iconName="arrow.triangle.path" isHard={mazeHard} onToggleDifficulty={() => setMazeHard(!mazeHard)} />
+          <PuzzleCard
+            title="Sudoku"
+            illustration={<SudokuIllustration />}
+            isHard={sudokuHard}
+            onToggleDifficulty={() => setSudokuHard(!sudokuHard)}
+          />
+          <PuzzleCard
+            title="Cross Math"
+            illustration={<CrossMathIllustration />}
+            isHard={crossMathHard}
+            onToggleDifficulty={() => setCrossMathHard(!crossMathHard)}
+          />
+          <PuzzleCard
+            title="KenKen"
+            illustration={<KenKenIllustration />}
+            isHard={kenKenHard}
+            onToggleDifficulty={() => setKenKenHard(!kenKenHard)}
+          />
+          <PuzzleCard
+            title="Math Maze"
+            illustration={<MathMazeIllustration />}
+            isHard={mazeHard}
+            onToggleDifficulty={() => setMazeHard(!mazeHard)}
+          />
         </View>
       </ScrollView>
     </Screen>
@@ -127,24 +192,150 @@ export default function DailiesScreen() {
 
 const styles = StyleSheet.create({
   scrollContainer: { paddingBottom: Spacing.xxxl },
-  trackerCard: { marginHorizontal: Spacing.lg, marginBottom: Spacing.xl },
-  trackerTitle: { fontSize: 14, fontWeight: "700", marginBottom: Spacing.md },
-  trackerRow: { marginBottom: 10 },
-  trackerInfo: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
-  trackerName: { fontSize: 12, fontWeight: "600" },
-  trackerVal: { fontSize: 12, fontWeight: "700" },
-  barTrack: { height: 12, borderRadius: Radius.sm, overflow: "hidden", borderWidth: 2 },
-  barFill: { height: "100%" },
-  noChallengesText: { fontSize: 12, textAlign: "center", marginVertical: 8 },
-  puzzleGrid: { paddingHorizontal: Spacing.lg },
-  card: { marginBottom: Spacing.lg },
-  cardHeader: { flexDirection: "row", alignItems: "center", marginBottom: Spacing.md },
-  cardIcon: { marginRight: Spacing.md },
-  titleBlock: { flex: 1 },
-  cardTitle: { fontSize: 15, fontWeight: "700" },
-  cardDesc: { fontSize: 11, marginTop: 2, lineHeight: 14 },
-  toggleRow: { flexDirection: "row", borderRadius: Radius.sm, padding: 2, marginBottom: Spacing.md },
-  toggleBtn: { flex: 1, paddingVertical: 6, alignItems: "center", borderRadius: 6 },
-  toggleBtnText: { fontSize: 10, fontWeight: "700" },
-  solveBtn: { width: "100%" }
+  topHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    marginBottom: Spacing.sm,
+  },
+  pageTitle: {
+    fontSize: 20,
+    fontWeight: "900",
+    letterSpacing: 0.5,
+  },
+  timerPill: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: Radius.sm,
+    borderWidth: 1.5,
+  },
+  timerText: {
+    fontSize: 10,
+    fontFamily: "monospace",
+    fontWeight: "800",
+  },
+  timelineCard: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.xl,
+    alignItems: "center",
+    paddingVertical: Spacing.xl,
+    marginRight: 0,
+  },
+  timelineMainVal: {
+    fontSize: 36,
+    fontWeight: "900",
+    letterSpacing: 1,
+  },
+  timelineSubtitle: {
+    fontSize: 10,
+    fontWeight: "700",
+    marginTop: 2,
+    marginBottom: 24,
+    textTransform: "uppercase",
+  },
+  timelineTrackRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "90%",
+    justifyContent: "center",
+  },
+  timelineNode: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  timelineLine: {
+    flex: 1,
+    height: 3,
+  },
+  piBox: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  piLabel: {
+    fontSize: 11,
+    fontWeight: "800",
+    lineHeight: 12,
+  },
+  piSub: {
+    fontSize: 7,
+    fontWeight: "900",
+    lineHeight: 8,
+  },
+  puzzleGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.lg,
+  },
+  puzzleCard: {
+    width: "48%",
+    marginBottom: Spacing.lg,
+    padding: 0,
+    overflow: "hidden",
+    marginRight: 0,
+  },
+  cardHeaderArea: {
+    padding: 12,
+    alignItems: "center",
+  },
+  difficultyRadioRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 16,
+  },
+  radioOption: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  radioLabel: {
+    fontSize: 9,
+    fontWeight: "800",
+    marginRight: 4,
+  },
+  radioCircle: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    borderWidth: 1.5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  illustrationContainer: {
+    width: 70,
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 4,
+  },
+  cardTitleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderTopWidth: 2,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  puzzleTitleText: {
+    fontSize: 12,
+    fontWeight: "900",
+    flex: 1,
+    marginRight: 6,
+  },
+  chevronCircle: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    borderWidth: 1.5,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

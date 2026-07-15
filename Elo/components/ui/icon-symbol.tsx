@@ -30,6 +30,9 @@ const MAPPING = {
   'bolt': 'flash-on',
   'psychology': 'psychology',
   'dollarsign.circle.fill': 'monetization-on',
+  'slider.horizontal.3': 'tune',
+  'square.stack.3d.down.right': 'layers',
+  'logic.circles': 'group-work',
 } as IconMapping;
 
 /**

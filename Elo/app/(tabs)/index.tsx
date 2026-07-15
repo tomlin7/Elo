@@ -11,7 +11,8 @@ import {
   TextInput,
   View,
   Share,
-  Modal
+  Modal,
+  TouchableOpacity
 } from "react-native";
 import { useRouter } from "expo-router";
 import { authService } from "../../src/utils/auth.ts";
@@ -35,23 +36,40 @@ interface ModeProps {
 }
 
 const DisciplineCard: React.FC<ModeProps & { colors: ReturnType<typeof useThemeStore.getState>["colors"] }> = ({ label, isActive, onPress, colors }) => {
+  const getIcon = () => {
+    switch (label) {
+      case "MATH": return "slider.horizontal.3";
+      case "MEMORY": return "square.stack.3d.down.right";
+      case "PUZZLE": return "grid.sharp";
+      case "LOGIC": return "logic.circles";
+      default: return "grid.sharp";
+    }
+  };
+
   return (
-    <Card 
-      onPress={onPress}
-      style={[
-        styles.discCard,
-        isActive && { borderColor: colors.primary }
-      ]}
-    >
-      <Text style={[styles.discLabelText, { color: colors.textMuted }, isActive && { color: colors.primary }]}>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.discContainer}>
+      <Card
+        style={[
+          styles.discCard,
+          isActive ? { backgroundColor: colors.accent, borderColor: colors.cardBorder } : { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
+          { marginRight: 0 }
+        ]}
+      >
+        <IconSymbol
+          name={getIcon()}
+          size={24}
+          color={isActive ? colors.onPrimary : colors.textMuted}
+        />
+        {isActive && (
+          <View style={[styles.pointsBadge, { backgroundColor: colors.cardBorder }]}>
+            <Text style={[styles.pointsText, { color: colors.accent, fontWeight: "900" }]}>1000</Text>
+          </View>
+        )}
+      </Card>
+      <Text style={[styles.discLabelText, { color: isActive ? colors.accent : colors.textMuted }]}>
         {label}
       </Text>
-      {isActive && (
-        <View style={[styles.pointsBadge, { backgroundColor: colors.primary }]}>
-          <Text style={[styles.pointsText, { color: colors.onPrimary }]}>+100</Text>
-        </View>
-      )}
-    </Card>
+    </TouchableOpacity>
   );
 };
 
@@ -300,7 +318,7 @@ export default function HomeScreen() {
             <View style={styles.avatarShadowContainer}>
               <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
               <View style={[styles.onlineRing, { borderColor: colors.primary, backgroundColor: colors.cardBg }]}>
-                <Text style={[styles.onlineInitial, { color: colors.text }]}>U</Text>
+                <IconSymbol name="star" size={18} color={colors.accent} />
               </View>
             </View>
             <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>YOU</Text>
@@ -309,7 +327,7 @@ export default function HomeScreen() {
             <View style={styles.avatarShadowContainer}>
               <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
               <View style={[styles.onlineRing, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
-                <Text style={[styles.onlineInitial, { color: colors.text }]}>A</Text>
+                <IconSymbol name="bolt" size={18} color={colors.primary} />
               </View>
             </View>
             <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>UserA</Text>
@@ -318,7 +336,7 @@ export default function HomeScreen() {
             <View style={styles.avatarShadowContainer}>
               <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
               <View style={[styles.onlineRing, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
-                <Text style={[styles.onlineInitial, { color: colors.text }]}>B</Text>
+                <IconSymbol name="psychology" size={18} color={colors.success} />
               </View>
             </View>
             <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>UserB</Text>
@@ -497,11 +515,19 @@ const styles = StyleSheet.create({
   activeQuestLine: { flex: 1, height: 2, marginHorizontal: 8 },
   inactiveQuestLine: { flex: 1, height: 2, marginHorizontal: 8 },
   discGrid: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: Spacing.lg, marginBottom: Spacing.xl },
-  discCard: {
-    width: "23%", height: 85,
-    justifyContent: "center", alignItems: "center"
+  discContainer: {
+    width: "23%",
+    alignItems: "center",
   },
-  discLabelText: { fontSize: 11, fontWeight: "800" },
+  discCard: {
+    width: "100%",
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 0,
+    marginBottom: 8,
+  },
+  discLabelText: { fontSize: 10, fontWeight: "800", textTransform: "uppercase" },
   pointsBadge: { position: "absolute", bottom: -6, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 6 },
   pointsText: { fontSize: 8, fontWeight: "900" },
   duelCardContainer: { paddingHorizontal: Spacing.lg, marginBottom: 20 },

@@ -1,6 +1,6 @@
 import React from "react";
 import { View, StyleSheet, type ViewStyle } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import Svg, { Path, Rect, Circle } from "react-native-svg";
 
 interface ShapeProps {
   color: string;
@@ -59,6 +59,55 @@ export const SparkleShape: React.FC<ShapeProps> = ({ color, size = 60, style }) 
       d="M50 0 Q50 50 100 50 Q50 50 50 100 Q50 50 0 50 Q50 50 50 0 Z"
       fill={color}
     />
+  </Svg>
+);
+
+// Daily Challenge Puzzle Graphics
+export const SudokuIllustration = () => (
+  <Svg width={64} height={64} viewBox="0 0 100 100">
+    <Rect x="0" y="0" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.6" />
+    <Rect x="26" y="0" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.8" />
+    <Rect x="52" y="0" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.4" />
+    <Rect x="78" y="0" width="20" height="20" rx="4" fill="#A6E3A1" opacity="1" />
+    <Rect x="0" y="26" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.9" />
+    <Rect x="26" y="26" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.3" />
+    <Rect x="52" y="26" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.7" />
+    <Rect x="78" y="26" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.5" />
+    <Rect x="0" y="52" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.5" />
+    <Rect x="26" y="52" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.9" />
+    <Rect x="52" y="52" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.4" />
+    <Rect x="78" y="52" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.8" />
+    <Rect x="0" y="78" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.8" />
+    <Rect x="26" y="78" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.5" />
+    <Rect x="52" y="78" width="20" height="20" rx="4" fill="#A6E3A1" opacity="1" />
+    <Rect x="78" y="78" width="20" height="20" rx="4" fill="#A6E3A1" opacity="0.3" />
+  </Svg>
+);
+
+export const CrossMathIllustration = () => (
+  <Svg width={64} height={64} viewBox="0 0 100 100">
+    <Rect x="38" y="0" width="24" height="100" rx="6" fill="#89B4FA" opacity="0.4" />
+    <Rect x="0" y="38" width="100" height="24" rx="6" fill="#89B4FA" opacity="0.6" />
+    <Rect x="38" y="38" width="24" height="24" rx="6" fill="#89B4FA" opacity="1" />
+    <Path d="M12 12 h10 M17 7 v10" stroke="#CDD6F4" strokeWidth="4" strokeLinecap="round" />
+    <Path d="M78 78 h10 M83 73 v10" stroke="#CDD6F4" strokeWidth="4" strokeLinecap="round" />
+  </Svg>
+);
+
+export const KenKenIllustration = () => (
+  <Svg width={64} height={64} viewBox="0 0 100 100">
+    <Rect x="5" y="5" width="40" height="40" rx="8" fill="none" stroke="#F9E2AF" strokeWidth="6" />
+    <Rect x="50" y="5" width="45" height="85" rx="8" fill="none" stroke="#F9E2AF" strokeWidth="6" />
+    <Rect x="5" y="50" width="40" height="40" rx="8" fill="none" stroke="#F9E2AF" strokeWidth="6" opacity="0.5" />
+  </Svg>
+);
+
+export const MathMazeIllustration = () => (
+  <Svg width={64} height={64} viewBox="0 0 100 100">
+    <Path d="M 20 20 L 50 80 L 80 20" fill="none" stroke="#CBA6F7" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" />
+    <Circle cx="20" cy="20" r="12" fill="#CBA6F7" />
+    <Circle cx="50" cy="80" r="12" fill="#CDD6F4" />
+    <Circle cx="80" cy="20" r="12" fill="#CBA6F7" />
   </Svg>
 );
 
