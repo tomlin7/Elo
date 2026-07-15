@@ -33,6 +33,7 @@ const MAPPING = {
   'slider.horizontal.3': 'tune',
   'square.stack.3d.down.right': 'layers',
   'logic.circles': 'group-work',
+  'person.crop.circle': 'account-circle',
 } as IconMapping;
 
 /**

@@ -4,11 +4,13 @@ import {
   FlatList,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from "react-native";
-import { useProfileStore } from "../../src/store/profileStore.ts";
-import { useThemeStore, ThemeId } from "../../src/store/themeStore.ts";
-import { getBackendUrls } from "../../src/utils/auth.ts";
+import { useRouter } from "expo-router";
+import { useProfileStore } from "../src/store/profileStore.ts";
+import { useThemeStore, ThemeId } from "../src/store/themeStore.ts";
+import { getBackendUrls } from "../src/utils/auth.ts";
 import * as Haptics from "expo-haptics";
 import { Screen } from "@/components/ui/Screen";
 import { Card } from "@/components/ui/Card";
@@ -27,6 +29,7 @@ interface ShopItem {
 }
 
 export default function CosmeticsVault() {
+  const router = useRouter();
   const { profile, updateStats } = useProfileStore();
   const { themeId, setTheme, colors } = useThemeStore();
   const [loadingItemId, setLoadingItemId] = useState<string | null>(null);
@@ -226,7 +229,12 @@ export default function CosmeticsVault() {
     <Screen>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.primary }]}>COSMETICS VAULT</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <TouchableOpacity onPress={() => router.back()} style={[styles.backBtn, { borderColor: colors.cardBorder }]}>
+              <IconSymbol name="chevron.left" size={16} color={colors.text} />
+            </TouchableOpacity>
+            <Text style={[styles.title, { color: colors.primary }]}>COSMETICS VAULT</Text>
+          </View>
           <View style={[styles.creditsBox, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
             <IconSymbol name="dollarsign.circle.fill" size={14} color={colors.primary} style={{ marginRight: 6 }} />
             <Text style={[styles.creditsText, { color: colors.accent }]}>
@@ -260,6 +268,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     marginTop: Spacing.md,
     paddingHorizontal: Spacing.lg,
+  },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: Radius.sm,
+    borderWidth: 2,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.md,
   },
   title: {
     fontSize: 20,
