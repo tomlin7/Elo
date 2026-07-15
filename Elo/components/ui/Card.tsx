@@ -64,6 +64,11 @@ export function Card({ style, variant = "default", onPress, children, ...props }
       }
     : {};
 
+  const innerDimensionsStyle = {
+    width: width ? "100%" : undefined,
+    height: height ? "100%" : undefined,
+  };
+
   return (
     <View style={[styles.shadowContainer, containerStyle]}>
       {!isPressed && (
@@ -77,6 +82,7 @@ export function Card({ style, variant = "default", onPress, children, ...props }
             borderColor: colors.cardBorder,
             borderStyle: variant === "dashed" ? "dashed" : "solid",
           },
+          innerDimensionsStyle,
           innerStyle,
           isPressed && { transform: [{ translateX: 7 }, { translateY: 7 }] },
         ]}

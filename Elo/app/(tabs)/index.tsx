@@ -12,7 +12,8 @@ import {
   View,
   Share,
   Modal,
-  TouchableOpacity
+  TouchableOpacity,
+  StatusBar as RNStatusBar
 } from "react-native";
 import { useRouter } from "expo-router";
 import { authService } from "../../src/utils/auth.ts";
@@ -489,7 +490,10 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
+  },
   scrollContainer: { paddingBottom: Spacing.xxxl },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   loadingText: { marginTop: 12, fontSize: 14, fontFamily: "monospace" },
