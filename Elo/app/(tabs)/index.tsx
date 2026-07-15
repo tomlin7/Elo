@@ -46,27 +46,37 @@ const DisciplineCard: React.FC<ModeProps & { colors: ReturnType<typeof useThemeS
     }
   };
 
+  const getThemeColor = () => {
+    switch (label) {
+      case "MATH": return "#F9E2AF";
+      case "MEMORY": return "#89B4FA";
+      case "PUZZLE": return "#A6E3A1";
+      case "LOGIC": return "#F38BA8";
+      default: return colors.primary;
+    }
+  };
+
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.discContainer}>
       <Card
         style={[
           styles.discCard,
-          isActive ? { backgroundColor: colors.accent, borderColor: colors.cardBorder } : { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
+          isActive ? { backgroundColor: getThemeColor(), borderColor: colors.cardBorder } : { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
           { marginRight: 0 }
         ]}
       >
         <IconSymbol
           name={getIcon()}
           size={24}
-          color={isActive ? colors.onPrimary : colors.textMuted}
+          color={isActive ? "#000000" : getThemeColor()}
         />
         {isActive && (
-          <View style={[styles.pointsBadge, { backgroundColor: colors.cardBorder }]}>
-            <Text style={[styles.pointsText, { color: colors.accent, fontWeight: "900" }]}>1000</Text>
+          <View style={[styles.pointsBadge, { backgroundColor: colors.cardBorder, borderColor: colors.cardBorder, borderWidth: 1 }]}>
+            <Text style={[styles.pointsText, { color: getThemeColor(), fontWeight: "900" }]}>1000</Text>
           </View>
         )}
       </Card>
-      <Text style={[styles.discLabelText, { color: isActive ? colors.accent : colors.textMuted }]}>
+      <Text style={[styles.discLabelText, { color: isActive ? getThemeColor() : colors.textMuted }]}>
         {label}
       </Text>
     </TouchableOpacity>
@@ -300,8 +310,8 @@ export default function HomeScreen() {
     <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        <View style={[styles.streakWarning, { backgroundColor: colors.accent }]}>
-          <Text style={[styles.streakWarningText, { color: colors.onPrimary }]}>ALERTS: Turn on alerts to preserve your daily streaks!</Text>
+        <View style={[styles.streakWarning, { backgroundColor: colors.accent, borderBottomColor: colors.cardBorder, borderBottomWidth: 2 }]}>
+          <Text style={[styles.streakWarningText, { color: "#000000" }]}>ALERTS: Turn on alerts to preserve your daily streaks!</Text>
         </View>
 
         <StatCapsuleRow
