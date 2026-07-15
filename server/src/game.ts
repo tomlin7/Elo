@@ -109,6 +109,7 @@ export class GameRoom {
   winnerId: string | null = null;
   playerOneReconToken: string = "";
   playerTwoReconToken: string = "";
+  questionSeed: string = "";
 
   constructor(
     id: string,
@@ -123,6 +124,7 @@ export class GameRoom {
     this.id = id;
     this.playerOne = p1;
     this.playerTwo = p2;
+    this.questionSeed = `seed_${Math.random().toString(36).substring(2, 7)}`;
     this.roomType = roomType;
     this.spectators = [];
     this.privateRoomCode = privateRoomCode;
@@ -244,7 +246,7 @@ export class GameRoom {
     setTimeout(runBotTurn, 1500 + Math.random() * 1000);
   }
 
-  handleClientAction(playerId: string, action: elo.v2.IClientAction) {
+  handleClientAction(playerId: string, action: elo.v3.IClientAction) {
     if (this.state !== MatchState.MATCH_STATE_ACTIVE) return;
 
     const player = this.playerOne.id === playerId ? this.playerOne : this.playerTwo;
@@ -267,6 +269,23 @@ export class GameRoom {
         }
       }
       player.lastKeystrokeTime = clientTime;
+    }
+
+    if (action.payload === "sendMatchChat" && action.sendMatchChat) {
+      const chatMsg = action.sendMatchChat;
+      const update = elo.v3.ServerGameStateUpdate.create({
+        roomId: this.id,
+        state: this.state,
+        receiveMatchChat: `${player.username}: ${chatMsg}`
+      });
+      const buffer = elo.v3.ServerGameStateUpdate.encode(update).finish();
+      if (this.playerOne.socket && !this.playerOne.isBot) {
+        this.playerOne.socket.send(buffer);
+      }
+      if (this.playerTwo.socket && !this.playerTwo.isBot) {
+        this.playerTwo.socket.send(buffer);
+      }
+      return;
     }
 
     if (action.payload === "currentInput") {

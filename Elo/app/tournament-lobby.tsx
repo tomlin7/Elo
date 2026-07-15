@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -14,8 +11,12 @@ import { useThemeStore } from "../src/store/themeStore.ts";
 import { useProfileStore } from "../src/store/profileStore.ts";
 import { getBackendUrls } from "../src/utils/auth.ts";
 import { decodeServerState, encodeClientAction, MatchState } from "../src/utils/protobuf.ts";
-import { StatusBar } from "expo-status-bar";
 import * as Haptics from "expo-haptics";
+import { Screen } from "@/components/ui/Screen";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Spacing, Typography } from "@/constants/design";
+import { IconSymbol } from "@/components/ui/icon-symbol";
 
 interface TournamentNode {
   nodeId: string;
@@ -31,11 +32,10 @@ interface TournamentNode {
 
 export default function TournamentLobbyScreen() {
   const router = useRouter();
-  const { colors, themeId } = useThemeStore();
+  const { colors } = useThemeStore();
   const { profile } = useProfileStore();
 
   const [status, setStatus] = useState<"queue" | "bracket" | "finished">("queue");
-  const [pooledCount, setPooledCount] = useState(1);
   const [bracketNodes, setBracketNodes] = useState<TournamentNode[]>([]);
   const [winnerId, setWinnerId] = useState("");
   const [loading, setLoading] = useState(true);
@@ -119,7 +119,7 @@ export default function TournamentLobbyScreen() {
     const inProgress = node.status === 1;
 
     return (
-      <View key={node.nodeId} style={[styles.nodeCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+      <Card key={node.nodeId} style={styles.nodeCard}>
         <View style={styles.playerRow}>
           <Text style={[styles.playerName, { color: isP1Winner ? colors.accent : colors.text }, !node.playerOneId && { color: colors.textMuted }]}>
             {node.playerOneUsername || "TBD"}
@@ -135,36 +135,36 @@ export default function TournamentLobbyScreen() {
         </View>
 
         {inProgress && node.activeRoomId ? (
-          <TouchableOpacity
-            style={[styles.specBtn, { backgroundColor: colors.primary }]}
+          <Button
+            label="SPECTATE MATCH"
+            variant="primary"
+            compact
             onPress={() => handleSpectate(node.activeRoomId)}
-          >
-            <Text style={styles.specText}>SPECTATE MATCH</Text>
-          </TouchableOpacity>
+            style={styles.specBtn}
+          />
         ) : null}
-      </View>
+      </Card>
     );
   };
 
   if (loading || status === "queue") {
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-        <StatusBar style={themeId === "light" ? "dark" : "light"} />
+      <Screen>
         <View style={styles.centerContainer}>
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text style={[styles.title, { color: colors.text, marginTop: 24 }]}>TOURNAMENT MATCHMAKING</Text>
+          <Text style={[styles.title, { color: colors.text, marginTop: Spacing.xl }]}>TOURNAMENT MATCHMAKING</Text>
           <Text style={[styles.subtitle, { color: colors.textMuted }]}>Pooling 8 competitors of comparable ratings...</Text>
-          <TouchableOpacity
-            style={[styles.cancelBtn, { borderColor: colors.cardBorder }]}
+          <Button
+            label="LEAVE QUEUE"
+            variant="secondary"
             onPress={() => {
               if (wsRef.current) wsRef.current.close();
               router.replace("/(tabs)");
             }}
-          >
-            <Text style={[styles.cancelText, { color: colors.text }]}>LEAVE QUEUE</Text>
-          </TouchableOpacity>
+            style={styles.cancelBtn}
+          />
         </View>
-      </SafeAreaView>
+      </Screen>
     );
   }
 
@@ -174,20 +174,19 @@ export default function TournamentLobbyScreen() {
       : bracketNodes.find(n => n.nodeId === "F1")?.playerTwoUsername;
 
     return (
-      <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-        <StatusBar style={themeId === "light" ? "dark" : "light"} />
+      <Screen>
         <View style={styles.centerContainer}>
-          <Text style={[styles.trophy, { color: colors.accent }]}>🏆</Text>
+          <IconSymbol name="star" size={72} color={colors.accent} style={{ marginBottom: Spacing.xl }} />
           <Text style={[styles.title, { color: colors.text }]}>TOURNAMENT COMPLETE</Text>
           <Text style={[styles.winnerLabel, { color: colors.accent }]}>WINNER: {winnerUsername || "Champion"}</Text>
-          <TouchableOpacity
-            style={[styles.primaryButton, { backgroundColor: colors.primary, marginTop: 40, width: 240 }]}
+          <Button
+            label="BACK TO MENU"
+            variant="primary"
             onPress={() => router.replace("/(tabs)")}
-          >
-            <Text style={styles.buttonText}>BACK TO MENU</Text>
-          </TouchableOpacity>
+            style={styles.primaryBtn}
+          />
         </View>
-      </SafeAreaView>
+      </Screen>
     );
   }
 
@@ -196,17 +195,17 @@ export default function TournamentLobbyScreen() {
   const finals = bracketNodes.filter(n => n.roundTier === 3);
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
-      <StatusBar style={themeId === "light" ? "dark" : "light"} />
+    <Screen>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={[styles.logoText, { color: colors.primary }]}>LIVE BRACKETS</Text>
-          <TouchableOpacity
-            style={[styles.exitBtn, { borderColor: colors.cardBorder }]}
+          <Button
+            label="EXIT"
+            variant="secondary"
+            compact
             onPress={() => router.replace("/(tabs)")}
-          >
-            <Text style={[styles.exitText, { color: colors.textMuted }]}>EXIT</Text>
-          </TouchableOpacity>
+            style={styles.exitBtn}
+          />
         </View>
 
         <ScrollView horizontal contentContainerStyle={styles.bracketContainer} showsHorizontalScrollIndicator={false}>
@@ -224,94 +223,75 @@ export default function TournamentLobbyScreen() {
 
           {/* Finals */}
           <View style={[styles.roundColumn, { justifyContent: "center" }]}>
-            <Text style={[styles.roundLabel, { color: colors.textMuted, marginBottom: 20 }]}>FINALS</Text>
+            <Text style={[styles.roundLabel, { color: colors.textMuted, marginBottom: Spacing.xl }]}>FINALS</Text>
             {finals.map(renderNode)}
           </View>
         </ScrollView>
       </View>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
     flex: 1,
-    paddingTop: 16,
+    paddingTop: Spacing.lg,
   },
   centerContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.xl,
   },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 24,
-    marginBottom: 24,
+    paddingHorizontal: Spacing.xl,
+    marginBottom: Spacing.xl,
   },
   logoText: {
+    ...Typography.title,
     fontSize: 24,
-    fontWeight: "900",
-    letterSpacing: 1.5,
   },
   exitBtn: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    borderWidth: 1,
-  },
-  exitText: {
-    fontSize: 12,
-    fontWeight: "700",
+    height: 34,
+    paddingHorizontal: Spacing.md,
   },
   title: {
+    ...Typography.heading,
     fontSize: 22,
-    fontWeight: "900",
     textAlign: "center",
     marginBottom: 6,
   },
   subtitle: {
-    fontSize: 14,
+    ...Typography.body,
     textAlign: "center",
-    marginBottom: 40,
+    marginBottom: Spacing.xxxl,
   },
   cancelBtn: {
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 14,
-    borderWidth: 1,
+    width: 240,
   },
-  cancelText: {
-    fontSize: 14,
-    fontWeight: "800",
-    letterSpacing: 0.5,
+  primaryBtn: {
+    marginTop: Spacing.xxl,
+    width: 240,
   },
   bracketContainer: {
-    paddingLeft: 24,
+    paddingLeft: Spacing.xl,
     paddingRight: 64,
   },
   roundColumn: {
     width: 220,
-    marginRight: 32,
-    paddingVertical: 20,
+    marginRight: Spacing.xxl,
+    paddingVertical: Spacing.xl,
   },
   roundLabel: {
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.5,
-    marginBottom: 16,
+    ...Typography.label,
+    marginBottom: Spacing.lg,
     textAlign: "center",
   },
   nodeCard: {
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 14,
-    marginBottom: 24,
+    marginBottom: Spacing.xl,
     justifyContent: "center",
   },
   playerRow: {
@@ -334,35 +314,15 @@ const styles = StyleSheet.create({
   },
   specBtn: {
     marginTop: 12,
-    height: 36,
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  specText: {
-    color: "#FFF",
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 0.5,
+    height: 34,
   },
   trophy: {
     fontSize: 72,
-    marginBottom: 20,
+    marginBottom: Spacing.xl,
   },
   winnerLabel: {
+    ...Typography.heading,
     fontSize: 20,
-    fontWeight: "900",
     marginTop: 12,
-  },
-  primaryButton: {
-    height: 52,
-    borderRadius: 14,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    color: "#FFF",
-    fontSize: 15,
-    fontWeight: "800",
   },
 });

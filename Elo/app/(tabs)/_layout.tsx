@@ -10,12 +10,12 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#8AFF29",
-        tabBarInactiveTintColor: "#8E8E93",
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarStyle: {
-          backgroundColor: "#161616",
+          backgroundColor: colors.background,
           borderTopWidth: 1,
-          borderTopColor: "#262626"
+          borderTopColor: colors.cardBorder,
         },
         headerShown: false,
         tabBarButton: HapticTab,
@@ -42,10 +42,10 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="vault"
+        name="profile"
         options={{
-          title: 'Vault',
-          tabBarIcon: ({ color }) => <IconSymbol size={24} name="bag.fill" color={color} />,
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <IconSymbol size={24} name="person.crop.circle" color={color} />,
         }}
       />
     </Tabs>

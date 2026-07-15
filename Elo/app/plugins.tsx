@@ -5,7 +5,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from "react-native";
 import { useRouter } from "expo-router";
@@ -13,6 +12,8 @@ import { useThemeStore } from "../src/store/themeStore.ts";
 import { MOCK_COMMUNITY_PLUGINS, PluginMetadata } from "../src/utils/pluginBridge.ts";
 import { StatusBar } from "expo-status-bar";
 import * as Haptics from "expo-haptics";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 export default function PluginsScreen() {
   const router = useRouter();
@@ -22,7 +23,6 @@ export default function PluginsScreen() {
   const handleTogglePlugin = (plugin: PluginMetadata) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     
-    // Simulate SHA-256 integrity validation checks (NFR verification constraint)
     const startTime = Date.now();
     const isValidSignature = plugin.fingerprint.length === 64;
     const latency = Date.now() - startTime;
@@ -49,12 +49,12 @@ export default function PluginsScreen() {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={[styles.headerTitle, { color: colors.primary }]}>PLUGINS VAULT</Text>
-          <TouchableOpacity
-            style={[styles.backBtn, { borderColor: colors.cardBorder }]}
+          <Button
+            label="BACK"
             onPress={() => router.replace("/(tabs)")}
-          >
-            <Text style={[styles.backBtnText, { color: colors.text }]}>BACK</Text>
-          </TouchableOpacity>
+            compact
+            style={styles.backBtn}
+          />
         </View>
 
         <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
@@ -65,14 +65,11 @@ export default function PluginsScreen() {
           {MOCK_COMMUNITY_PLUGINS.map((plugin) => {
             const isActive = activeIds.includes(plugin.id);
             return (
-              <View
+              <Card
                 key={plugin.id}
                 style={[
                   styles.pluginCard,
-                  {
-                    backgroundColor: colors.cardBg,
-                    borderColor: isActive ? colors.accent : colors.cardBorder
-                  }
+                  isActive && { borderColor: colors.accent }
                 ]}
               >
                 <View style={styles.cardHeader}>
@@ -91,20 +88,12 @@ export default function PluginsScreen() {
                   Fingerprint: {plugin.fingerprint.slice(0, 16)}...{plugin.fingerprint.slice(-16)}
                 </Text>
 
-                <TouchableOpacity
-                  style={[
-                    styles.actionBtn,
-                    {
-                      backgroundColor: isActive ? "#EF4444" : colors.primary
-                    }
-                  ]}
+                <Button
+                  label={isActive ? "DEACTIVATE MODULE" : "MOUNT & RUN MODULE"}
                   onPress={() => handleTogglePlugin(plugin)}
-                >
-                  <Text style={styles.actionBtnText}>
-                    {isActive ? "DEACTIVATE MODULE" : "MOUNT & RUN MODULE"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
+                  variant={isActive ? "destructive" : "primary"}
+                />
+              </Card>
             );
           })}
         </ScrollView>
@@ -134,14 +123,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   backBtn: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  backBtnText: {
-    fontSize: 12,
-    fontWeight: "700",
+    width: 80,
   },
   scrollContainer: {
     paddingHorizontal: 24,
@@ -153,10 +135,8 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   pluginCard: {
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 20,
     marginBottom: 20,
+    marginRight: 0,
   },
   cardHeader: {
     flexDirection: "row",
@@ -186,17 +166,5 @@ const styles = StyleSheet.create({
     fontSize: 9,
     fontFamily: "monospace",
     marginBottom: 20,
-  },
-  actionBtn: {
-    height: 44,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  actionBtnText: {
-    color: "#FFF",
-    fontSize: 12,
-    fontWeight: "800",
-    letterSpacing: 0.5,
   },
 });

@@ -150,7 +150,61 @@ message ClientAction {
     
     // Phase 5 Extensions
     RegionalHandshakeOverride regional_override = 14;
+
+    // Phase 11 Extensions
+    PresenceStatus update_presence = 15;
+    SocialRelationshipAction relationship_action = 16;
+    DirectMessage send_direct_message = 17;
+    string send_match_chat = 18;
+
+    // Phase 12 Extensions
+    MatchmakingTicket join_matchmaking = 19;
   }
+}
+
+enum PresenceStatus {
+  PRESENCE_ONLINE = 0;
+  PRESENCE_IN_MATCH = 1;
+  PRESENCE_OFFLINE = 2;
+}
+
+enum RelationshipState {
+  RELATION_NONE = 0;
+  RELATION_PENDING_A = 1;
+  RELATION_FRIENDS = 2;
+  RELATION_BLOCKED = 3;
+}
+
+enum RelationshipAction {
+  ACTION_SEND_REQUEST = 0;
+  ACTION_ACCEPT_REQUEST = 1;
+  ACTION_BLOCK_USER = 2;
+}
+
+message SocialRelationshipAction {
+  string target_player_id = 1;
+  RelationshipAction action = 2;
+}
+
+message PresenceUpdate {
+  string player_id = 1;
+  PresenceStatus status = 2;
+  int64 timestamp = 3;
+}
+
+message RelationshipUpdate {
+  string initiator_id = 1;
+  string target_id = 2;
+  RelationshipState state = 3;
+  int64 timestamp = 4;
+}
+
+message DirectMessage {
+  string id = 1;
+  string sender_id = 2;
+  string receiver_id = 3;
+  string message_text = 4;
+  int64 timestamp = 5;
 }
 
 message ServerGameStateUpdate {
@@ -189,4 +243,29 @@ message ServerGameStateUpdate {
   // Phase 5 Extensions
   RegionZone current_node_zone = 17;
   RegionalHandshakeOverride standby_override = 18;
+
+  // Phase 11 Extensions
+  PresenceUpdate presence_update = 19;
+  RelationshipUpdate relationship_update = 20;
+  DirectMessage direct_message = 21;
+  string receive_match_chat = 22;
+
+  // Phase 12 Extensions
+  MatchReadySignal match_ready = 23;
 }
+
+message MatchmakingTicket {
+  string player_id = 1;
+  int32 current_elo = 2;
+  string discipline_mode = 3;
+  int64 ticket_timestamp = 4;
+}
+
+message MatchReadySignal {
+  string room_id = 1;
+  string opponent_name = 2;
+  string opponent_avatar_url = 3;
+  int32 opponent_elo = 4;
+  string seed = 5;
+}
+

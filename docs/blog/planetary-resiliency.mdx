@@ -1,0 +1,107 @@
+---
+title: "Planetary Resiliency: Region-Isolated Sharding and Sub-1500ms Failover"
+description: "A technical deep dive into Elo's geographic ShardRouter, regional database sharding, Prometheus monitoring metrics, and automated cluster node evacuation."
+date: "2026-07-14"
+author: "Elo Engineering Team"
+---
+
+To guarantee low latency and high availability for players globally, Elo utilizes a distributed, sharded backend infrastructure. This blog post explores our multi-region network topology, geographic database sharding, Prometheus logging, and our automatic standby node evacuation engine.
+
+---
+
+## 1. Geographic Sharding via the ShardRouter
+
+Running a global database server for real-time competitive matches results in significant cross-continent network delay. To address this, Elo segments data storage geographically:
+
+* **Regional SQLite Database Shards**: We instantiate region-specific database files (e.g. `shard_us.db`, `shard_eu.db`, `shard_apac.db`) on edge servers located physically close to players.
+* **The ShardRouter Engine**: At connection time, our server-side `ShardRouter` analyzes the client's geographic region based on IP headers and maps their session data to the designated regional shard.
+* **Isolated Transactions**: All ELO rating changes, matching history logs, and profile progression updates remain regional. Only aggregated leaderboard summaries are synchronized globally to avoid cross-continental bottlenecks.
+
+```
+       [Global Client Request]
+                  │
+          [地理 ShardRouter]
+      ┌───────────┼───────────┐
+      ▼           ▼           ▼
+  [US Shard]  [EU Shard]  [APAC Shard]
+```
+
+---
+
+## 2. Real-Time Telemetry via Prometheus Metrics Exporter
+
+To monitor database health and network load across all regions, we expose a standard `/api/metrics` scraping endpoint:
+
+* **Prometheus Integration**: The edge server tracks active socket counts, matching queue sizes, and database transaction times.
+* **Compatibility Format**: The metric strings conform strictly to Prometheus guidelines:
+  ```text
+  # HELP elo_active_connections Number of active WebSocket connections
+  # TYPE elo_active_connections gauge
+  elo_active_connections{region="us"} 452
+  elo_active_connections{region="eu"} 389
+  elo_active_connections{region="apac"} 198
+  
+  # HELP elo_match_duration_seconds Time taken to resolve a math duel room
+  # TYPE elo_match_duration_seconds histogram
+  elo_match_duration_seconds_bucket{le="30.0"} 12
+  elo_match_duration_seconds_bucket{le="60.0"} 84
+  ```
+
+---
+
+## 3. High-Availability Hot Standby & Evacuation Engine
+
+When an edge node hosting active math duel rooms goes offline due to a network outage, players must not lose their progress or Elo standings. Elo implements a resilient standby node failover system:
+
+1. **Active Snapshots**: Active game rooms continuously stream compressed state snapshots to a secondary **Hot Standby Node** in a nearby zone.
+2. **Catastrophic Infrastructure Evacuation**: The `ClusterManager` polls nodes for heartbeats. If a node drops offline, the manager triggers an automated evacuation process.
+3. **Sub-1500ms Handover**: Active room configurations are evacuated and re-instantiated on the standby server node under a **1500ms window**.
+4. **Token Resume Handshake**: Stored client reconnection tokens (`recon_p1_...`) allow WebSocket clients to reconnect to the new node seamlessly. The user continues their math duel from the exact question and score they had before the failover.
+
+---
+
+## 4. Evacuation Data Schema
+
+The failover orchestrator manages node state migrations via structural serialization packets:
+
+```protobuf
+syntax = "proto3";
+
+package elo.v3;
+
+message RoomSnapshot {
+  string room_id = 1;
+  int32 current_question_index = 2;
+  int32 time_remaining_seconds = 3;
+  
+  message PlayerSnapshot {
+    string player_id = 4;
+    int32 score = 5;
+    int32 streak = 6;
+    string username = 7;
+  }
+  
+  PlayerSnapshot player_one = 8;
+  PlayerSnapshot player_two = 9;
+  string question_seed = 10;
+}
+
+message NodeEvacuationCommand {
+  string source_node_id = 1;
+  string target_node_id = 2;
+  repeated RoomSnapshot rooms = 3;
+  int64 command_timestamp = 4;
+}
+```
+
+---
+
+## 5. Success Metrics
+
+| Metric | Benchmark Goal | Verification Method |
+| --- | --- | --- |
+| **Failover Handover Window** | `< 1500ms` | Simulating node crashes during active matches and timing state restore. |
+| **Client Resumption Rate** | $> 99.8\%$ | Client socket reconnect attempt success logs. |
+| **Regional Data Integrity** | Zero shard leaks | SQLite query verification during database replication. |
+
+With regional resiliency established, we are diving deep into client-side security, hardware attestation, and bot prevention. Stay tuned for the next developer update!

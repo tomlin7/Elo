@@ -3,8 +3,10 @@ import {
   ActivityIndicator,
   StyleSheet,
   Text,
+  View,
   TouchableOpacity,
-  View
+  Platform,
+  Share
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -12,17 +14,48 @@ import { StatusBar } from "expo-status-bar";
 import { getBackendUrls } from "../src/utils/auth.ts";
 import { decodeServerState, encodeClientAction, MatchState } from "../src/utils/protobuf.ts";
 import { Keypad } from "../components/Keypad.tsx";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withTiming
 } from "react-native-reanimated";
-import * as Haptics from "expo-haptics";
+import { useThemeStore } from "../src/store/themeStore.ts";
+import { Spacing, Radius } from "@/constants/design";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+
+const GridBackdrop = () => (
+  <View style={[StyleSheet.absoluteFill, { opacity: 0.05, pointerEvents: "none" }]}>
+    <View style={{ flex: 1, flexDirection: "column", justifyContent: "space-between" }}>
+      {[...Array(14)].map((_, i) => (
+        <View key={i} style={{ height: 1, backgroundColor: "#FFF" }} />
+      ))}
+    </View>
+    <View style={[StyleSheet.absoluteFill, { flexDirection: "row", justifyContent: "space-between" }]}>
+      {[...Array(10)].map((_, i) => (
+        <View key={i} style={{ width: 1, backgroundColor: "#FFF" }} />
+      ))}
+    </View>
+  </View>
+);
+
+const RadarScanner = () => (
+  <View style={styles.radarContainer}>
+    <View style={styles.radarRingOuter}>
+      <View style={styles.radarRingMiddle}>
+        <View style={styles.radarRingInner}>
+          <Text style={{ fontSize: 32, fontWeight: "900", color: "#A6E3A1" }}>%</Text>
+        </View>
+      </View>
+    </View>
+  </View>
+);
 
 export default function BattleScreen() {
   const router = useRouter();
-  const { playerId } = useLocalSearchParams<{ playerId: string }>();
+  const { playerId, roomId } = useLocalSearchParams<{ playerId: string; roomId?: string }>();
 
   const [status, setStatus] = useState<"connecting" | "queue" | "countdown" | "active" | "finished" | "disconnected">("connecting");
   const [countdown, setCountdown] = useState(3);
@@ -34,8 +67,6 @@ export default function BattleScreen() {
   const [fps, setFps] = useState(60);
   const [ping, setPing] = useState(12);
   const [connectedRegion, setConnectedRegion] = useState("APAC-South");
-  const [packetLoss, setPacketLoss] = useState(0);
-  const [jitter, setJitter] = useState(0.8);
 
   const wsRef = useRef<WebSocket | null>(null);
   const prevStateRef = useRef<any>(null);
@@ -46,9 +77,10 @@ export default function BattleScreen() {
 
   // Time remaining
   const [timeRemaining, setTimeRemaining] = useState(60);
+  const { colors, themeId } = useThemeStore();
 
   useEffect(() => {
-    // Geoping the closest edge region
+    // Geoping region
     const fetchRegion = async () => {
       try {
         const urls = getBackendUrls();
@@ -59,7 +91,7 @@ export default function BattleScreen() {
     };
     fetchRegion();
 
-    // 1. Measure FPS
+    // Measure FPS
     let frames = 0;
     let lastFpsTime = Date.now();
     let animFrameId: number;
@@ -76,7 +108,7 @@ export default function BattleScreen() {
     };
     animFrameId = requestAnimationFrame(measureFps);
 
-    // 2. Measure average ping (sliding window every 3 seconds)
+    // Measure Ping
     const pingHistory: number[] = [];
     const interval = setInterval(async () => {
       try {
@@ -103,14 +135,14 @@ export default function BattleScreen() {
       return;
     }
 
-    connectWebSocket();
+    connectWebSocket(roomId);
 
     return () => {
       if (wsRef.current) {
         wsRef.current.close();
       }
     };
-  }, [playerId]);
+  }, [playerId, roomId]);
 
   const connectWebSocket = (roomIdToRejoin?: string) => {
     setStatus("connecting");
@@ -129,7 +161,6 @@ export default function BattleScreen() {
       if (roomIdToRejoin) {
         // Automatically rejoining active room
       } else {
-        // Request to join matchmaking queue
         const action = encodeClientAction({ joinQueuePlayerId: playerId });
         ws.send(action);
         setStatus("queue");
@@ -145,128 +176,144 @@ export default function BattleScreen() {
         console.error("Error decoding server update:", err);
       }
     };
-
-    ws.onerror = (e) => {
-      console.error("WebSocket error:", e);
-      setErrorMsg("Connection error. Retrying...");
-    };
-
-    ws.onclose = (e) => {
-      console.log("WebSocket closed:", e.code, e.reason);
-      setStatus("disconnected");
-    };
   };
 
   const handleStateUpdate = (update: any) => {
-    setGameState(update);
-    setTimeRemaining(update.timeRemainingSeconds);
+    if (update.matchState) {
+      const match = update.matchState;
+      setGameState(match);
+      setTimeRemaining(match.timeLeftSeconds || 60);
 
-    // Sync reconnect info
-    if (wsRef.current) {
-      // In expo-router/RN we can save roomId inside ws instance
-      (wsRef.current as any).roomId = update.roomId;
-    }
-
-    // Determine state
-    if (update.state === MatchState.MATCH_STATE_COUNTDOWN) {
-      setStatus("countdown");
-      // Countdown is handled by the server ticking, but we can compute countdown value locally
-      // Or just count down
-      setCountdown(Math.max(1, Math.min(3, update.timeRemainingSeconds || 3)));
-    } else if (update.state === MatchState.MATCH_STATE_ACTIVE) {
-      setStatus("active");
-    } else if (update.state === MatchState.MATCH_STATE_PAUSED_DISCONNECT) {
-      setStatus("active"); // Keep game UI but maybe show a overlay
-    } else if (update.state === MatchState.MATCH_STATE_FINISHED) {
-      setStatus("finished");
-      if (update.winnerId === playerId) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      } else {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      // Handle transition states
+      if (match.state === MatchState.MATCH_STATE_COUNTDOWN) {
+        setStatus("countdown");
+        setCountdown(match.countdownSeconds || 3);
+      } else if (match.state === MatchState.MATCH_STATE_ACTIVE || match.state === MatchState.MATCH_STATE_PAUSED_DISCONNECT) {
+        setStatus("active");
+      } else if (match.state === MatchState.MATCH_STATE_FINISHED) {
+        setStatus("finished");
       }
-    }
 
-    // Reactive flash feedback
-    const prev = prevStateRef.current;
-    if (prev) {
-      const isPlayerOne = update.playerOne.playerId === playerId;
-      const me = isPlayerOne ? update.playerOne : update.playerTwo;
-      const prevMe = isPlayerOne ? prev.playerOne : prev.playerTwo;
+      // Check flashes
+      const me = isPlayerOne ? match.playerOne : match.playerTwo;
+      const prevMe = isPlayerOne ? prevStateRef.current?.playerOne : prevStateRef.current?.playerTwo;
 
       if (me && prevMe) {
-        // Correct answer flash (score went up)
         if (me.currentScore > prevMe.currentScore) {
-          triggerFlash("rgba(16, 185, 129, 0.25)"); // Emerald Green
-          setCurrentInput(""); // Clear local typing
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        }
-        // Wrong answer flash (streak reset to 0 but score did not go up)
-        else if (me.currentStreak === 0 && prevMe.currentStreak > 0 && me.currentScore === prevMe.currentScore) {
-          triggerFlash("rgba(239, 68, 68, 0.25)"); // Rose Red
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          triggerSuccessFlash();
+        } else if (me.currentStreak === 0 && prevMe.currentStreak > 0) {
+          triggerFailureFlash();
         }
       }
+
+      prevStateRef.current = match;
     }
-    prevStateRef.current = update;
   };
 
-  const triggerFlash = (color: string) => {
-    flashColor.value = color;
+  const triggerSuccessFlash = () => {
+    flashColor.value = colors.success;
     flashOpacity.value = withSequence(
-      withTiming(1, { duration: 80 }),
-      withTiming(0, { duration: 250 })
+      withTiming(0.2, { duration: 100 }),
+      withTiming(0, { duration: 400 })
     );
   };
 
-  const handleKeyPress = (key: string) => {
-    if (status !== "active" || !gameState) return;
+  const triggerFailureFlash = () => {
+    flashColor.value = colors.danger;
+    flashOpacity.value = withSequence(
+      withTiming(0.2, { duration: 100 }),
+      withTiming(0, { duration: 400 })
+    );
+  };
 
-    let nextInput = currentInput;
-    if (key === "delete") {
-      nextInput = currentInput.slice(0, -1);
+  const handleKeyPress = (val: string) => {
+    if (status !== "active") return;
+
+    if (val === "delete") {
+      setCurrentInput((prev) => prev.slice(0, -1));
+    } else if (val === "-") {
+      if (currentInput.startsWith("-")) {
+        setCurrentInput((prev) => prev.slice(1));
+      } else {
+        setCurrentInput((prev) => "-" + prev);
+      }
     } else {
-      nextInput = currentInput + key;
+      // Append number
+      if (currentInput.length < 8) {
+        const next = currentInput + val;
+        setCurrentInput(next);
+        sendGhostInput(next);
+      }
     }
+  };
 
-    setCurrentInput(nextInput);
-
-    // Send update to server
+  const sendGhostInput = (val: string) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
-      const buffer = encodeClientAction({
-        roomId: gameState.roomId,
-        playerId: playerId,
-        timestamp: Date.now(),
-        submittedAnswer: nextInput // Submit on every key for prefix-evaluation
+      const action = encodeClientAction({
+        submitAnswer: {
+          playerId,
+          answerValue: val,
+          isGhostUpdate: true,
+        },
       });
-      wsRef.current.send(buffer);
+      wsRef.current.send(action);
     }
   };
 
-  const handleBackToMenu = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    router.replace("/(tabs)");
-  };
+  // Submit Answer Action
+  useEffect(() => {
+    if (status !== "active" || !gameState) return;
+    const currentQ = gameState.nextQuestionText;
+    if (!currentQ) return;
+
+    // Fast check if answer is reached
+    const checkSubmit = () => {
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        const action = encodeClientAction({
+          submitAnswer: {
+            playerId,
+            answerValue: currentInput,
+            isGhostUpdate: false,
+          },
+        });
+        wsRef.current.send(action);
+        setCurrentInput("");
+      }
+    };
+
+    // Auto submit if length matches or on enter/numeric lengths
+    if (currentInput.length >= 4) {
+      checkSubmit();
+    }
+  }, [currentInput, status, gameState]);
 
   const handleReconnectPress = () => {
-    const roomId = wsRef.current ? (wsRef.current as any).roomId : undefined;
     connectWebSocket(roomId);
   };
 
-  // Reanimated style
-  const animatedFlashStyle = useAnimatedStyle(() => {
-    return {
-      backgroundColor: flashColor.value,
-      opacity: flashOpacity.value,
-    };
-  });
+  const handleBackToMenu = () => {
+    if (wsRef.current) wsRef.current.close();
+    router.replace("/(tabs)");
+  };
 
-  const { colors, themeId } = useThemeStore();
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `I scored a victory in Elo Math Duel! Come battle me!`,
+      });
+    } catch {}
+  };
 
-  const isPlayerOne = gameState && gameState.playerOne.playerId === playerId;
-  const me = gameState ? (isPlayerOne ? gameState.playerOne : gameState.playerTwo) : null;
-  const opponent = gameState ? (isPlayerOne ? gameState.playerTwo : gameState.playerOne) : null;
+  const isPlayerOne = gameState?.playerOne?.playerId === playerId;
+  const me = isPlayerOne ? gameState?.playerOne : gameState?.playerTwo;
+  const opponent = isPlayerOne ? gameState?.playerTwo : gameState?.playerOne;
 
-  // 1. Loading / Connecting Screen
+  const animatedFlashStyle = useAnimatedStyle(() => ({
+    backgroundColor: flashColor.value,
+    opacity: flashOpacity.value,
+  }));
+
+  // 1. Handshake Handshake Loading
   if (status === "connecting") {
     return (
       <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
@@ -276,29 +323,27 @@ export default function BattleScreen() {
     );
   }
 
-  // 2. Matchmaking Queue Screen
+  // 2. Radar Matchmaker Searching
   if (status === "queue") {
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <StatusBar style={themeId === "light" ? "dark" : "light"} />
+        <GridBackdrop />
         <View style={styles.matchmakingContainer}>
-          <ActivityIndicator size="large" color={colors.primary} style={{ marginBottom: 20 }} />
-          <Text style={[styles.matchmakingTitle, { color: colors.text }]}>SEARCHING FOR DUEL</Text>
-          <Text style={[styles.matchmakingSubtitle, { color: colors.textMuted }]}>Looking for opponent in your Elo rating...</Text>
-          <Text style={[styles.matchmakingTip, { color: colors.textMuted }]}>Matches fall back to an adaptive bot after 20s</Text>
-          <TouchableOpacity
-            style={[styles.cancelBtn, { borderColor: colors.cardBorder }]}
+          <Text style={[styles.matchmakingTitle, { color: colors.textMuted }]}>SEARCHING FOR OPPONENT</Text>
+          <RadarScanner />
+          <Button
+            label="Cancel Search"
             onPress={handleBackToMenu}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.cancelBtnText, { color: colors.text }]}>CANCEL</Text>
-          </TouchableOpacity>
+            variant="secondary"
+            style={styles.cancelBtn3D}
+          />
         </View>
       </SafeAreaView>
     );
   }
 
-  // 3. Reconnect / Disconnected Screen
+  // 3. Disconnected Screen
   if (status === "disconnected") {
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
@@ -308,20 +353,17 @@ export default function BattleScreen() {
           <Text style={[styles.disconnectedText, { color: colors.textMuted }]}>
             You have disconnected from the server.
           </Text>
-          <TouchableOpacity
-            style={[styles.reconnectBtn, { backgroundColor: colors.primary }]}
+          <Button
+            label="RECONNECT TO DUEL"
             onPress={handleReconnectPress}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.reconnectBtnText}>RECONNECT TO DUEL</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.cancelBtn, { marginTop: 12, borderColor: colors.cardBorder }]}
+            style={styles.reconnectBtn}
+          />
+          <Button
+            label="EXIT TO MENU"
             onPress={handleBackToMenu}
-            activeOpacity={0.8}
-          >
-            <Text style={[styles.cancelBtnText, { color: colors.text }]}>EXIT TO MENU</Text>
-          </TouchableOpacity>
+            variant="secondary"
+            style={[styles.cancelBtn3D, { marginTop: 12 }]}
+          />
         </View>
       </SafeAreaView>
     );
@@ -338,101 +380,95 @@ export default function BattleScreen() {
     );
   }
 
-  // 5. Active Battle Screen
+  // 5. Active Duel Gameplay Arena
   if (status === "active" && gameState && me && opponent) {
     const isPaused = gameState.state === MatchState.MATCH_STATE_PAUSED_DISCONNECT;
+    const formattedTimer = `00:${timeRemaining.toString().padStart(2, "0")}`;
 
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <StatusBar style={themeId === "light" ? "dark" : "light"} />
+        <GridBackdrop />
         <Animated.View style={[StyleSheet.absoluteFill, animatedFlashStyle, { pointerEvents: "none", zIndex: 10 }]} />
 
         {isPaused ? (
           <View style={[styles.pausedOverlay, { backgroundColor: "rgba(0,0,0,0.85)" }]}>
             <ActivityIndicator size="large" color="#EF4444" style={{ marginBottom: 12 }} />
             <Text style={styles.pausedTitle}>OPPONENT DISCONNECTED</Text>
-            <Text style={styles.pausedSubtitle}>Waiting 7s for reconnection before forfeit...</Text>
+            <Text style={styles.pausedSubtitle}>Waiting 7s for reconnection...</Text>
           </View>
         ) : null}
 
         <View style={styles.battleContainer}>
-          {/* Top Bar: Progress and Timer */}
+          {/* Header row */}
           <View style={styles.battleHeader}>
-            <View style={styles.playerScoreBlock}>
-              <Text style={[styles.battleUsername, { color: colors.text }]} numberOfLines={1}>{me.username}</Text>
-              <Text style={[styles.battleTitle, { color: colors.primary }]} numberOfLines={1}>
-                {me.activeTitle || `LVL ${me.level || 1}`}
-              </Text>
-              <Text style={[styles.battleScore, { color: colors.text }]}>{me.currentScore} / 20</Text>
-              <Text style={[styles.battleStreak, { color: colors.accent }]}>Streak: {me.currentStreak}</Text>
-            </View>
-
-            <View style={styles.timerBlock}>
-              <Text style={[styles.timerText, { color: colors.text }, timeRemaining <= 10 && styles.lowTimerText]}>
-                {timeRemaining}s
-              </Text>
-            </View>
-
-            <View style={[styles.playerScoreBlock, { alignItems: "flex-end" }]}>
-              <Text style={[styles.battleUsername, { color: colors.text, textAlign: "right" }]} numberOfLines={1}>{opponent.username}</Text>
-              <Text style={[styles.battleTitle, { color: colors.primary, textAlign: "right" }]} numberOfLines={1}>
-                {opponent.activeTitle || `LVL ${opponent.level || 1}`}
-              </Text>
-              <Text style={[styles.battleScore, { color: colors.text, textAlign: "right" }]}>{opponent.currentScore} / 20</Text>
-              <Text style={[styles.battleStreak, { color: colors.accent, textAlign: "right" }]}>Streak: {opponent.currentStreak}</Text>
-            </View>
-          </View>
-
-          {/* Time Progress Bar */}
-          <View style={[styles.progressBarContainer, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-            <View style={[styles.progressBar, { width: `${(timeRemaining / (gameState.durationSeconds || 60)) * 100}%`, backgroundColor: timeRemaining <= 10 ? "#EF4444" : colors.primary }]} />
-          </View>
-
-          {/* Telemetry Control Panel */}
-          <View style={styles.telemetryControlsRow}>
-            <TouchableOpacity
-              style={[styles.telemetryToggleBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
-              onPress={() => setShowTelemetry(!showTelemetry)}
-            >
-              <Text style={[styles.telemetryToggleText, { color: colors.textMuted }]}>
-                {showTelemetry ? "HIDE METRICS" : "SHOW METRICS"}
-              </Text>
-            </TouchableOpacity>
-
-            {showTelemetry && (
-              <View style={[styles.telemetryPill, { backgroundColor: colors.cardBg, borderColor: colors.accentMuted }]}>
-                <Text style={[styles.telemetryDataText, { color: colors.text }]}>
-                  FPS: {fps} | PING: {ping}ms [{connectedRegion}] | LOSS: {packetLoss}% | JITTER: {jitter}ms
-                </Text>
+            {/* Left section: me */}
+            <View style={styles.playerSectionLeft}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={[styles.playerAvatarSquircle, { backgroundColor: colors.primary, borderColor: colors.cardBorder, borderWidth: 2 }]}>
+                  <Text style={[styles.avatarInitial, { color: colors.onPrimary }]}>
+                    {me.username[0].toUpperCase()}
+                  </Text>
+                </View>
+                <View style={{ marginLeft: Spacing.sm }}>
+                  <Text style={[styles.playerName, { color: colors.text }]}>You</Text>
+                  <Text style={[styles.playerRating, { color: colors.textMuted }]}>1000</Text>
+                </View>
               </View>
-            )}
+              <View style={[styles.scorePill, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+                <Text style={[styles.scorePillText, { color: colors.text }]}>{me.currentScore}</Text>
+              </View>
+            </View>
+
+            {/* Center section: timer */}
+            <View style={styles.timerPillWrapper}>
+              <View style={[styles.timerPillActive, { borderColor: colors.accent, backgroundColor: colors.cardBg }]}>
+                <IconSymbol name="star" size={10} color={colors.accent} style={{ marginRight: 4 }} />
+                <Text style={[styles.timerPillText, { color: colors.accent }]}>{formattedTimer}</Text>
+              </View>
+            </View>
+
+            {/* Right section: opponent */}
+            <View style={styles.playerSectionRight}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <View style={{ marginRight: Spacing.sm, alignItems: "flex-end" }}>
+                  <Text style={[styles.playerName, { color: colors.text }]}>{opponent.username}</Text>
+                  <Text style={[styles.playerRating, { color: colors.textMuted }]}>1026</Text>
+                </View>
+                <View style={[styles.playerAvatarCircle, { backgroundColor: colors.danger, borderColor: colors.cardBorder, borderWidth: 2 }]}>
+                  <Text style={[styles.avatarInitial, { color: colors.onPrimary }]}>
+                    {opponent.username[0].toUpperCase()}
+                  </Text>
+                </View>
+              </View>
+              <View style={[styles.scorePill, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+                <Text style={[styles.scorePillText, { color: colors.text }]}>{opponent.currentScore}</Text>
+              </View>
+            </View>
           </View>
 
-          {/* Core Battle Arena */}
+          {/* Equation Grid Area */}
           <View style={styles.arena}>
             <Text style={[styles.questionText, { color: colors.text }]}>{gameState.nextQuestionText}</Text>
-            
-            {/* Input Display Area */}
-            <View style={[styles.inputDisplayArea, { borderBottomColor: colors.cardBorder }]}>
-              <Text style={[styles.currentInputText, { color: colors.primary }]}>{currentInput || "?"}</Text>
-            </View>
-
-            {/* Opponent Ghost Progress */}
-            <View style={styles.ghostProgressArea}>
-              <Text style={[styles.ghostInputText, { color: colors.textMuted }]}>
-                {opponent.ghostInput ? `${opponent.username} typing: ${opponent.ghostInput}` : "Opponent thinking..."}
-              </Text>
-            </View>
           </View>
 
-          {/* Keypad */}
-          <Keypad onPress={handleKeyPress} />
+          {/* Input field and keypad */}
+          <View style={styles.inputKeypadArea}>
+            <Text style={[styles.inputTypeLabel, { color: colors.textMuted }]}>TYPE OUT YOUR ANSWER</Text>
+            <View style={[styles.inputBoxArea, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+              <Text style={[styles.inputBoxText, { color: currentInput ? colors.text : colors.textMuted }]}>
+                {currentInput || "Enter answer"}
+              </Text>
+            </View>
+
+            <Keypad onPress={handleKeyPress} />
+          </View>
         </View>
       </SafeAreaView>
     );
   }
 
-  // 6. Finished Results Screen
+  // 6. Finished Results Screen Overhaul
   if (status === "finished" && gameState && me && opponent) {
     const isWinner = gameState.winnerId === playerId;
     const isDraw = gameState.winnerId === null;
@@ -442,56 +478,80 @@ export default function BattleScreen() {
     return (
       <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
         <StatusBar style={themeId === "light" ? "dark" : "light"} />
+        <GridBackdrop />
+
+        {/* Action Header row */}
+        <View style={styles.resultsHeaderActions}>
+          <TouchableOpacity onPress={handleBackToMenu} style={[styles.resultsHeaderBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+            <IconSymbol name="house.fill" size={16} color={colors.text} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleShare} style={[styles.resultsHeaderBtn, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+            <IconSymbol name="code" size={16} color={colors.text} />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.resultsContainer}>
-          <Text style={[styles.resultBanner, isWinner ? styles.winBanner : isDraw ? styles.drawBanner : styles.loseBanner]}>
-            {isWinner ? "VICTORY" : isDraw ? "DRAW" : "DEFEAT"}
-          </Text>
-
-          <View style={[styles.resultsCard, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
-            <View style={styles.resultRow}>
-              <View style={styles.resultCol}>
-                <Text style={[styles.resultUsername, { color: colors.textMuted }]}>{me.username}</Text>
-                <Text style={[styles.resultScoreBig, { color: colors.text }]}>{me.currentScore}</Text>
-                <Text style={[styles.resultLabel, { color: colors.textMuted }]}>Correct Answers</Text>
-              </View>
-
-              <Text style={[styles.vsText, { color: colors.cardBorder }]}>VS</Text>
-
-              <View style={[styles.resultCol, { alignItems: "flex-end" }]}>
-                <Text style={[styles.resultUsername, { textAlign: "right", color: colors.textMuted }]}>{opponent.username}</Text>
-                <Text style={[styles.resultScoreBig, { color: colors.text }]}>{opponent.currentScore}</Text>
-                <Text style={[styles.resultLabel, { color: colors.textMuted }]}>Correct Answers</Text>
-              </View>
-            </View>
-
-            <View style={[styles.divider, { backgroundColor: colors.cardBorder }]} />
-
-            <View style={styles.eloShiftSection}>
-              {gameState.roomType === 0 && ( // ROOM_TYPE_RANKED
-                <>
-                  <Text style={[styles.eloShiftLabel, { color: colors.textMuted }]}>ELO RATING CHANGE</Text>
-                  <Text style={[styles.eloShiftVal, myEloChange >= 0 ? styles.eloPositive : styles.eloNegative]}>
-                    {myEloChange >= 0 ? `+${myEloChange}` : myEloChange}
-                  </Text>
-                  <Text style={[styles.newEloLabel, { color: colors.textMuted }]}>New Rating: {me.elo}</Text>
-                  <View style={[styles.divider, { backgroundColor: colors.cardBorder, width: "100%" }]} />
-                </>
-              )}
-
-              <Text style={[styles.eloShiftLabel, { color: colors.textMuted }]}>XP PROGRESS</Text>
-              <Text style={[styles.eloShiftVal, { color: colors.accent }]}>
-                +{myXpChange} XP
-              </Text>
-            </View>
+          {/* Layered 3D text banner */}
+          <View style={styles.victoryBadge}>
+            <Text style={[styles.layeredTextShadow, { color: "rgba(166,227,161,0.18)", transform: [{ translateX: 4 }, { translateY: 4 }] }]}>
+              {isWinner ? "VICTORY" : isDraw ? "DRAW" : "DEFEAT"}
+            </Text>
+            <Text style={[styles.layeredTextShadow, { color: "rgba(166,227,161,0.36)", transform: [{ translateX: 2 }, { translateY: 2 }] }]}>
+              {isWinner ? "VICTORY" : isDraw ? "DRAW" : "DEFEAT"}
+            </Text>
+            <Text style={[styles.layeredTextMain, { color: isWinner ? colors.success : isDraw ? "#F59E0B" : "#EF4444" }]}>
+              {isWinner ? "VICTORY" : isDraw ? "DRAW" : "DEFEAT"}
+            </Text>
           </View>
 
-          <TouchableOpacity
-            style={[styles.doneBtn, { backgroundColor: colors.primary }]}
-            onPress={handleBackToMenu}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.doneBtnText}>EXIT TO MENU</Text>
-          </TouchableOpacity>
+          {/* Scores values */}
+          <Text style={[styles.vsScoreText, { color: colors.text }]}>
+            <Text style={{ color: isWinner ? colors.success : colors.text }}>{me.currentScore}</Text>
+            <Text style={{ color: colors.textMuted }}> - </Text>
+            <Text style={{ color: !isWinner ? colors.success : colors.text }}>{opponent.currentScore}</Text>
+          </Text>
+
+          {/* Players sub labels */}
+          <View style={styles.playerMetaRow}>
+            <Text style={[styles.playerMetaName, { color: colors.text }]}>{me.username}</Text>
+            <IconSymbol name="star" size={14} color={colors.success} style={{ marginHorizontal: 8 }} />
+            <Text style={[styles.playerMetaName, { color: colors.text }]}>{opponent.username}</Text>
+          </View>
+
+          {/* Shifting Capsules */}
+          <View style={styles.resultsStatRow}>
+            <Card style={[styles.statOverlayCard, { borderColor: colors.cardBorder }]}>
+              <Text style={[styles.statLabelHeader, { color: colors.textMuted }]}>RATING</Text>
+              <Text style={[styles.statValueLarge, { color: colors.text }]}>
+                {me.elo} <Text style={{ color: colors.success }}>+{myEloChange}</Text>
+              </Text>
+            </Card>
+
+            <Card style={[styles.statOverlayCard, { borderColor: colors.cardBorder }]}>
+              <Text style={[styles.statLabelHeader, { color: colors.textMuted }]}>TOTAL XP</Text>
+              <Text style={[styles.statValueLarge, { color: colors.text }]}>
+                {me.xp || 10} <Text style={{ color: colors.accent }}>+{myXpChange}</Text>
+              </Text>
+            </Card>
+          </View>
+
+          {/* Trigger buttons */}
+          <View style={styles.bottomButtonsRow}>
+            <Button
+              label="REMATCH"
+              variant="secondary"
+              style={styles.rematchBtn}
+              onPress={() => {}}
+            />
+            <Button
+              label="NEW GAME"
+              variant="success"
+              style={styles.newGameBtn}
+              onPress={handleBackToMenu}
+            />
+          </View>
+
+          <Text style={[styles.swipeLabel, { color: colors.textMuted }]}>SWIPE UP FOR GAME ANALYSIS</Text>
         </View>
       </SafeAreaView>
     );
@@ -503,48 +563,16 @@ export default function BattleScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#0A0A0C",
-  },
-  telemetryControlsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 24,
-    marginTop: 10,
-    height: 32,
-  },
-  telemetryToggleBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    borderWidth: 1,
-  },
-  telemetryToggleText: {
-    fontSize: 9,
-    fontWeight: "800",
-    letterSpacing: 0.5,
-  },
-  telemetryPill: {
-    paddingVertical: 4,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-  },
-  telemetryDataText: {
-    fontSize: 9,
-    fontWeight: "700",
-    letterSpacing: 0.5,
   },
   loadingContainer: {
     flex: 1,
-    backgroundColor: "#0A0A0C",
     justifyContent: "center",
     alignItems: "center",
   },
   loadingText: {
-    color: "rgba(255, 255, 255, 0.6)",
     marginTop: 12,
-    fontSize: 16,
+    fontSize: 14,
+    fontFamily: "monospace",
   },
   matchmakingContainer: {
     flex: 1,
@@ -553,37 +581,46 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   matchmakingTitle: {
-    fontSize: 24,
+    fontSize: 16,
     fontWeight: "900",
-    color: "#FFFFFF",
     letterSpacing: 2,
     marginBottom: 8,
   },
-  matchmakingSubtitle: {
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.5)",
-    textAlign: "center",
-    marginBottom: 4,
+  radarContainer: {
+    marginVertical: 40,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  matchmakingTip: {
-    fontSize: 12,
-    color: "rgba(255, 255, 255, 0.35)",
-    textAlign: "center",
-    marginBottom: 48,
+  radarRingOuter: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.08)",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  cancelBtn: {
-    paddingVertical: 12,
-    paddingHorizontal: 28,
-    borderRadius: 12,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.1)",
+  radarRingMiddle: {
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.12)",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  cancelBtnText: {
-    color: "rgba(255, 255, 255, 0.6)",
-    fontWeight: "700",
-    fontSize: 14,
-    letterSpacing: 1,
+  radarRingInner: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  cancelBtn3D: {
+    width: 160,
+    height: 44,
   },
   disconnectedContainer: {
     flex: 1,
@@ -592,46 +629,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: 24,
   },
   disconnectedTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "900",
-    color: "#EF4444",
     letterSpacing: 1,
     marginBottom: 8,
   },
   disconnectedText: {
     fontSize: 14,
-    color: "rgba(255, 255, 255, 0.5)",
     textAlign: "center",
     marginBottom: 24,
   },
   reconnectBtn: {
-    backgroundColor: "#6366F1",
-    paddingVertical: 14,
-    paddingHorizontal: 32,
-    borderRadius: 12,
-  },
-  reconnectBtnText: {
-    color: "#FFF",
-    fontWeight: "700",
-    fontSize: 15,
+    width: "100%",
+    height: 48,
   },
   countdownContainer: {
     flex: 1,
-    backgroundColor: "#0A0A0C",
     justifyContent: "center",
     alignItems: "center",
   },
   countdownLabel: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "rgba(255, 255, 255, 0.4)",
+    fontSize: 12,
+    fontWeight: "800",
     letterSpacing: 3,
     marginBottom: 16,
   },
   countdownNum: {
-    fontSize: 120,
-    fontWeight: "900",
-    color: "#6366F1",
+    fontSize: 100,
+    fontWeight: "950",
   },
   battleContainer: {
     flex: 1,
@@ -641,211 +666,206 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
   },
-  playerScoreBlock: {
+  playerSectionLeft: {
+    alignItems: "flex-start",
     flex: 1,
   },
-  battleUsername: {
-    color: "rgba(255, 255, 255, 0.6)",
+  playerSectionRight: {
+    alignItems: "flex-end",
+    flex: 1,
+  },
+  playerAvatarSquircle: {
+    width: 42,
+    height: 42,
+    borderRadius: Radius.md,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  playerAvatarCircle: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  avatarInitial: {
+    fontSize: 16,
+    fontWeight: "900",
+  },
+  playerName: {
     fontSize: 12,
-    fontWeight: "700",
-  },
-  battleScore: {
-    color: "#FFF",
-    fontSize: 20,
     fontWeight: "800",
-    marginTop: 2,
   },
-  battleStreak: {
-    color: "#10B981",
-    fontSize: 11,
+  playerRating: {
+    fontSize: 9,
     fontWeight: "600",
     marginTop: 1,
   },
-  timerBlock: {
-    width: 60,
+  scorePill: {
+    paddingHorizontal: 16,
+    paddingVertical: 3,
+    borderRadius: 12,
+    borderWidth: 2,
+    minWidth: 46,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scorePillText: {
+    fontSize: 12,
+    fontWeight: "900",
+  },
+  timerPillWrapper: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
   },
-  timerText: {
-    color: "#FFFFFF",
-    fontSize: 22,
-    fontWeight: "800",
+  timerPillActive: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 5,
+    borderRadius: Radius.md,
+    borderWidth: 2,
   },
-  lowTimerText: {
-    color: "#EF4444",
-  },
-  progressBarContainer: {
-    height: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    width: "100%",
-  },
-  progressBar: {
-    height: "100%",
+  timerPillText: {
+    fontSize: 12,
+    fontFamily: "monospace",
+    fontWeight: "900",
   },
   arena: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
   },
   questionText: {
     fontSize: 48,
-    fontWeight: "800",
-    color: "#FFFFFF",
-    marginBottom: 20,
-    letterSpacing: 1,
-  },
-  inputDisplayArea: {
-    height: 72,
-    minWidth: 120,
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24,
-    marginBottom: 16,
-  },
-  currentInputText: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#6366F1",
-  },
-  ghostProgressArea: {
-    height: 24,
-  },
-  ghostInputText: {
-    color: "rgba(255, 255, 255, 0.35)",
-    fontSize: 13,
-    fontStyle: "italic",
-  },
-  pausedOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(10, 10, 12, 0.9)",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 20,
-    paddingHorizontal: 32,
-  },
-  pausedTitle: {
-    color: "#EF4444",
-    fontSize: 20,
-    fontWeight: "800",
-    letterSpacing: 1,
-    marginTop: 8,
-  },
-  pausedSubtitle: {
-    color: "rgba(255, 255, 255, 0.6)",
-    fontSize: 13,
+    fontWeight: "900",
     textAlign: "center",
-    marginTop: 4,
+    lineHeight: 56,
+  },
+  inputKeypadArea: {
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.sm,
+    alignItems: "center",
+  },
+  inputTypeLabel: {
+    fontSize: 9,
+    fontWeight: "900",
+    marginBottom: 8,
+  },
+  inputBoxArea: {
+    width: "100%",
+    height: 52,
+    borderRadius: Radius.md,
+    borderWidth: 2.5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.md,
+  },
+  inputBoxText: {
+    fontSize: 18,
+    fontWeight: "800",
+  },
+  resultsHeaderActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
+    width: "100%",
+  },
+  resultsHeaderBtn: {
+    width: 40,
+    height: 40,
+    borderWidth: 2,
+    borderRadius: Radius.sm,
+    justifyContent: "center",
+    alignItems: "center",
   },
   resultsContainer: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.lg,
+  },
+  victoryBadge: {
+    position: "relative",
+    width: "100%",
+    height: 70,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
+    marginBottom: Spacing.lg,
   },
-  resultBanner: {
+  layeredTextShadow: {
+    position: "absolute",
     fontSize: 48,
+    fontWeight: "950",
+    letterSpacing: 2,
+  },
+  layeredTextMain: {
+    fontSize: 48,
+    fontWeight: "950",
+    letterSpacing: 2,
+  },
+  vsScoreText: {
+    fontSize: 64,
     fontWeight: "900",
-    letterSpacing: 4,
-    marginBottom: 36,
+    marginVertical: Spacing.md,
   },
-  winBanner: {
-    color: "#10B981",
+  playerMetaRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: Spacing.xl,
   },
-  drawBanner: {
-    color: "#F59E0B",
+  playerMetaName: {
+    fontSize: 14,
+    fontWeight: "800",
   },
-  loseBanner: {
-    color: "#EF4444",
-  },
-  resultsCard: {
-    width: "100%",
-    backgroundColor: "rgba(255, 255, 255, 0.03)",
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: "rgba(255, 255, 255, 0.08)",
-    padding: 24,
-    marginBottom: 40,
-  },
-  resultRow: {
+  resultsStatRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
-  },
-  resultCol: {
-    flex: 1,
-  },
-  resultUsername: {
-    color: "rgba(255, 255, 255, 0.8)",
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  resultScoreBig: {
-    fontSize: 40,
-    fontWeight: "900",
-    color: "#FFF",
-    marginTop: 6,
-  },
-  resultLabel: {
-    fontSize: 11,
-    color: "rgba(255, 255, 255, 0.4)",
-    marginTop: 4,
-  },
-  vsText: {
-    color: "rgba(255, 255, 255, 0.2)",
-    fontSize: 18,
-    fontWeight: "800",
-    marginHorizontal: 12,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.08)",
-    marginVertical: 20,
-  },
-  eloShiftSection: {
-    alignItems: "center",
-  },
-  eloShiftLabel: {
-    fontSize: 11,
-    color: "rgba(255, 255, 255, 0.4)",
-    fontWeight: "700",
-    letterSpacing: 1.5,
-  },
-  eloShiftVal: {
-    fontSize: 36,
-    fontWeight: "900",
-    marginTop: 6,
-  },
-  eloPositive: {
-    color: "#10B981",
-  },
-  eloNegative: {
-    color: "#EF4444",
-  },
-  newEloLabel: {
-    fontSize: 13,
-    color: "rgba(255, 255, 255, 0.6)",
-    marginTop: 4,
-  },
-  doneBtn: {
-    backgroundColor: "#6366F1",
-    height: 56,
     width: "100%",
-    borderRadius: 16,
+    marginBottom: 36,
+  },
+  statOverlayCard: {
+    width: "48%",
+    height: 72,
+    padding: 0,
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 0,
   },
-  doneBtnText: {
-    color: "#FFF",
-    fontWeight: "800",
+  statLabelHeader: {
+    fontSize: 8,
+    fontWeight: "900",
+    textTransform: "uppercase",
+    marginBottom: 4,
+  },
+  statValueLarge: {
     fontSize: 16,
-    letterSpacing: 1,
+    fontWeight: "900",
+  },
+  bottomButtonsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: Spacing.xl,
+  },
+  rematchBtn: {
+    width: "48%",
+    height: 48,
+  },
+  newGameBtn: {
+    width: "48%",
+    height: 48,
+  },
+  swipeLabel: {
+    fontSize: 9,
+    fontWeight: "900",
   },
 });

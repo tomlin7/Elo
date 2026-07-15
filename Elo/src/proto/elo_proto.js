@@ -4097,6 +4097,11 @@ export const elo = $root.elo = (() => {
              * @property {elo.v3.ISpectatorEmojiBurst|null} [emojiBurst] ClientAction emojiBurst
              * @property {elo.v3.INetworkHandshake|null} [connectionHandshake] ClientAction connectionHandshake
              * @property {elo.v3.IRegionalHandshakeOverride|null} [regionalOverride] ClientAction regionalOverride
+             * @property {elo.v3.PresenceStatus|null} [updatePresence] ClientAction updatePresence
+             * @property {elo.v3.ISocialRelationshipAction|null} [relationshipAction] ClientAction relationshipAction
+             * @property {elo.v3.IDirectMessage|null} [sendDirectMessage] ClientAction sendDirectMessage
+             * @property {string|null} [sendMatchChat] ClientAction sendMatchChat
+             * @property {elo.v3.IMatchmakingTicket|null} [joinMatchmaking] ClientAction joinMatchmaking
              */
 
             /**
@@ -4226,17 +4231,57 @@ export const elo = $root.elo = (() => {
              */
             ClientAction.prototype.regionalOverride = null;
 
+            /**
+             * ClientAction updatePresence.
+             * @member {elo.v3.PresenceStatus|null|undefined} updatePresence
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.updatePresence = null;
+
+            /**
+             * ClientAction relationshipAction.
+             * @member {elo.v3.ISocialRelationshipAction|null|undefined} relationshipAction
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.relationshipAction = null;
+
+            /**
+             * ClientAction sendDirectMessage.
+             * @member {elo.v3.IDirectMessage|null|undefined} sendDirectMessage
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.sendDirectMessage = null;
+
+            /**
+             * ClientAction sendMatchChat.
+             * @member {string|null|undefined} sendMatchChat
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.sendMatchChat = null;
+
+            /**
+             * ClientAction joinMatchmaking.
+             * @member {elo.v3.IMatchmakingTicket|null|undefined} joinMatchmaking
+             * @memberof elo.v3.ClientAction
+             * @instance
+             */
+            ClientAction.prototype.joinMatchmaking = null;
+
             // OneOf field names bound to virtual getters and setters
             let $oneOfFields;
 
             /**
              * ClientAction payload.
-             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride"|undefined} payload
+             * @member {"currentInput"|"submittedAnswer"|"joinQueuePlayerId"|"createCustomRoom"|"joinPrivateRoomCode"|"securityLog"|"joinTournamentPlayerId"|"spectateRoomId"|"emojiBurst"|"connectionHandshake"|"regionalOverride"|"updatePresence"|"relationshipAction"|"sendDirectMessage"|"sendMatchChat"|"joinMatchmaking"|undefined} payload
              * @memberof elo.v3.ClientAction
              * @instance
              */
             Object.defineProperty(ClientAction.prototype, "payload", {
-                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst", "connectionHandshake", "regionalOverride"]),
+                get: $util.oneOfGetter($oneOfFields = ["currentInput", "submittedAnswer", "joinQueuePlayerId", "createCustomRoom", "joinPrivateRoomCode", "securityLog", "joinTournamentPlayerId", "spectateRoomId", "emojiBurst", "connectionHandshake", "regionalOverride", "updatePresence", "relationshipAction", "sendDirectMessage", "sendMatchChat", "joinMatchmaking"]),
                 set: $util.oneOfSetter($oneOfFields)
             });
 
@@ -4296,6 +4341,16 @@ export const elo = $root.elo = (() => {
                     $root.elo.v3.NetworkHandshake.encode(message.connectionHandshake, writer.uint32(/* id 13, wireType 2 =*/106).fork(), q + 1).ldelim();
                 if (message.regionalOverride != null && Object.hasOwnProperty.call(message, "regionalOverride"))
                     $root.elo.v3.RegionalHandshakeOverride.encode(message.regionalOverride, writer.uint32(/* id 14, wireType 2 =*/114).fork(), q + 1).ldelim();
+                if (message.updatePresence != null && Object.hasOwnProperty.call(message, "updatePresence"))
+                    writer.uint32(/* id 15, wireType 0 =*/120).int32(message.updatePresence);
+                if (message.relationshipAction != null && Object.hasOwnProperty.call(message, "relationshipAction"))
+                    $root.elo.v3.SocialRelationshipAction.encode(message.relationshipAction, writer.uint32(/* id 16, wireType 2 =*/130).fork(), q + 1).ldelim();
+                if (message.sendDirectMessage != null && Object.hasOwnProperty.call(message, "sendDirectMessage"))
+                    $root.elo.v3.DirectMessage.encode(message.sendDirectMessage, writer.uint32(/* id 17, wireType 2 =*/138).fork(), q + 1).ldelim();
+                if (message.sendMatchChat != null && Object.hasOwnProperty.call(message, "sendMatchChat"))
+                    writer.uint32(/* id 18, wireType 2 =*/146).string(message.sendMatchChat);
+                if (message.joinMatchmaking != null && Object.hasOwnProperty.call(message, "joinMatchmaking"))
+                    $root.elo.v3.MatchmakingTicket.encode(message.joinMatchmaking, writer.uint32(/* id 19, wireType 2 =*/154).fork(), q + 1).ldelim();
                 return writer;
             };
 
@@ -4390,6 +4445,26 @@ export const elo = $root.elo = (() => {
                         }
                     case 14: {
                             message.regionalOverride = $root.elo.v3.RegionalHandshakeOverride.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 15: {
+                            message.updatePresence = reader.int32();
+                            break;
+                        }
+                    case 16: {
+                            message.relationshipAction = $root.elo.v3.SocialRelationshipAction.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 17: {
+                            message.sendDirectMessage = $root.elo.v3.DirectMessage.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 18: {
+                            message.sendMatchChat = reader.string();
+                            break;
+                        }
+                    case 19: {
+                            message.joinMatchmaking = $root.elo.v3.MatchmakingTicket.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     default:
@@ -4531,6 +4606,56 @@ export const elo = $root.elo = (() => {
                             return "regionalOverride." + error;
                     }
                 }
+                if (message.updatePresence != null && Object.hasOwnProperty.call(message, "updatePresence")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    switch (message.updatePresence) {
+                    default:
+                        return "updatePresence: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                    }
+                }
+                if (message.relationshipAction != null && Object.hasOwnProperty.call(message, "relationshipAction")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    {
+                        let error = $root.elo.v3.SocialRelationshipAction.verify(message.relationshipAction, long + 1);
+                        if (error)
+                            return "relationshipAction." + error;
+                    }
+                }
+                if (message.sendDirectMessage != null && Object.hasOwnProperty.call(message, "sendDirectMessage")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    {
+                        let error = $root.elo.v3.DirectMessage.verify(message.sendDirectMessage, long + 1);
+                        if (error)
+                            return "sendDirectMessage." + error;
+                    }
+                }
+                if (message.sendMatchChat != null && Object.hasOwnProperty.call(message, "sendMatchChat")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    if (!$util.isString(message.sendMatchChat))
+                        return "sendMatchChat: string expected";
+                }
+                if (message.joinMatchmaking != null && Object.hasOwnProperty.call(message, "joinMatchmaking")) {
+                    if (properties.payload === 1)
+                        return "payload: multiple values";
+                    properties.payload = 1;
+                    {
+                        let error = $root.elo.v3.MatchmakingTicket.verify(message.joinMatchmaking, long + 1);
+                        if (error)
+                            return "joinMatchmaking." + error;
+                    }
+                }
                 return null;
             };
 
@@ -4601,6 +4726,43 @@ export const elo = $root.elo = (() => {
                     if (!$util.isObject(object.regionalOverride))
                         throw TypeError(".elo.v3.ClientAction.regionalOverride: object expected");
                     message.regionalOverride = $root.elo.v3.RegionalHandshakeOverride.fromObject(object.regionalOverride, long + 1);
+                }
+                switch (object.updatePresence) {
+                default:
+                    if (typeof object.updatePresence === "number") {
+                        message.updatePresence = object.updatePresence;
+                        break;
+                    }
+                    break;
+                case "PRESENCE_ONLINE":
+                case 0:
+                    message.updatePresence = 0;
+                    break;
+                case "PRESENCE_IN_MATCH":
+                case 1:
+                    message.updatePresence = 1;
+                    break;
+                case "PRESENCE_OFFLINE":
+                case 2:
+                    message.updatePresence = 2;
+                    break;
+                }
+                if (object.relationshipAction != null) {
+                    if (!$util.isObject(object.relationshipAction))
+                        throw TypeError(".elo.v3.ClientAction.relationshipAction: object expected");
+                    message.relationshipAction = $root.elo.v3.SocialRelationshipAction.fromObject(object.relationshipAction, long + 1);
+                }
+                if (object.sendDirectMessage != null) {
+                    if (!$util.isObject(object.sendDirectMessage))
+                        throw TypeError(".elo.v3.ClientAction.sendDirectMessage: object expected");
+                    message.sendDirectMessage = $root.elo.v3.DirectMessage.fromObject(object.sendDirectMessage, long + 1);
+                }
+                if (object.sendMatchChat != null)
+                    message.sendMatchChat = String(object.sendMatchChat);
+                if (object.joinMatchmaking != null) {
+                    if (!$util.isObject(object.joinMatchmaking))
+                        throw TypeError(".elo.v3.ClientAction.joinMatchmaking: object expected");
+                    message.joinMatchmaking = $root.elo.v3.MatchmakingTicket.fromObject(object.joinMatchmaking, long + 1);
                 }
                 return message;
             };
@@ -4697,6 +4859,31 @@ export const elo = $root.elo = (() => {
                     if (options.oneofs)
                         object.payload = "regionalOverride";
                 }
+                if (message.updatePresence != null && Object.hasOwnProperty.call(message, "updatePresence")) {
+                    object.updatePresence = options.enums === String ? $root.elo.v3.PresenceStatus[message.updatePresence] === undefined ? message.updatePresence : $root.elo.v3.PresenceStatus[message.updatePresence] : message.updatePresence;
+                    if (options.oneofs)
+                        object.payload = "updatePresence";
+                }
+                if (message.relationshipAction != null && Object.hasOwnProperty.call(message, "relationshipAction")) {
+                    object.relationshipAction = $root.elo.v3.SocialRelationshipAction.toObject(message.relationshipAction, options, q + 1);
+                    if (options.oneofs)
+                        object.payload = "relationshipAction";
+                }
+                if (message.sendDirectMessage != null && Object.hasOwnProperty.call(message, "sendDirectMessage")) {
+                    object.sendDirectMessage = $root.elo.v3.DirectMessage.toObject(message.sendDirectMessage, options, q + 1);
+                    if (options.oneofs)
+                        object.payload = "sendDirectMessage";
+                }
+                if (message.sendMatchChat != null && Object.hasOwnProperty.call(message, "sendMatchChat")) {
+                    object.sendMatchChat = message.sendMatchChat;
+                    if (options.oneofs)
+                        object.payload = "sendMatchChat";
+                }
+                if (message.joinMatchmaking != null && Object.hasOwnProperty.call(message, "joinMatchmaking")) {
+                    object.joinMatchmaking = $root.elo.v3.MatchmakingTicket.toObject(message.joinMatchmaking, options, q + 1);
+                    if (options.oneofs)
+                        object.payload = "joinMatchmaking";
+                }
                 return object;
             };
 
@@ -4729,6 +4916,1323 @@ export const elo = $root.elo = (() => {
             return ClientAction;
         })();
 
+        /**
+         * PresenceStatus enum.
+         * @name elo.v3.PresenceStatus
+         * @enum {number}
+         * @property {number} PRESENCE_ONLINE=0 PRESENCE_ONLINE value
+         * @property {number} PRESENCE_IN_MATCH=1 PRESENCE_IN_MATCH value
+         * @property {number} PRESENCE_OFFLINE=2 PRESENCE_OFFLINE value
+         */
+        v3.PresenceStatus = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "PRESENCE_ONLINE"] = 0;
+            values[valuesById[1] = "PRESENCE_IN_MATCH"] = 1;
+            values[valuesById[2] = "PRESENCE_OFFLINE"] = 2;
+            return values;
+        })();
+
+        /**
+         * RelationshipState enum.
+         * @name elo.v3.RelationshipState
+         * @enum {number}
+         * @property {number} RELATION_NONE=0 RELATION_NONE value
+         * @property {number} RELATION_PENDING_A=1 RELATION_PENDING_A value
+         * @property {number} RELATION_FRIENDS=2 RELATION_FRIENDS value
+         * @property {number} RELATION_BLOCKED=3 RELATION_BLOCKED value
+         */
+        v3.RelationshipState = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "RELATION_NONE"] = 0;
+            values[valuesById[1] = "RELATION_PENDING_A"] = 1;
+            values[valuesById[2] = "RELATION_FRIENDS"] = 2;
+            values[valuesById[3] = "RELATION_BLOCKED"] = 3;
+            return values;
+        })();
+
+        /**
+         * RelationshipAction enum.
+         * @name elo.v3.RelationshipAction
+         * @enum {number}
+         * @property {number} ACTION_SEND_REQUEST=0 ACTION_SEND_REQUEST value
+         * @property {number} ACTION_ACCEPT_REQUEST=1 ACTION_ACCEPT_REQUEST value
+         * @property {number} ACTION_BLOCK_USER=2 ACTION_BLOCK_USER value
+         */
+        v3.RelationshipAction = (function() {
+            const valuesById = {}, values = Object.create(valuesById);
+            values[valuesById[0] = "ACTION_SEND_REQUEST"] = 0;
+            values[valuesById[1] = "ACTION_ACCEPT_REQUEST"] = 1;
+            values[valuesById[2] = "ACTION_BLOCK_USER"] = 2;
+            return values;
+        })();
+
+        v3.SocialRelationshipAction = (function() {
+
+            /**
+             * Properties of a SocialRelationshipAction.
+             * @memberof elo.v3
+             * @interface ISocialRelationshipAction
+             * @property {string|null} [targetPlayerId] SocialRelationshipAction targetPlayerId
+             * @property {elo.v3.RelationshipAction|null} [action] SocialRelationshipAction action
+             */
+
+            /**
+             * Constructs a new SocialRelationshipAction.
+             * @memberof elo.v3
+             * @classdesc Represents a SocialRelationshipAction.
+             * @implements ISocialRelationshipAction
+             * @constructor
+             * @param {elo.v3.ISocialRelationshipAction=} [properties] Properties to set
+             */
+            function SocialRelationshipAction(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * SocialRelationshipAction targetPlayerId.
+             * @member {string} targetPlayerId
+             * @memberof elo.v3.SocialRelationshipAction
+             * @instance
+             */
+            SocialRelationshipAction.prototype.targetPlayerId = "";
+
+            /**
+             * SocialRelationshipAction action.
+             * @member {elo.v3.RelationshipAction} action
+             * @memberof elo.v3.SocialRelationshipAction
+             * @instance
+             */
+            SocialRelationshipAction.prototype.action = 0;
+
+            /**
+             * Creates a new SocialRelationshipAction instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {elo.v3.ISocialRelationshipAction=} [properties] Properties to set
+             * @returns {elo.v3.SocialRelationshipAction} SocialRelationshipAction instance
+             */
+            SocialRelationshipAction.create = function create(properties) {
+                return new SocialRelationshipAction(properties);
+            };
+
+            /**
+             * Encodes the specified SocialRelationshipAction message. Does not implicitly {@link elo.v3.SocialRelationshipAction.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {elo.v3.ISocialRelationshipAction} message SocialRelationshipAction message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SocialRelationshipAction.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.targetPlayerId != null && Object.hasOwnProperty.call(message, "targetPlayerId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.targetPlayerId);
+                if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.action);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified SocialRelationshipAction message, length delimited. Does not implicitly {@link elo.v3.SocialRelationshipAction.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {elo.v3.ISocialRelationshipAction} message SocialRelationshipAction message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            SocialRelationshipAction.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a SocialRelationshipAction message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.SocialRelationshipAction} SocialRelationshipAction
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SocialRelationshipAction.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.SocialRelationshipAction();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.targetPlayerId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.action = reader.int32();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a SocialRelationshipAction message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.SocialRelationshipAction} SocialRelationshipAction
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            SocialRelationshipAction.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a SocialRelationshipAction message.
+             * @function verify
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            SocialRelationshipAction.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.targetPlayerId != null && Object.hasOwnProperty.call(message, "targetPlayerId"))
+                    if (!$util.isString(message.targetPlayerId))
+                        return "targetPlayerId: string expected";
+                if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                    switch (message.action) {
+                    default:
+                        return "action: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                    }
+                return null;
+            };
+
+            /**
+             * Creates a SocialRelationshipAction message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.SocialRelationshipAction} SocialRelationshipAction
+             */
+            SocialRelationshipAction.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.SocialRelationshipAction)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.SocialRelationshipAction: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.SocialRelationshipAction();
+                if (object.targetPlayerId != null)
+                    message.targetPlayerId = String(object.targetPlayerId);
+                switch (object.action) {
+                default:
+                    if (typeof object.action === "number") {
+                        message.action = object.action;
+                        break;
+                    }
+                    break;
+                case "ACTION_SEND_REQUEST":
+                case 0:
+                    message.action = 0;
+                    break;
+                case "ACTION_ACCEPT_REQUEST":
+                case 1:
+                    message.action = 1;
+                    break;
+                case "ACTION_BLOCK_USER":
+                case 2:
+                    message.action = 2;
+                    break;
+                }
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a SocialRelationshipAction message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {elo.v3.SocialRelationshipAction} message SocialRelationshipAction
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            SocialRelationshipAction.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.targetPlayerId = "";
+                    object.action = options.enums === String ? "ACTION_SEND_REQUEST" : 0;
+                }
+                if (message.targetPlayerId != null && Object.hasOwnProperty.call(message, "targetPlayerId"))
+                    object.targetPlayerId = message.targetPlayerId;
+                if (message.action != null && Object.hasOwnProperty.call(message, "action"))
+                    object.action = options.enums === String ? $root.elo.v3.RelationshipAction[message.action] === undefined ? message.action : $root.elo.v3.RelationshipAction[message.action] : message.action;
+                return object;
+            };
+
+            /**
+             * Converts this SocialRelationshipAction to JSON.
+             * @function toJSON
+             * @memberof elo.v3.SocialRelationshipAction
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            SocialRelationshipAction.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for SocialRelationshipAction
+             * @function getTypeUrl
+             * @memberof elo.v3.SocialRelationshipAction
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            SocialRelationshipAction.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.SocialRelationshipAction";
+            };
+
+            return SocialRelationshipAction;
+        })();
+
+        v3.PresenceUpdate = (function() {
+
+            /**
+             * Properties of a PresenceUpdate.
+             * @memberof elo.v3
+             * @interface IPresenceUpdate
+             * @property {string|null} [playerId] PresenceUpdate playerId
+             * @property {elo.v3.PresenceStatus|null} [status] PresenceUpdate status
+             * @property {number|Long|null} [timestamp] PresenceUpdate timestamp
+             */
+
+            /**
+             * Constructs a new PresenceUpdate.
+             * @memberof elo.v3
+             * @classdesc Represents a PresenceUpdate.
+             * @implements IPresenceUpdate
+             * @constructor
+             * @param {elo.v3.IPresenceUpdate=} [properties] Properties to set
+             */
+            function PresenceUpdate(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * PresenceUpdate playerId.
+             * @member {string} playerId
+             * @memberof elo.v3.PresenceUpdate
+             * @instance
+             */
+            PresenceUpdate.prototype.playerId = "";
+
+            /**
+             * PresenceUpdate status.
+             * @member {elo.v3.PresenceStatus} status
+             * @memberof elo.v3.PresenceUpdate
+             * @instance
+             */
+            PresenceUpdate.prototype.status = 0;
+
+            /**
+             * PresenceUpdate timestamp.
+             * @member {number|Long} timestamp
+             * @memberof elo.v3.PresenceUpdate
+             * @instance
+             */
+            PresenceUpdate.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new PresenceUpdate instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {elo.v3.IPresenceUpdate=} [properties] Properties to set
+             * @returns {elo.v3.PresenceUpdate} PresenceUpdate instance
+             */
+            PresenceUpdate.create = function create(properties) {
+                return new PresenceUpdate(properties);
+            };
+
+            /**
+             * Encodes the specified PresenceUpdate message. Does not implicitly {@link elo.v3.PresenceUpdate.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {elo.v3.IPresenceUpdate} message PresenceUpdate message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            PresenceUpdate.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.playerId);
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.status);
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int64(message.timestamp);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified PresenceUpdate message, length delimited. Does not implicitly {@link elo.v3.PresenceUpdate.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {elo.v3.IPresenceUpdate} message PresenceUpdate message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            PresenceUpdate.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a PresenceUpdate message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.PresenceUpdate} PresenceUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            PresenceUpdate.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.PresenceUpdate();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.playerId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.status = reader.int32();
+                            break;
+                        }
+                    case 3: {
+                            message.timestamp = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a PresenceUpdate message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.PresenceUpdate} PresenceUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            PresenceUpdate.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a PresenceUpdate message.
+             * @function verify
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            PresenceUpdate.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    if (!$util.isString(message.playerId))
+                        return "playerId: string expected";
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    switch (message.status) {
+                    default:
+                        return "status: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                        break;
+                    }
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
+                        return "timestamp: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates a PresenceUpdate message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.PresenceUpdate} PresenceUpdate
+             */
+            PresenceUpdate.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.PresenceUpdate)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.PresenceUpdate: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.PresenceUpdate();
+                if (object.playerId != null)
+                    message.playerId = String(object.playerId);
+                switch (object.status) {
+                default:
+                    if (typeof object.status === "number") {
+                        message.status = object.status;
+                        break;
+                    }
+                    break;
+                case "PRESENCE_ONLINE":
+                case 0:
+                    message.status = 0;
+                    break;
+                case "PRESENCE_IN_MATCH":
+                case 1:
+                    message.status = 1;
+                    break;
+                case "PRESENCE_OFFLINE":
+                case 2:
+                    message.status = 2;
+                    break;
+                }
+                if (object.timestamp != null)
+                    if ($util.Long)
+                        message.timestamp = $util.Long.fromValue(object.timestamp, false);
+                    else if (typeof object.timestamp === "string")
+                        message.timestamp = parseInt(object.timestamp, 10);
+                    else if (typeof object.timestamp === "number")
+                        message.timestamp = object.timestamp;
+                    else if (typeof object.timestamp === "object")
+                        message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a PresenceUpdate message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {elo.v3.PresenceUpdate} message PresenceUpdate
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            PresenceUpdate.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.playerId = "";
+                    object.status = options.enums === String ? "PRESENCE_ONLINE" : 0;
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.timestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    object.playerId = message.playerId;
+                if (message.status != null && Object.hasOwnProperty.call(message, "status"))
+                    object.status = options.enums === String ? $root.elo.v3.PresenceStatus[message.status] === undefined ? message.status : $root.elo.v3.PresenceStatus[message.status] : message.status;
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.timestamp = typeof message.timestamp === "number" ? BigInt(message.timestamp) : $util.Long.fromBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0, false).toBigInt();
+                    else if (typeof message.timestamp === "number")
+                        object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
+                    else
+                        object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber() : message.timestamp;
+                return object;
+            };
+
+            /**
+             * Converts this PresenceUpdate to JSON.
+             * @function toJSON
+             * @memberof elo.v3.PresenceUpdate
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            PresenceUpdate.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for PresenceUpdate
+             * @function getTypeUrl
+             * @memberof elo.v3.PresenceUpdate
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            PresenceUpdate.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.PresenceUpdate";
+            };
+
+            return PresenceUpdate;
+        })();
+
+        v3.RelationshipUpdate = (function() {
+
+            /**
+             * Properties of a RelationshipUpdate.
+             * @memberof elo.v3
+             * @interface IRelationshipUpdate
+             * @property {string|null} [initiatorId] RelationshipUpdate initiatorId
+             * @property {string|null} [targetId] RelationshipUpdate targetId
+             * @property {elo.v3.RelationshipState|null} [state] RelationshipUpdate state
+             * @property {number|Long|null} [timestamp] RelationshipUpdate timestamp
+             */
+
+            /**
+             * Constructs a new RelationshipUpdate.
+             * @memberof elo.v3
+             * @classdesc Represents a RelationshipUpdate.
+             * @implements IRelationshipUpdate
+             * @constructor
+             * @param {elo.v3.IRelationshipUpdate=} [properties] Properties to set
+             */
+            function RelationshipUpdate(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * RelationshipUpdate initiatorId.
+             * @member {string} initiatorId
+             * @memberof elo.v3.RelationshipUpdate
+             * @instance
+             */
+            RelationshipUpdate.prototype.initiatorId = "";
+
+            /**
+             * RelationshipUpdate targetId.
+             * @member {string} targetId
+             * @memberof elo.v3.RelationshipUpdate
+             * @instance
+             */
+            RelationshipUpdate.prototype.targetId = "";
+
+            /**
+             * RelationshipUpdate state.
+             * @member {elo.v3.RelationshipState} state
+             * @memberof elo.v3.RelationshipUpdate
+             * @instance
+             */
+            RelationshipUpdate.prototype.state = 0;
+
+            /**
+             * RelationshipUpdate timestamp.
+             * @member {number|Long} timestamp
+             * @memberof elo.v3.RelationshipUpdate
+             * @instance
+             */
+            RelationshipUpdate.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new RelationshipUpdate instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {elo.v3.IRelationshipUpdate=} [properties] Properties to set
+             * @returns {elo.v3.RelationshipUpdate} RelationshipUpdate instance
+             */
+            RelationshipUpdate.create = function create(properties) {
+                return new RelationshipUpdate(properties);
+            };
+
+            /**
+             * Encodes the specified RelationshipUpdate message. Does not implicitly {@link elo.v3.RelationshipUpdate.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {elo.v3.IRelationshipUpdate} message RelationshipUpdate message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            RelationshipUpdate.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.initiatorId != null && Object.hasOwnProperty.call(message, "initiatorId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.initiatorId);
+                if (message.targetId != null && Object.hasOwnProperty.call(message, "targetId"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.targetId);
+                if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                    writer.uint32(/* id 3, wireType 0 =*/24).int32(message.state);
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int64(message.timestamp);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified RelationshipUpdate message, length delimited. Does not implicitly {@link elo.v3.RelationshipUpdate.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {elo.v3.IRelationshipUpdate} message RelationshipUpdate message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            RelationshipUpdate.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a RelationshipUpdate message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.RelationshipUpdate} RelationshipUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            RelationshipUpdate.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.RelationshipUpdate();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.initiatorId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.targetId = reader.string();
+                            break;
+                        }
+                    case 3: {
+                            message.state = reader.int32();
+                            break;
+                        }
+                    case 4: {
+                            message.timestamp = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a RelationshipUpdate message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.RelationshipUpdate} RelationshipUpdate
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            RelationshipUpdate.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a RelationshipUpdate message.
+             * @function verify
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            RelationshipUpdate.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.initiatorId != null && Object.hasOwnProperty.call(message, "initiatorId"))
+                    if (!$util.isString(message.initiatorId))
+                        return "initiatorId: string expected";
+                if (message.targetId != null && Object.hasOwnProperty.call(message, "targetId"))
+                    if (!$util.isString(message.targetId))
+                        return "targetId: string expected";
+                if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                    switch (message.state) {
+                    default:
+                        return "state: enum value expected";
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                        break;
+                    }
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
+                        return "timestamp: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates a RelationshipUpdate message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.RelationshipUpdate} RelationshipUpdate
+             */
+            RelationshipUpdate.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.RelationshipUpdate)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.RelationshipUpdate: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.RelationshipUpdate();
+                if (object.initiatorId != null)
+                    message.initiatorId = String(object.initiatorId);
+                if (object.targetId != null)
+                    message.targetId = String(object.targetId);
+                switch (object.state) {
+                default:
+                    if (typeof object.state === "number") {
+                        message.state = object.state;
+                        break;
+                    }
+                    break;
+                case "RELATION_NONE":
+                case 0:
+                    message.state = 0;
+                    break;
+                case "RELATION_PENDING_A":
+                case 1:
+                    message.state = 1;
+                    break;
+                case "RELATION_FRIENDS":
+                case 2:
+                    message.state = 2;
+                    break;
+                case "RELATION_BLOCKED":
+                case 3:
+                    message.state = 3;
+                    break;
+                }
+                if (object.timestamp != null)
+                    if ($util.Long)
+                        message.timestamp = $util.Long.fromValue(object.timestamp, false);
+                    else if (typeof object.timestamp === "string")
+                        message.timestamp = parseInt(object.timestamp, 10);
+                    else if (typeof object.timestamp === "number")
+                        message.timestamp = object.timestamp;
+                    else if (typeof object.timestamp === "object")
+                        message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a RelationshipUpdate message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {elo.v3.RelationshipUpdate} message RelationshipUpdate
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            RelationshipUpdate.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.initiatorId = "";
+                    object.targetId = "";
+                    object.state = options.enums === String ? "RELATION_NONE" : 0;
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.timestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.initiatorId != null && Object.hasOwnProperty.call(message, "initiatorId"))
+                    object.initiatorId = message.initiatorId;
+                if (message.targetId != null && Object.hasOwnProperty.call(message, "targetId"))
+                    object.targetId = message.targetId;
+                if (message.state != null && Object.hasOwnProperty.call(message, "state"))
+                    object.state = options.enums === String ? $root.elo.v3.RelationshipState[message.state] === undefined ? message.state : $root.elo.v3.RelationshipState[message.state] : message.state;
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.timestamp = typeof message.timestamp === "number" ? BigInt(message.timestamp) : $util.Long.fromBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0, false).toBigInt();
+                    else if (typeof message.timestamp === "number")
+                        object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
+                    else
+                        object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber() : message.timestamp;
+                return object;
+            };
+
+            /**
+             * Converts this RelationshipUpdate to JSON.
+             * @function toJSON
+             * @memberof elo.v3.RelationshipUpdate
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            RelationshipUpdate.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for RelationshipUpdate
+             * @function getTypeUrl
+             * @memberof elo.v3.RelationshipUpdate
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            RelationshipUpdate.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.RelationshipUpdate";
+            };
+
+            return RelationshipUpdate;
+        })();
+
+        v3.DirectMessage = (function() {
+
+            /**
+             * Properties of a DirectMessage.
+             * @memberof elo.v3
+             * @interface IDirectMessage
+             * @property {string|null} [id] DirectMessage id
+             * @property {string|null} [senderId] DirectMessage senderId
+             * @property {string|null} [receiverId] DirectMessage receiverId
+             * @property {string|null} [messageText] DirectMessage messageText
+             * @property {number|Long|null} [timestamp] DirectMessage timestamp
+             */
+
+            /**
+             * Constructs a new DirectMessage.
+             * @memberof elo.v3
+             * @classdesc Represents a DirectMessage.
+             * @implements IDirectMessage
+             * @constructor
+             * @param {elo.v3.IDirectMessage=} [properties] Properties to set
+             */
+            function DirectMessage(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * DirectMessage id.
+             * @member {string} id
+             * @memberof elo.v3.DirectMessage
+             * @instance
+             */
+            DirectMessage.prototype.id = "";
+
+            /**
+             * DirectMessage senderId.
+             * @member {string} senderId
+             * @memberof elo.v3.DirectMessage
+             * @instance
+             */
+            DirectMessage.prototype.senderId = "";
+
+            /**
+             * DirectMessage receiverId.
+             * @member {string} receiverId
+             * @memberof elo.v3.DirectMessage
+             * @instance
+             */
+            DirectMessage.prototype.receiverId = "";
+
+            /**
+             * DirectMessage messageText.
+             * @member {string} messageText
+             * @memberof elo.v3.DirectMessage
+             * @instance
+             */
+            DirectMessage.prototype.messageText = "";
+
+            /**
+             * DirectMessage timestamp.
+             * @member {number|Long} timestamp
+             * @memberof elo.v3.DirectMessage
+             * @instance
+             */
+            DirectMessage.prototype.timestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new DirectMessage instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {elo.v3.IDirectMessage=} [properties] Properties to set
+             * @returns {elo.v3.DirectMessage} DirectMessage instance
+             */
+            DirectMessage.create = function create(properties) {
+                return new DirectMessage(properties);
+            };
+
+            /**
+             * Encodes the specified DirectMessage message. Does not implicitly {@link elo.v3.DirectMessage.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {elo.v3.IDirectMessage} message DirectMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            DirectMessage.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.id);
+                if (message.senderId != null && Object.hasOwnProperty.call(message, "senderId"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.senderId);
+                if (message.receiverId != null && Object.hasOwnProperty.call(message, "receiverId"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.receiverId);
+                if (message.messageText != null && Object.hasOwnProperty.call(message, "messageText"))
+                    writer.uint32(/* id 4, wireType 2 =*/34).string(message.messageText);
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    writer.uint32(/* id 5, wireType 0 =*/40).int64(message.timestamp);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified DirectMessage message, length delimited. Does not implicitly {@link elo.v3.DirectMessage.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {elo.v3.IDirectMessage} message DirectMessage message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            DirectMessage.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a DirectMessage message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.DirectMessage} DirectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            DirectMessage.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.DirectMessage();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.id = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.senderId = reader.string();
+                            break;
+                        }
+                    case 3: {
+                            message.receiverId = reader.string();
+                            break;
+                        }
+                    case 4: {
+                            message.messageText = reader.string();
+                            break;
+                        }
+                    case 5: {
+                            message.timestamp = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a DirectMessage message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.DirectMessage} DirectMessage
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            DirectMessage.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a DirectMessage message.
+             * @function verify
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            DirectMessage.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                    if (!$util.isString(message.id))
+                        return "id: string expected";
+                if (message.senderId != null && Object.hasOwnProperty.call(message, "senderId"))
+                    if (!$util.isString(message.senderId))
+                        return "senderId: string expected";
+                if (message.receiverId != null && Object.hasOwnProperty.call(message, "receiverId"))
+                    if (!$util.isString(message.receiverId))
+                        return "receiverId: string expected";
+                if (message.messageText != null && Object.hasOwnProperty.call(message, "messageText"))
+                    if (!$util.isString(message.messageText))
+                        return "messageText: string expected";
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    if (!$util.isInteger(message.timestamp) && !(message.timestamp && $util.isInteger(message.timestamp.low) && $util.isInteger(message.timestamp.high)))
+                        return "timestamp: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates a DirectMessage message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.DirectMessage} DirectMessage
+             */
+            DirectMessage.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.DirectMessage)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.DirectMessage: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.DirectMessage();
+                if (object.id != null)
+                    message.id = String(object.id);
+                if (object.senderId != null)
+                    message.senderId = String(object.senderId);
+                if (object.receiverId != null)
+                    message.receiverId = String(object.receiverId);
+                if (object.messageText != null)
+                    message.messageText = String(object.messageText);
+                if (object.timestamp != null)
+                    if ($util.Long)
+                        message.timestamp = $util.Long.fromValue(object.timestamp, false);
+                    else if (typeof object.timestamp === "string")
+                        message.timestamp = parseInt(object.timestamp, 10);
+                    else if (typeof object.timestamp === "number")
+                        message.timestamp = object.timestamp;
+                    else if (typeof object.timestamp === "object")
+                        message.timestamp = new $util.LongBits(object.timestamp.low >>> 0, object.timestamp.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a DirectMessage message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {elo.v3.DirectMessage} message DirectMessage
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            DirectMessage.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.id = "";
+                    object.senderId = "";
+                    object.receiverId = "";
+                    object.messageText = "";
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.timestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.timestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.id != null && Object.hasOwnProperty.call(message, "id"))
+                    object.id = message.id;
+                if (message.senderId != null && Object.hasOwnProperty.call(message, "senderId"))
+                    object.senderId = message.senderId;
+                if (message.receiverId != null && Object.hasOwnProperty.call(message, "receiverId"))
+                    object.receiverId = message.receiverId;
+                if (message.messageText != null && Object.hasOwnProperty.call(message, "messageText"))
+                    object.messageText = message.messageText;
+                if (message.timestamp != null && Object.hasOwnProperty.call(message, "timestamp"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.timestamp = typeof message.timestamp === "number" ? BigInt(message.timestamp) : $util.Long.fromBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0, false).toBigInt();
+                    else if (typeof message.timestamp === "number")
+                        object.timestamp = options.longs === String ? String(message.timestamp) : message.timestamp;
+                    else
+                        object.timestamp = options.longs === String ? $util.Long.prototype.toString.call(message.timestamp) : options.longs === Number ? new $util.LongBits(message.timestamp.low >>> 0, message.timestamp.high >>> 0).toNumber() : message.timestamp;
+                return object;
+            };
+
+            /**
+             * Converts this DirectMessage to JSON.
+             * @function toJSON
+             * @memberof elo.v3.DirectMessage
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            DirectMessage.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for DirectMessage
+             * @function getTypeUrl
+             * @memberof elo.v3.DirectMessage
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            DirectMessage.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.DirectMessage";
+            };
+
+            return DirectMessage;
+        })();
+
         v3.ServerGameStateUpdate = (function() {
 
             /**
@@ -4753,6 +6257,11 @@ export const elo = $root.elo = (() => {
              * @property {string|null} [activeReconnectionToken] ServerGameStateUpdate activeReconnectionToken
              * @property {elo.v3.RegionZone|null} [currentNodeZone] ServerGameStateUpdate currentNodeZone
              * @property {elo.v3.IRegionalHandshakeOverride|null} [standbyOverride] ServerGameStateUpdate standbyOverride
+             * @property {elo.v3.IPresenceUpdate|null} [presenceUpdate] ServerGameStateUpdate presenceUpdate
+             * @property {elo.v3.IRelationshipUpdate|null} [relationshipUpdate] ServerGameStateUpdate relationshipUpdate
+             * @property {elo.v3.IDirectMessage|null} [directMessage] ServerGameStateUpdate directMessage
+             * @property {string|null} [receiveMatchChat] ServerGameStateUpdate receiveMatchChat
+             * @property {elo.v3.IMatchReadySignal|null} [matchReady] ServerGameStateUpdate matchReady
              */
 
             /**
@@ -4915,6 +6424,46 @@ export const elo = $root.elo = (() => {
             ServerGameStateUpdate.prototype.standbyOverride = null;
 
             /**
+             * ServerGameStateUpdate presenceUpdate.
+             * @member {elo.v3.IPresenceUpdate|null|undefined} presenceUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.presenceUpdate = null;
+
+            /**
+             * ServerGameStateUpdate relationshipUpdate.
+             * @member {elo.v3.IRelationshipUpdate|null|undefined} relationshipUpdate
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.relationshipUpdate = null;
+
+            /**
+             * ServerGameStateUpdate directMessage.
+             * @member {elo.v3.IDirectMessage|null|undefined} directMessage
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.directMessage = null;
+
+            /**
+             * ServerGameStateUpdate receiveMatchChat.
+             * @member {string} receiveMatchChat
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.receiveMatchChat = "";
+
+            /**
+             * ServerGameStateUpdate matchReady.
+             * @member {elo.v3.IMatchReadySignal|null|undefined} matchReady
+             * @memberof elo.v3.ServerGameStateUpdate
+             * @instance
+             */
+            ServerGameStateUpdate.prototype.matchReady = null;
+
+            /**
              * Creates a new ServerGameStateUpdate instance using the specified properties.
              * @function create
              * @memberof elo.v3.ServerGameStateUpdate
@@ -4978,6 +6527,16 @@ export const elo = $root.elo = (() => {
                     writer.uint32(/* id 17, wireType 0 =*/136).int32(message.currentNodeZone);
                 if (message.standbyOverride != null && Object.hasOwnProperty.call(message, "standbyOverride"))
                     $root.elo.v3.RegionalHandshakeOverride.encode(message.standbyOverride, writer.uint32(/* id 18, wireType 2 =*/146).fork(), q + 1).ldelim();
+                if (message.presenceUpdate != null && Object.hasOwnProperty.call(message, "presenceUpdate"))
+                    $root.elo.v3.PresenceUpdate.encode(message.presenceUpdate, writer.uint32(/* id 19, wireType 2 =*/154).fork(), q + 1).ldelim();
+                if (message.relationshipUpdate != null && Object.hasOwnProperty.call(message, "relationshipUpdate"))
+                    $root.elo.v3.RelationshipUpdate.encode(message.relationshipUpdate, writer.uint32(/* id 20, wireType 2 =*/162).fork(), q + 1).ldelim();
+                if (message.directMessage != null && Object.hasOwnProperty.call(message, "directMessage"))
+                    $root.elo.v3.DirectMessage.encode(message.directMessage, writer.uint32(/* id 21, wireType 2 =*/170).fork(), q + 1).ldelim();
+                if (message.receiveMatchChat != null && Object.hasOwnProperty.call(message, "receiveMatchChat"))
+                    writer.uint32(/* id 22, wireType 2 =*/178).string(message.receiveMatchChat);
+                if (message.matchReady != null && Object.hasOwnProperty.call(message, "matchReady"))
+                    $root.elo.v3.MatchReadySignal.encode(message.matchReady, writer.uint32(/* id 23, wireType 2 =*/186).fork(), q + 1).ldelim();
                 return writer;
             };
 
@@ -5088,6 +6647,26 @@ export const elo = $root.elo = (() => {
                         }
                     case 18: {
                             message.standbyOverride = $root.elo.v3.RegionalHandshakeOverride.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 19: {
+                            message.presenceUpdate = $root.elo.v3.PresenceUpdate.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 20: {
+                            message.relationshipUpdate = $root.elo.v3.RelationshipUpdate.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 21: {
+                            message.directMessage = $root.elo.v3.DirectMessage.decode(reader, reader.uint32(), undefined, long + 1);
+                            break;
+                        }
+                    case 22: {
+                            message.receiveMatchChat = reader.string();
+                            break;
+                        }
+                    case 23: {
+                            message.matchReady = $root.elo.v3.MatchReadySignal.decode(reader, reader.uint32(), undefined, long + 1);
                             break;
                         }
                     default:
@@ -5214,6 +6793,29 @@ export const elo = $root.elo = (() => {
                     let error = $root.elo.v3.RegionalHandshakeOverride.verify(message.standbyOverride, long + 1);
                     if (error)
                         return "standbyOverride." + error;
+                }
+                if (message.presenceUpdate != null && Object.hasOwnProperty.call(message, "presenceUpdate")) {
+                    let error = $root.elo.v3.PresenceUpdate.verify(message.presenceUpdate, long + 1);
+                    if (error)
+                        return "presenceUpdate." + error;
+                }
+                if (message.relationshipUpdate != null && Object.hasOwnProperty.call(message, "relationshipUpdate")) {
+                    let error = $root.elo.v3.RelationshipUpdate.verify(message.relationshipUpdate, long + 1);
+                    if (error)
+                        return "relationshipUpdate." + error;
+                }
+                if (message.directMessage != null && Object.hasOwnProperty.call(message, "directMessage")) {
+                    let error = $root.elo.v3.DirectMessage.verify(message.directMessage, long + 1);
+                    if (error)
+                        return "directMessage." + error;
+                }
+                if (message.receiveMatchChat != null && Object.hasOwnProperty.call(message, "receiveMatchChat"))
+                    if (!$util.isString(message.receiveMatchChat))
+                        return "receiveMatchChat: string expected";
+                if (message.matchReady != null && Object.hasOwnProperty.call(message, "matchReady")) {
+                    let error = $root.elo.v3.MatchReadySignal.verify(message.matchReady, long + 1);
+                    if (error)
+                        return "matchReady." + error;
                 }
                 return null;
             };
@@ -5357,6 +6959,28 @@ export const elo = $root.elo = (() => {
                         throw TypeError(".elo.v3.ServerGameStateUpdate.standbyOverride: object expected");
                     message.standbyOverride = $root.elo.v3.RegionalHandshakeOverride.fromObject(object.standbyOverride, long + 1);
                 }
+                if (object.presenceUpdate != null) {
+                    if (!$util.isObject(object.presenceUpdate))
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.presenceUpdate: object expected");
+                    message.presenceUpdate = $root.elo.v3.PresenceUpdate.fromObject(object.presenceUpdate, long + 1);
+                }
+                if (object.relationshipUpdate != null) {
+                    if (!$util.isObject(object.relationshipUpdate))
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.relationshipUpdate: object expected");
+                    message.relationshipUpdate = $root.elo.v3.RelationshipUpdate.fromObject(object.relationshipUpdate, long + 1);
+                }
+                if (object.directMessage != null) {
+                    if (!$util.isObject(object.directMessage))
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.directMessage: object expected");
+                    message.directMessage = $root.elo.v3.DirectMessage.fromObject(object.directMessage, long + 1);
+                }
+                if (object.receiveMatchChat != null)
+                    message.receiveMatchChat = String(object.receiveMatchChat);
+                if (object.matchReady != null) {
+                    if (!$util.isObject(object.matchReady))
+                        throw TypeError(".elo.v3.ServerGameStateUpdate.matchReady: object expected");
+                    message.matchReady = $root.elo.v3.MatchReadySignal.fromObject(object.matchReady, long + 1);
+                }
                 return message;
             };
 
@@ -5396,6 +7020,11 @@ export const elo = $root.elo = (() => {
                     object.activeReconnectionToken = "";
                     object.currentNodeZone = options.enums === String ? "REGION_ZONE_UNSPECIFIED" : 0;
                     object.standbyOverride = null;
+                    object.presenceUpdate = null;
+                    object.relationshipUpdate = null;
+                    object.directMessage = null;
+                    object.receiveMatchChat = "";
+                    object.matchReady = null;
                 }
                 if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
                     object.roomId = message.roomId;
@@ -5433,6 +7062,16 @@ export const elo = $root.elo = (() => {
                     object.currentNodeZone = options.enums === String ? $root.elo.v3.RegionZone[message.currentNodeZone] === undefined ? message.currentNodeZone : $root.elo.v3.RegionZone[message.currentNodeZone] : message.currentNodeZone;
                 if (message.standbyOverride != null && Object.hasOwnProperty.call(message, "standbyOverride"))
                     object.standbyOverride = $root.elo.v3.RegionalHandshakeOverride.toObject(message.standbyOverride, options, q + 1);
+                if (message.presenceUpdate != null && Object.hasOwnProperty.call(message, "presenceUpdate"))
+                    object.presenceUpdate = $root.elo.v3.PresenceUpdate.toObject(message.presenceUpdate, options, q + 1);
+                if (message.relationshipUpdate != null && Object.hasOwnProperty.call(message, "relationshipUpdate"))
+                    object.relationshipUpdate = $root.elo.v3.RelationshipUpdate.toObject(message.relationshipUpdate, options, q + 1);
+                if (message.directMessage != null && Object.hasOwnProperty.call(message, "directMessage"))
+                    object.directMessage = $root.elo.v3.DirectMessage.toObject(message.directMessage, options, q + 1);
+                if (message.receiveMatchChat != null && Object.hasOwnProperty.call(message, "receiveMatchChat"))
+                    object.receiveMatchChat = message.receiveMatchChat;
+                if (message.matchReady != null && Object.hasOwnProperty.call(message, "matchReady"))
+                    object.matchReady = $root.elo.v3.MatchReadySignal.toObject(message.matchReady, options, q + 1);
                 return object;
             };
 
@@ -5852,6 +7491,639 @@ export const elo = $root.elo = (() => {
             })();
 
             return ServerGameStateUpdate;
+        })();
+
+        v3.MatchmakingTicket = (function() {
+
+            /**
+             * Properties of a MatchmakingTicket.
+             * @memberof elo.v3
+             * @interface IMatchmakingTicket
+             * @property {string|null} [playerId] MatchmakingTicket playerId
+             * @property {number|null} [currentElo] MatchmakingTicket currentElo
+             * @property {string|null} [disciplineMode] MatchmakingTicket disciplineMode
+             * @property {number|Long|null} [ticketTimestamp] MatchmakingTicket ticketTimestamp
+             */
+
+            /**
+             * Constructs a new MatchmakingTicket.
+             * @memberof elo.v3
+             * @classdesc Represents a MatchmakingTicket.
+             * @implements IMatchmakingTicket
+             * @constructor
+             * @param {elo.v3.IMatchmakingTicket=} [properties] Properties to set
+             */
+            function MatchmakingTicket(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * MatchmakingTicket playerId.
+             * @member {string} playerId
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             */
+            MatchmakingTicket.prototype.playerId = "";
+
+            /**
+             * MatchmakingTicket currentElo.
+             * @member {number} currentElo
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             */
+            MatchmakingTicket.prototype.currentElo = 0;
+
+            /**
+             * MatchmakingTicket disciplineMode.
+             * @member {string} disciplineMode
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             */
+            MatchmakingTicket.prototype.disciplineMode = "";
+
+            /**
+             * MatchmakingTicket ticketTimestamp.
+             * @member {number|Long} ticketTimestamp
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             */
+            MatchmakingTicket.prototype.ticketTimestamp = $util.Long ? $util.Long.fromBits(0,0,false) : 0;
+
+            /**
+             * Creates a new MatchmakingTicket instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {elo.v3.IMatchmakingTicket=} [properties] Properties to set
+             * @returns {elo.v3.MatchmakingTicket} MatchmakingTicket instance
+             */
+            MatchmakingTicket.create = function create(properties) {
+                return new MatchmakingTicket(properties);
+            };
+
+            /**
+             * Encodes the specified MatchmakingTicket message. Does not implicitly {@link elo.v3.MatchmakingTicket.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {elo.v3.IMatchmakingTicket} message MatchmakingTicket message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            MatchmakingTicket.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.playerId);
+                if (message.currentElo != null && Object.hasOwnProperty.call(message, "currentElo"))
+                    writer.uint32(/* id 2, wireType 0 =*/16).int32(message.currentElo);
+                if (message.disciplineMode != null && Object.hasOwnProperty.call(message, "disciplineMode"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.disciplineMode);
+                if (message.ticketTimestamp != null && Object.hasOwnProperty.call(message, "ticketTimestamp"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int64(message.ticketTimestamp);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified MatchmakingTicket message, length delimited. Does not implicitly {@link elo.v3.MatchmakingTicket.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {elo.v3.IMatchmakingTicket} message MatchmakingTicket message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            MatchmakingTicket.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a MatchmakingTicket message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.MatchmakingTicket} MatchmakingTicket
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            MatchmakingTicket.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.MatchmakingTicket();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.playerId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.currentElo = reader.int32();
+                            break;
+                        }
+                    case 3: {
+                            message.disciplineMode = reader.string();
+                            break;
+                        }
+                    case 4: {
+                            message.ticketTimestamp = reader.int64();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a MatchmakingTicket message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.MatchmakingTicket} MatchmakingTicket
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            MatchmakingTicket.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a MatchmakingTicket message.
+             * @function verify
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            MatchmakingTicket.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    if (!$util.isString(message.playerId))
+                        return "playerId: string expected";
+                if (message.currentElo != null && Object.hasOwnProperty.call(message, "currentElo"))
+                    if (!$util.isInteger(message.currentElo))
+                        return "currentElo: integer expected";
+                if (message.disciplineMode != null && Object.hasOwnProperty.call(message, "disciplineMode"))
+                    if (!$util.isString(message.disciplineMode))
+                        return "disciplineMode: string expected";
+                if (message.ticketTimestamp != null && Object.hasOwnProperty.call(message, "ticketTimestamp"))
+                    if (!$util.isInteger(message.ticketTimestamp) && !(message.ticketTimestamp && $util.isInteger(message.ticketTimestamp.low) && $util.isInteger(message.ticketTimestamp.high)))
+                        return "ticketTimestamp: integer|Long expected";
+                return null;
+            };
+
+            /**
+             * Creates a MatchmakingTicket message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.MatchmakingTicket} MatchmakingTicket
+             */
+            MatchmakingTicket.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.MatchmakingTicket)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.MatchmakingTicket: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.MatchmakingTicket();
+                if (object.playerId != null)
+                    message.playerId = String(object.playerId);
+                if (object.currentElo != null)
+                    message.currentElo = object.currentElo | 0;
+                if (object.disciplineMode != null)
+                    message.disciplineMode = String(object.disciplineMode);
+                if (object.ticketTimestamp != null)
+                    if ($util.Long)
+                        message.ticketTimestamp = $util.Long.fromValue(object.ticketTimestamp, false);
+                    else if (typeof object.ticketTimestamp === "string")
+                        message.ticketTimestamp = parseInt(object.ticketTimestamp, 10);
+                    else if (typeof object.ticketTimestamp === "number")
+                        message.ticketTimestamp = object.ticketTimestamp;
+                    else if (typeof object.ticketTimestamp === "object")
+                        message.ticketTimestamp = new $util.LongBits(object.ticketTimestamp.low >>> 0, object.ticketTimestamp.high >>> 0).toNumber();
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a MatchmakingTicket message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {elo.v3.MatchmakingTicket} message MatchmakingTicket
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            MatchmakingTicket.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.playerId = "";
+                    object.currentElo = 0;
+                    object.disciplineMode = "";
+                    if ($util.Long) {
+                        let long = new $util.Long(0, 0, false);
+                        object.ticketTimestamp = options.longs === String ? long.toString() : options.longs === Number ? long.toNumber() : typeof BigInt !== "undefined" && options.longs === BigInt ? long.toBigInt() : long;
+                    } else
+                        object.ticketTimestamp = options.longs === String ? "0" : typeof BigInt !== "undefined" && options.longs === BigInt ? BigInt("0") : 0;
+                }
+                if (message.playerId != null && Object.hasOwnProperty.call(message, "playerId"))
+                    object.playerId = message.playerId;
+                if (message.currentElo != null && Object.hasOwnProperty.call(message, "currentElo"))
+                    object.currentElo = message.currentElo;
+                if (message.disciplineMode != null && Object.hasOwnProperty.call(message, "disciplineMode"))
+                    object.disciplineMode = message.disciplineMode;
+                if (message.ticketTimestamp != null && Object.hasOwnProperty.call(message, "ticketTimestamp"))
+                    if (typeof BigInt !== "undefined" && options.longs === BigInt)
+                        object.ticketTimestamp = typeof message.ticketTimestamp === "number" ? BigInt(message.ticketTimestamp) : $util.Long.fromBits(message.ticketTimestamp.low >>> 0, message.ticketTimestamp.high >>> 0, false).toBigInt();
+                    else if (typeof message.ticketTimestamp === "number")
+                        object.ticketTimestamp = options.longs === String ? String(message.ticketTimestamp) : message.ticketTimestamp;
+                    else
+                        object.ticketTimestamp = options.longs === String ? $util.Long.prototype.toString.call(message.ticketTimestamp) : options.longs === Number ? new $util.LongBits(message.ticketTimestamp.low >>> 0, message.ticketTimestamp.high >>> 0).toNumber() : message.ticketTimestamp;
+                return object;
+            };
+
+            /**
+             * Converts this MatchmakingTicket to JSON.
+             * @function toJSON
+             * @memberof elo.v3.MatchmakingTicket
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            MatchmakingTicket.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for MatchmakingTicket
+             * @function getTypeUrl
+             * @memberof elo.v3.MatchmakingTicket
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            MatchmakingTicket.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.MatchmakingTicket";
+            };
+
+            return MatchmakingTicket;
+        })();
+
+        v3.MatchReadySignal = (function() {
+
+            /**
+             * Properties of a MatchReadySignal.
+             * @memberof elo.v3
+             * @interface IMatchReadySignal
+             * @property {string|null} [roomId] MatchReadySignal roomId
+             * @property {string|null} [opponentName] MatchReadySignal opponentName
+             * @property {string|null} [opponentAvatarUrl] MatchReadySignal opponentAvatarUrl
+             * @property {number|null} [opponentElo] MatchReadySignal opponentElo
+             * @property {string|null} [seed] MatchReadySignal seed
+             */
+
+            /**
+             * Constructs a new MatchReadySignal.
+             * @memberof elo.v3
+             * @classdesc Represents a MatchReadySignal.
+             * @implements IMatchReadySignal
+             * @constructor
+             * @param {elo.v3.IMatchReadySignal=} [properties] Properties to set
+             */
+            function MatchReadySignal(properties) {
+                if (properties)
+                    for (let keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                        if (properties[keys[i]] != null && keys[i] !== "__proto__")
+                            this[keys[i]] = properties[keys[i]];
+            }
+
+            /**
+             * MatchReadySignal roomId.
+             * @member {string} roomId
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.roomId = "";
+
+            /**
+             * MatchReadySignal opponentName.
+             * @member {string} opponentName
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.opponentName = "";
+
+            /**
+             * MatchReadySignal opponentAvatarUrl.
+             * @member {string} opponentAvatarUrl
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.opponentAvatarUrl = "";
+
+            /**
+             * MatchReadySignal opponentElo.
+             * @member {number} opponentElo
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.opponentElo = 0;
+
+            /**
+             * MatchReadySignal seed.
+             * @member {string} seed
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             */
+            MatchReadySignal.prototype.seed = "";
+
+            /**
+             * Creates a new MatchReadySignal instance using the specified properties.
+             * @function create
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {elo.v3.IMatchReadySignal=} [properties] Properties to set
+             * @returns {elo.v3.MatchReadySignal} MatchReadySignal instance
+             */
+            MatchReadySignal.create = function create(properties) {
+                return new MatchReadySignal(properties);
+            };
+
+            /**
+             * Encodes the specified MatchReadySignal message. Does not implicitly {@link elo.v3.MatchReadySignal.verify|verify} messages.
+             * @function encode
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {elo.v3.IMatchReadySignal} message MatchReadySignal message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            MatchReadySignal.encode = function encode(message, writer, q) {
+                if (!writer)
+                    writer = $Writer.create();
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    writer.uint32(/* id 1, wireType 2 =*/10).string(message.roomId);
+                if (message.opponentName != null && Object.hasOwnProperty.call(message, "opponentName"))
+                    writer.uint32(/* id 2, wireType 2 =*/18).string(message.opponentName);
+                if (message.opponentAvatarUrl != null && Object.hasOwnProperty.call(message, "opponentAvatarUrl"))
+                    writer.uint32(/* id 3, wireType 2 =*/26).string(message.opponentAvatarUrl);
+                if (message.opponentElo != null && Object.hasOwnProperty.call(message, "opponentElo"))
+                    writer.uint32(/* id 4, wireType 0 =*/32).int32(message.opponentElo);
+                if (message.seed != null && Object.hasOwnProperty.call(message, "seed"))
+                    writer.uint32(/* id 5, wireType 2 =*/42).string(message.seed);
+                return writer;
+            };
+
+            /**
+             * Encodes the specified MatchReadySignal message, length delimited. Does not implicitly {@link elo.v3.MatchReadySignal.verify|verify} messages.
+             * @function encodeDelimited
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {elo.v3.IMatchReadySignal} message MatchReadySignal message or plain object to encode
+             * @param {$protobuf.Writer} [writer] Writer to encode to
+             * @returns {$protobuf.Writer} Writer
+             */
+            MatchReadySignal.encodeDelimited = function encodeDelimited(message, writer) {
+                return this.encode(message, writer && writer.len ? writer.fork() : writer).ldelim();
+            };
+
+            /**
+             * Decodes a MatchReadySignal message from the specified reader or buffer.
+             * @function decode
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @param {number} [length] Message length if known beforehand
+             * @returns {elo.v3.MatchReadySignal} MatchReadySignal
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            MatchReadySignal.decode = function decode(reader, length, error, long) {
+                if (!(reader instanceof $Reader))
+                    reader = $Reader.create(reader);
+                if (long === undefined)
+                    long = 0;
+                if (long > $Reader.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let end = length === undefined ? reader.len : reader.pos + length, message = new $root.elo.v3.MatchReadySignal();
+                while (reader.pos < end) {
+                    let tag = reader.uint32();
+                    if (tag === error)
+                        break;
+                    switch (tag >>> 3) {
+                    case 1: {
+                            message.roomId = reader.string();
+                            break;
+                        }
+                    case 2: {
+                            message.opponentName = reader.string();
+                            break;
+                        }
+                    case 3: {
+                            message.opponentAvatarUrl = reader.string();
+                            break;
+                        }
+                    case 4: {
+                            message.opponentElo = reader.int32();
+                            break;
+                        }
+                    case 5: {
+                            message.seed = reader.string();
+                            break;
+                        }
+                    default:
+                        reader.skipType(tag & 7, long);
+                        break;
+                    }
+                }
+                return message;
+            };
+
+            /**
+             * Decodes a MatchReadySignal message from the specified reader or buffer, length delimited.
+             * @function decodeDelimited
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+             * @returns {elo.v3.MatchReadySignal} MatchReadySignal
+             * @throws {Error} If the payload is not a reader or valid buffer
+             * @throws {$protobuf.util.ProtocolError} If required fields are missing
+             */
+            MatchReadySignal.decodeDelimited = function decodeDelimited(reader) {
+                if (!(reader instanceof $Reader))
+                    reader = new $Reader(reader);
+                return this.decode(reader, reader.uint32());
+            };
+
+            /**
+             * Verifies a MatchReadySignal message.
+             * @function verify
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {Object.<string,*>} message Plain object to verify
+             * @returns {string|null} `null` if valid, otherwise the reason why it is not
+             */
+            MatchReadySignal.verify = function verify(message, long) {
+                if (typeof message !== "object" || message === null)
+                    return "object expected";
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    return "maximum nesting depth exceeded";
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    if (!$util.isString(message.roomId))
+                        return "roomId: string expected";
+                if (message.opponentName != null && Object.hasOwnProperty.call(message, "opponentName"))
+                    if (!$util.isString(message.opponentName))
+                        return "opponentName: string expected";
+                if (message.opponentAvatarUrl != null && Object.hasOwnProperty.call(message, "opponentAvatarUrl"))
+                    if (!$util.isString(message.opponentAvatarUrl))
+                        return "opponentAvatarUrl: string expected";
+                if (message.opponentElo != null && Object.hasOwnProperty.call(message, "opponentElo"))
+                    if (!$util.isInteger(message.opponentElo))
+                        return "opponentElo: integer expected";
+                if (message.seed != null && Object.hasOwnProperty.call(message, "seed"))
+                    if (!$util.isString(message.seed))
+                        return "seed: string expected";
+                return null;
+            };
+
+            /**
+             * Creates a MatchReadySignal message from a plain object. Also converts values to their respective internal types.
+             * @function fromObject
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {Object.<string,*>} object Plain object
+             * @returns {elo.v3.MatchReadySignal} MatchReadySignal
+             */
+            MatchReadySignal.fromObject = function fromObject(object, long) {
+                if (object instanceof $root.elo.v3.MatchReadySignal)
+                    return object;
+                if (!$util.isObject(object))
+                    throw TypeError(".elo.v3.MatchReadySignal: object expected");
+                if (long === undefined)
+                    long = 0;
+                if (long > $util.recursionLimit)
+                    throw Error("maximum nesting depth exceeded");
+                let message = new $root.elo.v3.MatchReadySignal();
+                if (object.roomId != null)
+                    message.roomId = String(object.roomId);
+                if (object.opponentName != null)
+                    message.opponentName = String(object.opponentName);
+                if (object.opponentAvatarUrl != null)
+                    message.opponentAvatarUrl = String(object.opponentAvatarUrl);
+                if (object.opponentElo != null)
+                    message.opponentElo = object.opponentElo | 0;
+                if (object.seed != null)
+                    message.seed = String(object.seed);
+                return message;
+            };
+
+            /**
+             * Creates a plain object from a MatchReadySignal message. Also converts values to other types if specified.
+             * @function toObject
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {elo.v3.MatchReadySignal} message MatchReadySignal
+             * @param {$protobuf.IConversionOptions} [options] Conversion options
+             * @returns {Object.<string,*>} Plain object
+             */
+            MatchReadySignal.toObject = function toObject(message, options, q) {
+                if (!options)
+                    options = {};
+                if (q === undefined)
+                    q = 0;
+                if (q > $util.recursionLimit)
+                    throw Error("max depth exceeded");
+                let object = {};
+                if (options.defaults) {
+                    object.roomId = "";
+                    object.opponentName = "";
+                    object.opponentAvatarUrl = "";
+                    object.opponentElo = 0;
+                    object.seed = "";
+                }
+                if (message.roomId != null && Object.hasOwnProperty.call(message, "roomId"))
+                    object.roomId = message.roomId;
+                if (message.opponentName != null && Object.hasOwnProperty.call(message, "opponentName"))
+                    object.opponentName = message.opponentName;
+                if (message.opponentAvatarUrl != null && Object.hasOwnProperty.call(message, "opponentAvatarUrl"))
+                    object.opponentAvatarUrl = message.opponentAvatarUrl;
+                if (message.opponentElo != null && Object.hasOwnProperty.call(message, "opponentElo"))
+                    object.opponentElo = message.opponentElo;
+                if (message.seed != null && Object.hasOwnProperty.call(message, "seed"))
+                    object.seed = message.seed;
+                return object;
+            };
+
+            /**
+             * Converts this MatchReadySignal to JSON.
+             * @function toJSON
+             * @memberof elo.v3.MatchReadySignal
+             * @instance
+             * @returns {Object.<string,*>} JSON object
+             */
+            MatchReadySignal.prototype.toJSON = function toJSON() {
+                return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+            };
+
+            /**
+             * Gets the default type url for MatchReadySignal
+             * @function getTypeUrl
+             * @memberof elo.v3.MatchReadySignal
+             * @static
+             * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+             * @returns {string} The default type url
+             */
+            MatchReadySignal.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+                if (typeUrlPrefix === undefined) {
+                    typeUrlPrefix = "type.googleapis.com";
+                }
+                return typeUrlPrefix + "/elo.v3.MatchReadySignal";
+            };
+
+            return MatchReadySignal;
         })();
 
         return v3;

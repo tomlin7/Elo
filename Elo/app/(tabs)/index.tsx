@@ -9,16 +9,27 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
-  Share
+  Share,
+  Modal,
+  TouchableOpacity,
+  StatusBar as RNStatusBar
 } from "react-native";
 import { useRouter } from "expo-router";
 import { authService } from "../../src/utils/auth.ts";
 import { useProfileStore, ProfileData } from "../../src/store/profileStore.ts";
 import { useThemeStore } from "../../src/store/themeStore.ts";
+import { useMatchmakingStore } from "../../src/store/matchmakingStore.ts";
 import { StatusBar } from "expo-status-bar";
 import * as Haptics from "expo-haptics";
+import { SectionLabel } from "@/components/ui/SectionLabel";
+import { StatCapsuleRow } from "@/components/ui/StatCapsuleRow";
+import { Spacing, Radius, Typography } from "@/constants/design";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import Svg, { Path, Circle, Rect } from "react-native-svg";
+import { IconSymbol } from "@/components/ui/icon-symbol";
+import { StarburstShape, ShapesComposition } from "@/components/ui/Shapes";
 
 interface ModeProps {
   label: string;
@@ -26,24 +37,96 @@ interface ModeProps {
   onPress: () => void;
 }
 
-const DisciplineCard: React.FC<ModeProps> = ({ label, isActive, onPress }) => {
+const DisciplineCard: React.FC<ModeProps & { colors: ReturnType<typeof useThemeStore.getState>["colors"] }> = ({ label, isActive, onPress, colors }) => {
+  const getIcon = () => {
+    switch (label) {
+      case "MATH": return "slider.horizontal.3";
+      case "MEMORY": return "square.stack.3d.down.right";
+      case "PUZZLE": return "grid.sharp";
+      case "LOGIC": return "logic.circles";
+      default: return "grid.sharp";
+    }
+  };
+
+  const getThemeColor = () => {
+    switch (label) {
+      case "MATH": return "#F9E2AF";
+      case "MEMORY": return "#89B4FA";
+      case "PUZZLE": return "#A6E3A1";
+      case "LOGIC": return "#F38BA8";
+      default: return colors.primary;
+    }
+  };
+
   return (
-    <TouchableOpacity 
-      onPress={onPress}
-      style={[styles.discCard, isActive && styles.activeDiscCard]}
-      activeOpacity={0.8}
-    >
-      <Text style={[styles.discLabelText, isActive && styles.activeDiscLabelText]}>
+    <TouchableOpacity onPress={onPress} activeOpacity={0.8} style={styles.discContainer}>
+      <Card
+        style={[
+          styles.discCard,
+          isActive ? { backgroundColor: getThemeColor(), borderColor: colors.cardBorder } : { backgroundColor: colors.cardBg, borderColor: colors.cardBorder },
+          { marginRight: 0 }
+        ]}
+      >
+        <IconSymbol
+          name={getIcon()}
+          size={24}
+          color={isActive ? "#000000" : getThemeColor()}
+        />
+        {isActive && (
+          <View style={[styles.pointsBadge, { backgroundColor: colors.cardBorder, borderColor: colors.cardBorder, borderWidth: 1 }]}>
+            <Text style={[styles.pointsText, { color: getThemeColor(), fontWeight: "900" }]}>1000</Text>
+          </View>
+        )}
+      </Card>
+      <Text style={[styles.discLabelText, { color: isActive ? getThemeColor() : colors.textMuted }]}>
         {label}
       </Text>
-      {isActive && (
-        <View style={styles.pointsBadge}>
-          <Text style={styles.pointsText}>+100</Text>
-        </View>
-      )}
     </TouchableOpacity>
   );
 };
+
+const MascotIllustration = () => (
+  <Svg width={70} height={50} viewBox="0 0 100 60" style={{ marginRight: 8 }}>
+    <Path
+      d="M 30,10 C 35,5 37,5 42,10 C 46,15 48,22 52,25 C 58,26 65,24 70,28 C 75,32 75,35 70,40 C 65,45 58,45 52,48 C 48,53 46,58 42,60 C 37,60 35,58 30,53 C 25,48 18,48 12,45 C 7,42 7,38 12,34 C 18,30 25,32 30,26 Z"
+      fill="#CBA6F7"
+    />
+    <Circle cx="26" cy="30" r="2.5" fill="#000000" />
+    <Circle cx="38" cy="28" r="2.5" fill="#000000" />
+    <Circle cx="22" cy="34" r="3" fill="#F38BA8" opacity="0.6" />
+    <Circle cx="42" cy="32" r="3" fill="#F38BA8" opacity="0.6" />
+    <Path d="M 30,34 Q 32,37 34,34" fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" />
+    <Path d="M 48,38 Q 55,35 60,38" fill="none" stroke="#89B4FA" strokeWidth="4" strokeLinecap="round" />
+    <Path
+      d="M 60,40 C 60,25 78,25 78,40 Z"
+      fill="#F9E2AF"
+    />
+    <Rect x="58" y="40" width="22" height="4" rx="2" fill="#F9E2AF" />
+    <Circle cx="69" cy="45" r="3" fill="#EBA0B3" />
+  </Svg>
+);
+
+const NotificationBanner = ({ colors }: { colors: any }) => {
+  return (
+    <View style={[styles.bannerContainer, { backgroundColor: "#A6E3A1", borderColor: colors.cardBorder }]}>
+      <View style={styles.bannerLeft}>
+        <MascotIllustration />
+        <Text style={[styles.bannerText, { color: "#000000" }]}>
+          {"Don't miss notifications from Sero"}
+        </Text>
+      </View>
+
+      <View style={styles.allowBtnShadowContainer}>
+        <View style={[styles.allowBtnShadow, { backgroundColor: "#000000" }]} />
+        <TouchableOpacity activeOpacity={0.9} style={[styles.allowBtn, { backgroundColor: "#FFFFFF", borderColor: colors.cardBorder }]}>
+          <Text style={[styles.allowBtnText, { color: "#000000" }]}>Allow</Text>
+          <IconSymbol name="bell.fill" size={12} color="#F9E2AF" style={{ marginLeft: 6 }} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -58,6 +141,52 @@ export default function HomeScreen() {
   const [activeEvents, setActiveEvents] = useState<string[]>([]);
   const [activeDisc, setActiveDisc] = useState("MATH");
   const bannerPulse = useRef(new Animated.Value(1)).current;
+
+  const { isQueued, queueTime, disciplineMode, matchReadyData, startQueue, cancelQueue } = useMatchmakingStore();
+  const [showMatchReadyModal, setShowMatchReadyModal] = useState(false);
+  const [matchInfo, setMatchInfo] = useState<any>(null);
+  const spinAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (isQueued) {
+      Animated.loop(
+        Animated.timing(spinAnim, {
+          toValue: 1,
+          duration: 3500,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      spinAnim.setValue(0);
+    }
+  }, [isQueued]);
+
+  const spinRotation = spinAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"],
+  });
+
+  useEffect(() => {
+    if (matchReadyData) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+      setMatchInfo(matchReadyData);
+      setShowMatchReadyModal(true);
+
+      const navTimer = setTimeout(() => {
+        router.replace({
+          pathname: "/battle",
+          params: {
+            playerId: profile?.id,
+            roomId: matchReadyData.roomId
+          }
+        });
+        setShowMatchReadyModal(false);
+        cancelQueue();
+      }, 1500);
+
+      return () => clearTimeout(navTimer);
+    }
+  }, [matchReadyData, profile]);
 
   useEffect(() => {
     checkAuth();
@@ -150,10 +279,7 @@ export default function HomeScreen() {
   const handleFindMatch = () => {
     if (!profile) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push({
-      pathname: "/battle",
-      params: { playerId: profile.id }
-    });
+    startQueue(profile.id, activeDisc);
   };
 
   const handlePrivateMatch = () => {
@@ -169,9 +295,9 @@ export default function HomeScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.loadingContainer, { backgroundColor: "#161616" }]}>
-        <ActivityIndicator size="large" color="#8AFF29" />
-        <Text style={styles.loadingText}>Loading Profile...</Text>
+      <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={[styles.loadingText, { color: colors.textMuted }]}>Loading Profile...</Text>
       </View>
     );
   }
@@ -180,46 +306,45 @@ export default function HomeScreen() {
     return (
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={[styles.keyboardContainer, { backgroundColor: "#161616" }]}
+        style={[styles.keyboardContainer, { backgroundColor: colors.background }]}
       >
         <SafeAreaView style={styles.onboardSafeArea}>
           <StatusBar style="light" />
           <View style={styles.onboardContent}>
-            <Text style={styles.brandTitle}>ELO</Text>
-            <Text style={styles.brandSubtitle}>1v1 MENTAL MATH DUEL</Text>
+            <Text style={[styles.brandTitle, { color: colors.primary }]}>ELO</Text>
+            <Text style={[styles.brandSubtitle, { color: colors.textMuted }]}>1v1 MENTAL MATH DUEL</Text>
 
-            <View style={styles.card}>
-              <Text style={styles.onboardLabel}>Choose your username</Text>
-              <Text style={styles.onboardDesc}>
+            <View style={{ marginBottom: Spacing.xl }}>
+              <ShapesComposition type="slide1" size={120} />
+            </View>
+
+            <Card style={styles.card}>
+              <Text style={[styles.onboardLabel, { color: colors.text }]}>Choose your username</Text>
+              <Text style={[styles.onboardDesc, { color: colors.textMuted }]}>
                 This username will be visible on the global leaderboard. Max 14 characters.
               </Text>
 
               <TextInput
-                style={styles.input}
+                style={[styles.input, { backgroundColor: colors.background, borderColor: colors.cardBorder, color: colors.text }]}
                 value={usernameInput}
                 onChangeText={(text) => setUsernameInput(text.replace(/[^a-zA-Z0-9]/g, ""))}
                 placeholder="Username"
-                placeholderTextColor="rgba(255, 255, 255, 0.3)"
+                placeholderTextColor={colors.textMuted}
                 maxLength={14}
                 autoCapitalize="none"
                 autoCorrect={false}
               />
 
-              {errorMsg ? <Text style={styles.errorText}>{errorMsg}</Text> : null}
+              {errorMsg ? <Text style={[styles.errorText, { color: colors.accent }]}>{errorMsg}</Text> : null}
 
-              <TouchableOpacity
-                style={styles.submitBtn}
+              <Button
+                label="CLAIM USERNAME"
                 onPress={handleOnboard}
                 disabled={submitting}
-                activeOpacity={0.8}
-              >
-                {submitting ? (
-                  <ActivityIndicator color="#000" />
-                ) : (
-                  <Text style={styles.submitBtnText}>CLAIM USERNAME</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+                loading={submitting}
+                style={styles.submitBtn}
+              />
+            </Card>
           </View>
         </SafeAreaView>
       </KeyboardAvoidingView>
@@ -227,68 +352,63 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: "#161616" }]}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
       <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
-        {/* Streak Notification Banner */}
-        <View style={styles.streakWarning}>
-          <Text style={styles.streakWarningText}>⚠️ Turn on alerts to preserve your daily streaks!</Text>
-        </View>
+        <NotificationBanner colors={colors} />
 
-        {/* Global Telemetry Capsules */}
-        <View style={styles.capsuleRow}>
-          <View style={styles.capsule}>
-            <Text style={styles.capsuleIcon}>π</Text>
-            <Text style={styles.capsuleValue}>{profile.credits} Pies</Text>
-          </View>
-          <View style={styles.capsule}>
-            <Text style={styles.capsuleIcon}>🔥</Text>
-            <Text style={styles.capsuleValue}>{profile.dailyStreak} Streaks</Text>
-          </View>
-          <View style={styles.capsule}>
-            <Text style={styles.capsuleIcon}>⬡</Text>
-            <Text style={styles.capsuleValue}>{profile.xp} XP</Text>
-          </View>
-        </View>
+        <StatCapsuleRow
+          stats={[
+            { icon: "dollarsign.circle.fill", value: `${profile.credits} Coins` },
+            { icon: "bolt", value: `${profile.dailyStreak} Streaks` },
+            { icon: "star", value: `${profile.xp} XP` },
+          ]}
+        />
 
-        {/* Online Status tray */}
-        <Text style={styles.sectionLabel}>ONLINE DUELISTS</Text>
+        <SectionLabel>ONLINE DUELISTS</SectionLabel>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.onlineTray}>
           <View style={styles.onlineUser}>
-            <View style={[styles.onlineRing, { borderColor: "#8AFF29" }]}>
-              <Text style={styles.onlineInitial}>U</Text>
+            <View style={styles.avatarShadowContainer}>
+              <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
+              <View style={[styles.onlineRing, { borderColor: colors.primary, backgroundColor: colors.cardBg }]}>
+                <IconSymbol name="star" size={18} color={colors.accent} />
+              </View>
             </View>
-            <Text style={styles.onlineUsername}>YOU</Text>
+            <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>YOU</Text>
           </View>
           <View style={styles.onlineUser}>
-            <View style={[styles.onlineRing, { borderColor: "#262626" }]}>
-              <Text style={styles.onlineInitial}>A</Text>
+            <View style={styles.avatarShadowContainer}>
+              <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
+              <View style={[styles.onlineRing, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+                <IconSymbol name="bolt" size={18} color={colors.primary} />
+              </View>
             </View>
-            <Text style={styles.onlineUsername}>UserA</Text>
+            <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>UserA</Text>
           </View>
           <View style={styles.onlineUser}>
-            <View style={[styles.onlineRing, { borderColor: "#262626" }]}>
-              <Text style={styles.onlineInitial}>B</Text>
+            <View style={styles.avatarShadowContainer}>
+              <View style={[styles.avatarShadow, { backgroundColor: "#000" }]} />
+              <View style={[styles.onlineRing, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}>
+                <IconSymbol name="psychology" size={18} color={colors.success} />
+              </View>
             </View>
-            <Text style={styles.onlineUsername}>UserB</Text>
+            <Text style={[styles.onlineUsername, { color: colors.textMuted }]}>UserB</Text>
           </View>
         </ScrollView>
 
-        {/* Starter Quest Progress engine */}
-        <View style={styles.questEngine}>
-          <Text style={styles.questEngineTitle}>Starter Quest</Text>
+        <Card style={styles.questEngine}>
+          <Text style={[styles.questEngineTitle, { color: colors.textMuted }]}>Starter Quest</Text>
           <View style={styles.stepsHorizon}>
-            <Text style={styles.activeQuestStep}>Puzzle</Text>
-            <View style={styles.activeQuestLine} />
-            <Text style={styles.inactiveQuestStep}>Memory</Text>
-            <View style={styles.inactiveQuestLine} />
-            <Text style={styles.inactiveQuestStep}>Math</Text>
-            <Text style={styles.rewardCrateIcon}>🎁</Text>
+            <Text style={[styles.activeQuestStep, { color: colors.primary }]}>Puzzle</Text>
+            <View style={[styles.activeQuestLine, { backgroundColor: colors.primary }]} />
+            <Text style={[styles.inactiveQuestStep, { color: colors.textMuted }]}>Memory</Text>
+            <View style={[styles.inactiveQuestLine, { backgroundColor: colors.cardBorder }]} />
+            <Text style={[styles.inactiveQuestStep, { color: colors.textMuted }]}>Math</Text>
+            <IconSymbol name="card-giftcard" size={16} color={colors.primary} style={{ marginLeft: 8 }} />
           </View>
-        </View>
+        </Card>
 
-        {/* Discipline Mode selector grid */}
-        <Text style={styles.sectionLabel}>DUEL DISCIPLINE</Text>
+        <SectionLabel>DUEL DISCIPLINE</SectionLabel>
         <View style={styles.discGrid}>
           {["MATH", "MEMORY", "PUZZLE", "LOGIC"].map(d => (
             <DisciplineCard
@@ -296,136 +416,246 @@ export default function HomeScreen() {
               label={d}
               isActive={activeDisc === d}
               onPress={() => setActiveDisc(d)}
+              colors={colors}
             />
           ))}
         </View>
 
-        {/* Duel variants cards */}
-        <Text style={styles.sectionLabel}>CHALLENGE DUELS</Text>
+        <SectionLabel>CHALLENGE DUELS</SectionLabel>
         <View style={styles.duelCardContainer}>
-          <TouchableOpacity style={styles.duelVariantCard} onPress={handleFindMatch}>
-            <View style={styles.variantHeader}>
-              <Text style={styles.variantTitle}>Sprint Duels</Text>
-              <View style={styles.badgeAmber}>
-                <Text style={styles.badgeAmberText}>JUST PLAYED</Text>
+          <Card style={styles.duelVariantCard} onPress={handleFindMatch}>
+            <View style={styles.cardRow}>
+              <View style={{ flex: 1, paddingRight: 8 }}>
+                <View style={styles.variantHeader}>
+                  <Text style={[styles.variantTitle, { color: colors.text }]}>Sprint Duels</Text>
+                  <View style={[styles.badgeAmber, { backgroundColor: colors.accent }]}>
+                    <Text style={[styles.badgeAmberText, { color: colors.onPrimary }]}>LIVE</Text>
+                  </View>
+                </View>
+                <Text style={[styles.variantDescription, { color: colors.textMuted }]}>
+                  Solve math questions under 60s.
+                </Text>
               </View>
+              <ShapesComposition type="sprint" />
             </View>
-            <Text style={styles.variantDescription}>
-              High-velocity race to solve mathematical anomalies in under 60 seconds.
-            </Text>
-          </TouchableOpacity>
+          </Card>
 
-          <TouchableOpacity style={styles.duelVariantCard} onPress={() => router.push("/tournament-lobby")}>
-            <View style={styles.variantHeader}>
-              <Text style={styles.variantTitle}>Fast & First Duels</Text>
+          <Card style={styles.duelVariantCard} onPress={() => router.push("/tournament-lobby")}>
+            <View style={styles.cardRow}>
+              <View style={{ flex: 1, paddingRight: 8 }}>
+                <View style={styles.variantHeader}>
+                  <Text style={[styles.variantTitle, { color: colors.text }]}>Fast & First Duels</Text>
+                </View>
+                <Text style={[styles.variantDescription, { color: colors.textMuted }]}>
+                  First correct response wins.
+                </Text>
+              </View>
+              <ShapesComposition type="first" />
             </View>
-            <Text style={styles.variantDescription}>
-              Synchronized matches where the first response captures point dominance.
-            </Text>
-          </TouchableOpacity>
+          </Card>
         </View>
 
-        {/* Referral Card */}
-        <TouchableOpacity style={styles.referralCard} onPress={triggerReferral}>
-          <Text style={styles.referralTitle}>⚡ Invite Friends — Claim 50 Pies</Text>
-          <Text style={styles.referralDesc}>Share your custom link to boost e-sport credentials.</Text>
-        </TouchableOpacity>
+        <Card style={styles.referralCard} onPress={triggerReferral} variant="dashed">
+          <Text style={[styles.referralTitle, { color: colors.primary }]}>Invite Friends — Claim 50 Pies</Text>
+          <Text style={[styles.referralDesc, { color: colors.textMuted }]}>Share your custom link to boost e-sport credentials.</Text>
+        </Card>
 
-        {/* Options buttons */}
         <View style={styles.navBlock}>
-          <TouchableOpacity style={styles.optionBtn} onPress={() => router.push("/battle-pass")}>
-            <Text style={styles.optionText}>⚔️ COMBAT PASS</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.optionBtn} onPress={() => router.push("/analytics")}>
-            <Text style={styles.optionText}>📊 ANALYTICS HUD</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.optionBtn} onPress={() => router.push("/settings")}>
-            <Text style={styles.optionText}>⚙️ SETTINGS & OPTIONS</Text>
-          </TouchableOpacity>
+          <Button style={styles.optionBtn} label="COMBAT PASS" onPress={() => router.push("/battle-pass")} />
+          <Button style={styles.optionBtn} label="ANALYTICS HUD" onPress={() => router.push("/analytics")} />
+          <Button style={styles.optionBtn} label="SETTINGS & OPTIONS" onPress={() => router.push("/settings")} />
         </View>
       </ScrollView>
+
+      {/* Matchmaking Search Overlay */}
+      <Modal transparent visible={isQueued} animationType="slide">
+        <View style={styles.modalOverlay}>
+          <Card style={styles.matchmakingCard}>
+            <Animated.View style={{ transform: [{ rotate: spinRotation }], marginBottom: 20 }}>
+              <StarburstShape color={colors.primary} size={64} />
+            </Animated.View>
+            <Text style={[styles.queueTitle, { color: colors.text }]}>SEARCHING FOR OPPONENT</Text>
+            <Text style={[styles.queueSubtitle, { color: colors.textMuted }]}>Discipline: {disciplineMode}</Text>
+            <Text style={[styles.queueTimerText, { color: colors.primary }]}>{queueTime}s</Text>
+            <Button
+              label="CANCEL SEARCH"
+              onPress={cancelQueue}
+              style={{ marginTop: 24, backgroundColor: colors.danger, width: "100%" }}
+            />
+          </Card>
+        </View>
+      </Modal>
+
+      {/* Match Ready Ingress Viewport */}
+      <Modal transparent visible={showMatchReadyModal} animationType="fade">
+        <View style={[styles.modalOverlay, { backgroundColor: "#161616" }]}>
+          {matchInfo && (
+            <View style={styles.ingressContainer}>
+              <Text style={[styles.ingressTitle, { color: colors.primary }]}>MATCH FOUND</Text>
+              
+              <View style={styles.vsContainer}>
+                {/* Player Profile */}
+                <View style={styles.profileBox}>
+                  <View style={[styles.avatarCircle, { backgroundColor: colors.cardBg, borderColor: colors.primary }]}>
+                    <Text style={[styles.avatarText, { color: colors.text }]}>
+                      {profile?.username ? profile.username.slice(0, 2).toUpperCase() : "ME"}
+                    </Text>
+                  </View>
+                  <Text style={[styles.profileName, { color: colors.text }]}>{profile?.username || "You"}</Text>
+                  <Text style={[styles.profileElo, { color: colors.textMuted }]}>{profile?.elo || 1000} ELO</Text>
+                </View>
+
+                <Text style={[styles.vsText, { color: colors.accent }]}>VS</Text>
+
+                {/* Opponent Profile */}
+                <View style={styles.profileBox}>
+                  <View style={[styles.avatarCircle, { backgroundColor: colors.cardBg, borderColor: colors.accent }]}>
+                    <Text style={[styles.avatarText, { color: colors.text }]}>
+                      {matchInfo.opponentName ? matchInfo.opponentName.slice(0, 2).toUpperCase() : "OP"}
+                    </Text>
+                  </View>
+                  <Text style={[styles.profileName, { color: colors.text }]}>{matchInfo.opponentName}</Text>
+                  <Text style={[styles.profileElo, { color: colors.textMuted }]}>{matchInfo.opponentElo} ELO</Text>
+                </View>
+              </View>
+
+              <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: 40 }} />
+              <Text style={[styles.ingressLoadingText, { color: colors.textMuted }]}>
+                Synchronizing battle state engines...
+              </Text>
+            </View>
+          )}
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
-  scrollContainer: { paddingBottom: 40 },
+  safeArea: {
+    flex: 1,
+    paddingTop: Platform.OS === "android" ? RNStatusBar.currentHeight : 0,
+  },
+  scrollContainer: { paddingBottom: Spacing.xxxl },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { color: "#8E8E93", marginTop: 12, fontSize: 14, fontFamily: "monospace" },
+  loadingText: { marginTop: 12, fontSize: 14, fontFamily: "monospace" },
   keyboardContainer: { flex: 1 },
   onboardSafeArea: { flex: 1 },
-  onboardContent: { flex: 1, paddingHorizontal: 24, justifyContent: "center", alignItems: "center" },
-  brandTitle: { fontSize: 44, fontWeight: "900", letterSpacing: 8, color: "#8AFF29" },
-  brandSubtitle: { fontSize: 12, fontWeight: "700", letterSpacing: 4, color: "#8E8E93", marginBottom: 32 },
-  card: { width: "100%", backgroundColor: "#262626", borderRadius: 20, padding: 24 },
-  onboardLabel: { fontSize: 18, fontWeight: "700", color: "#FFFFFF", marginBottom: 8 },
-  onboardDesc: { fontSize: 13, color: "#8E8E93", lineHeight: 18, marginBottom: 20 },
+  onboardContent: { flex: 1, paddingHorizontal: Spacing.xl, justifyContent: "center", alignItems: "center" },
+  brandTitle: { ...Typography.hero },
+  brandSubtitle: { fontSize: 12, fontWeight: "700", letterSpacing: 4, marginBottom: Spacing.xxl },
+  card: { width: "100%", padding: Spacing.xl },
+  onboardLabel: { fontSize: 18, fontWeight: "700", marginBottom: 8 },
+  onboardDesc: { fontSize: 13, lineHeight: 18, marginBottom: 20 },
   input: {
-    width: "100%", height: 50, backgroundColor: "#161616", borderWidth: 1,
-    borderColor: "#333", borderRadius: 12, paddingHorizontal: 16, fontSize: 15,
-    color: "#FFFFFF", marginBottom: 16
+    width: "100%", height: 50, borderWidth: 2,
+    borderRadius: Radius.md, paddingHorizontal: Spacing.lg, fontSize: 15,
+    marginBottom: Spacing.lg
   },
-  errorText: { color: "#FFD400", fontSize: 13, marginBottom: 16 },
-  submitBtn: { width: "100%", height: 50, backgroundColor: "#8AFF29", borderRadius: 12, justifyContent: "center", alignItems: "center" },
-  submitBtnText: { color: "#000000", fontSize: 15, fontWeight: "800", letterSpacing: 1 },
-
-  // Streak warning
-  streakWarning: { backgroundColor: "#FFD400", paddingVertical: 8, paddingHorizontal: 16, alignItems: "center" },
-  streakWarningText: { color: "#000000", fontSize: 11, fontWeight: "800" },
-
-  // Telemetry capsules
-  capsuleRow: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 16, paddingTop: 20, marginBottom: 20 },
-  capsule: { flexDirection: "row", backgroundColor: "#262626", borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6, alignItems: "center", borderWidth: 1, borderColor: "#333" },
-  capsuleIcon: { color: "#8AFF29", fontSize: 14, fontWeight: "800", marginRight: 6 },
-  capsuleValue: { color: "#FFFFFF", fontSize: 12, fontWeight: "700" },
-
-  // Status Tray
-  sectionLabel: { color: "#8E8E93", fontSize: 11, fontWeight: "800", letterSpacing: 1.5, marginLeft: 16, marginBottom: 10 },
-  onlineTray: { paddingLeft: 16, marginBottom: 24, flexDirection: "row" },
-  onlineUser: { alignItems: "center", marginRight: 16 },
-  onlineRing: { width: 44, height: 44, borderRadius: 22, borderWidth: 2, justifyContent: "center", alignItems: "center", backgroundColor: "#262626" },
-  onlineInitial: { color: "#FFFFFF", fontSize: 14, fontWeight: "700" },
-  onlineUsername: { color: "#8E8E93", fontSize: 10, fontWeight: "600", marginTop: 4 },
-
-  // Quest Engine
-  questEngine: { backgroundColor: "#262626", marginHorizontal: 16, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#333", marginBottom: 24 },
-  questEngineTitle: { color: "#8E8E93", fontSize: 11, fontWeight: "800", textTransform: "uppercase", marginBottom: 12 },
+  errorText: { fontSize: 13, marginBottom: Spacing.lg },
+  submitBtn: { width: "100%", height: 50 },
+  bannerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    borderBottomWidth: 3,
+  },
+  bannerLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    paddingRight: Spacing.sm,
+  },
+  bannerText: {
+    fontSize: 12,
+    fontWeight: "900",
+    lineHeight: 16,
+    flex: 1,
+  },
+  allowBtnShadowContainer: {
+    position: "relative",
+    width: 80,
+    height: 34,
+  },
+  allowBtnShadow: {
+    position: "absolute",
+    top: 3,
+    left: 3,
+    width: 77,
+    height: 31,
+    borderRadius: Radius.sm,
+  },
+  allowBtn: {
+    width: 77,
+    height: 31,
+    borderWidth: 2,
+    borderRadius: Radius.sm,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  allowBtnText: {
+    fontSize: 11,
+    fontWeight: "900",
+  },
+  onlineTray: { paddingLeft: Spacing.lg, marginBottom: Spacing.xl, flexDirection: "row" },
+  onlineUser: { alignItems: "center", marginRight: Spacing.lg + 4 },
+  avatarShadowContainer: { position: "relative", width: 48, height: 48, marginBottom: 6 },
+  avatarShadow: { position: "absolute", top: 4, left: 4, width: 44, height: 44, borderRadius: Radius.md },
+  onlineRing: { width: 44, height: 44, borderRadius: Radius.md, borderWidth: 2.5, justifyContent: "center", alignItems: "center" },
+  onlineInitial: { fontSize: 14, fontWeight: "700" },
+  onlineUsername: { fontSize: 10, fontWeight: "600", marginTop: 4 },
+  questEngine: { marginHorizontal: Spacing.lg, marginBottom: Spacing.xl },
+  questEngineTitle: { fontSize: 11, fontWeight: "800", textTransform: "uppercase", marginBottom: Spacing.md },
   stepsHorizon: { flexDirection: "row", alignItems: "center" },
-  activeQuestStep: { color: "#8AFF29", fontSize: 13, fontWeight: "800" },
-  inactiveQuestStep: { color: "#8E8E93", fontSize: 13, fontWeight: "700" },
-  activeQuestLine: { flex: 1, height: 2, backgroundColor: "#8AFF29", marginHorizontal: 8 },
-  inactiveQuestLine: { flex: 1, height: 2, backgroundColor: "#333", marginHorizontal: 8 },
-  rewardCrateIcon: { fontSize: 16, marginLeft: 8 },
-
-  // Selector grid
-  discGrid: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 16, marginBottom: 24 },
-  discCard: {
-    width: "22%", height: 85, backgroundColor: "#262626", borderRadius: 16,
-    justifyContent: "center", alignItems: "center", borderWidth: 2, borderColor: "transparent"
+  activeQuestStep: { fontSize: 13, fontWeight: "800" },
+  inactiveQuestStep: { fontSize: 13, fontWeight: "700" },
+  activeQuestLine: { flex: 1, height: 2, marginHorizontal: 8 },
+  inactiveQuestLine: { flex: 1, height: 2, marginHorizontal: 8 },
+  discGrid: { flexDirection: "row", justifyContent: "space-between", paddingHorizontal: Spacing.lg, marginBottom: Spacing.xl },
+  discContainer: {
+    width: "23%",
+    alignItems: "center",
   },
-  activeDiscCard: { borderColor: "#8AFF29" },
-  discLabelText: { fontSize: 11, fontWeight: "800", color: "#8E8E93" },
-  activeDiscLabelText: { color: "#8AFF29" },
-  pointsBadge: { position: "absolute", bottom: -6, backgroundColor: "#8AFF29", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 6 },
-  pointsText: { fontSize: 8, fontWeight: "900", color: "#000" },
-
-  // Duel variant cards
-  duelCardContainer: { paddingHorizontal: 16, marginBottom: 20 },
-  duelVariantCard: { backgroundColor: "#262626", borderRadius: 16, padding: 16, borderWidth: 1, borderColor: "#333", marginBottom: 12 },
-  variantHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 8 },
-  variantTitle: { color: "#FFFFFF", fontSize: 15, fontWeight: "700" },
-  badgeAmber: { backgroundColor: "#FFD400", paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
-  badgeAmberText: { color: "#000000", fontSize: 9, fontWeight: "900" },
-  variantDescription: { color: "#8E8E93", fontSize: 12, lineHeight: 16 },
-
-  // Referral Card
-  referralCard: { backgroundColor: "#262626", marginHorizontal: 16, padding: 16, borderRadius: 16, borderWidth: 1, borderColor: "#333", borderStyle: "dashed", marginBottom: 24 },
-  referralTitle: { color: "#8AFF29", fontSize: 14, fontWeight: "800", marginBottom: 4 },
-  referralDesc: { color: "#8E8E93", fontSize: 12 },
-
-  // Option buttons
-  navBlock: { paddingHorizontal: 16 },
-  optionBtn: { width: "100%", height: 52, backgroundColor: "#262626", borderWidth: 1, borderColor: "#333", borderRadius: 16, justifyContent: "center", alignItems: "center", marginBottom: 12 },
-  optionText: { color: "#FFFFFF", fontSize: 13, fontWeight: "800", letterSpacing: 0.5 }
+  discCard: {
+    width: "100%",
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 0,
+    marginBottom: 8,
+  },
+  discLabelText: { fontSize: 10, fontWeight: "800", textTransform: "uppercase" },
+  pointsBadge: { position: "absolute", bottom: -6, paddingHorizontal: 6, paddingVertical: 1, borderRadius: 6 },
+  pointsText: { fontSize: 8, fontWeight: "900" },
+  duelCardContainer: { paddingHorizontal: Spacing.lg, marginBottom: 20 },
+  duelVariantCard: { marginBottom: Spacing.md, marginRight: 0 },
+  cardRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  variantHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 4 },
+  variantTitle: { fontSize: 15, fontWeight: "700" },
+  badgeAmber: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
+  badgeAmberText: { fontSize: 9, fontWeight: "900" },
+  variantDescription: { fontSize: 12, lineHeight: 16 },
+  referralCard: { marginHorizontal: Spacing.lg, marginBottom: Spacing.xl },
+  referralTitle: { fontSize: 14, fontWeight: "800", marginBottom: 4 },
+  referralDesc: { fontSize: 12 },
+  navBlock: { paddingHorizontal: Spacing.lg },
+  optionBtn: { width: "100%", height: 52, marginBottom: Spacing.md },
+  modalOverlay: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.85)" },
+  matchmakingCard: { width: "80%", padding: 24, alignItems: "center" },
+  queueTitle: { fontSize: 16, fontWeight: "800", marginBottom: 8, letterSpacing: 1 },
+  queueSubtitle: { fontSize: 12, marginBottom: 12 },
+  queueTimerText: { fontSize: 28, fontWeight: "900" },
+  ingressContainer: { alignItems: "center", padding: 24 },
+  ingressTitle: { fontSize: 24, fontWeight: "900", letterSpacing: 3, marginBottom: 40 },
+  vsContainer: { flexDirection: "row", alignItems: "center", justifyContent: "space-around", width: "100%" },
+  profileBox: { alignItems: "center", width: 120 },
+  avatarCircle: { width: 70, height: 70, borderRadius: 35, borderWidth: 3, justifyContent: "center", alignItems: "center", marginBottom: 12 },
+  avatarText: { fontSize: 20, fontWeight: "800" },
+  profileName: { fontSize: 14, fontWeight: "700", textAlign: "center", marginBottom: 4 },
+  profileElo: { fontSize: 11, fontWeight: "600" },
+  vsText: { fontSize: 24, fontWeight: "900", fontStyle: "italic", marginHorizontal: 20 },
+  ingressLoadingText: { fontSize: 12, marginTop: 12 }
 });

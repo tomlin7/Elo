@@ -19,6 +19,8 @@ import { getBackendUrls } from "../src/utils/auth.ts";
 import { decodeServerState, encodeClientAction, MatchState } from "../src/utils/protobuf.ts";
 import { StatusBar } from "expo-status-bar";
 import * as Haptics from "expo-haptics";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
 
 export default function PrivateLobbyScreen() {
   const router = useRouter();
@@ -65,16 +67,14 @@ export default function PrivateLobbyScreen() {
         const update = decodeServerState(buffer);
 
         if (update.privateRoomCode && update.state === MatchState.MATCH_STATE_UNSPECIFIED) {
-          // Lobby created, waiting for opponent
           setRoomCode(update.privateRoomCode);
           setMode("waiting");
         } else if (update.state === MatchState.MATCH_STATE_COUNTDOWN || update.state === MatchState.MATCH_STATE_ACTIVE) {
-          // Game started! Transition immediately to battle
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-          if (wsRef.current) wsRef.current.close(); // Close this temporary config connection
+          if (wsRef.current) wsRef.current.close();
           router.replace({
             pathname: "/battle",
-            params: { playerId: profile.id, roomId: update.roomId } // Will trigger reconnection in battle screen
+            params: { playerId: profile.id, roomId: update.roomId }
           });
         } else if (update.winnerId === "error_invalid_code") {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
@@ -158,26 +158,24 @@ export default function PrivateLobbyScreen() {
             <Text style={[styles.title, { color: colors.text }]}>PRIVATE DUEL</Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>Play custom matches with friends</Text>
 
-            <TouchableOpacity
-              style={[styles.primaryButton, { backgroundColor: colors.primary }]}
+            <Button
+              label="CREATE CUSTOM ROOM"
               onPress={() => setMode("create")}
-            >
-              <Text style={styles.buttonText}>CREATE CUSTOM ROOM</Text>
-            </TouchableOpacity>
+              style={{ marginBottom: 12 }}
+            />
 
-            <TouchableOpacity
-              style={[styles.secondaryButton, { borderColor: colors.cardBorder, backgroundColor: colors.cardBg }]}
+            <Button
+              label="JOIN PRIVATE ROOM"
               onPress={() => setMode("join")}
-            >
-              <Text style={[styles.secondaryButtonText, { color: colors.text }]}>JOIN PRIVATE ROOM</Text>
-            </TouchableOpacity>
+              variant="secondary"
+              style={{ marginBottom: 36 }}
+            />
 
-            <TouchableOpacity
-              style={[styles.backButton, { borderTopColor: colors.cardBorder }]}
+            <Button
+              label="BACK TO MAIN MENU"
               onPress={() => router.replace("/(tabs)")}
-            >
-              <Text style={[styles.backButtonText, { color: colors.textMuted }]}>BACK TO MAIN MENU</Text>
-            </TouchableOpacity>
+              variant="ghost"
+            />
           </View>
         );
 
@@ -187,58 +185,58 @@ export default function PrivateLobbyScreen() {
             <Text style={[styles.title, { color: colors.text }]}>ROOM SETTINGS</Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>Customize your duel modifiers</Text>
 
-            {/* Custom Rules Selection */}
-            <View style={[styles.settingRow, { borderBottomColor: colors.cardBorder }]}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Allow Multiplication</Text>
-              <TouchableOpacity
-                style={[styles.toggleBtn, allowMultiplication ? { backgroundColor: colors.primary } : { backgroundColor: "rgba(255,255,255,0.05)" }]}
-                onPress={() => setAllowMultiplication(!allowMultiplication)}
-              >
-                <Text style={styles.toggleText}>{allowMultiplication ? "YES" : "NO"}</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={[styles.settingRow, { borderBottomColor: colors.cardBorder }]}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Allow Division (Integer)</Text>
-              <TouchableOpacity
-                style={[styles.toggleBtn, allowDivision ? { backgroundColor: colors.primary } : { backgroundColor: "rgba(255,255,255,0.05)" }]}
-                onPress={() => setAllowDivision(!allowDivision)}
-              >
-                <Text style={styles.toggleText}>{allowDivision ? "YES" : "NO"}</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={[styles.settingRow, { borderBottomColor: colors.cardBorder }]}>
-              <Text style={[styles.settingLabel, { color: colors.text }]}>Round Duration</Text>
-              <View style={styles.durationSelector}>
-                {[30, 60, 120].map((d) => (
-                  <TouchableOpacity
-                    key={d}
-                    style={[
-                      styles.durationOption,
-                      duration === d ? { backgroundColor: colors.primary } : { backgroundColor: "rgba(255,255,255,0.05)" }
-                    ]}
-                    onPress={() => setDuration(d)}
-                  >
-                    <Text style={styles.durationText}>{d}s</Text>
-                  </TouchableOpacity>
-                ))}
+            <Card style={{ marginBottom: 20 }}>
+              <View style={[styles.settingRow, { borderBottomColor: colors.cardBorder, borderBottomWidth: 1 }]}>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>Allow Multiplication</Text>
+                <TouchableOpacity
+                  style={[styles.toggleBtn, { borderWidth: 2, borderColor: "#000" }, allowMultiplication ? { backgroundColor: colors.primary } : { backgroundColor: "rgba(255,255,255,0.05)" }]}
+                  onPress={() => setAllowMultiplication(!allowMultiplication)}
+                >
+                  <Text style={styles.toggleText}>{allowMultiplication ? "YES" : "NO"}</Text>
+                </TouchableOpacity>
               </View>
-            </View>
 
-            <TouchableOpacity
-              style={[styles.primaryButton, { backgroundColor: colors.primary, marginTop: 24 }]}
+              <View style={[styles.settingRow, { borderBottomColor: colors.cardBorder, borderBottomWidth: 1 }]}>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>Allow Division</Text>
+                <TouchableOpacity
+                  style={[styles.toggleBtn, { borderWidth: 2, borderColor: "#000" }, allowDivision ? { backgroundColor: colors.primary } : { backgroundColor: "rgba(255,255,255,0.05)" }]}
+                  onPress={() => setAllowDivision(!allowDivision)}
+                >
+                  <Text style={styles.toggleText}>{allowDivision ? "YES" : "NO"}</Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.settingRow}>
+                <Text style={[styles.settingLabel, { color: colors.text }]}>Round Duration</Text>
+                <View style={styles.durationSelector}>
+                  {[30, 60, 120].map((d) => (
+                    <TouchableOpacity
+                      key={d}
+                      style={[
+                        styles.durationOption,
+                        { borderWidth: 2, borderColor: "#000" },
+                        duration === d ? { backgroundColor: colors.primary } : { backgroundColor: "rgba(255,255,255,0.05)" }
+                      ]}
+                      onPress={() => setDuration(d)}
+                    >
+                      <Text style={styles.durationText}>{d}s</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </Card>
+
+            <Button
+              label="GENERATE ROOM CODE"
               onPress={handleCreateRoom}
-            >
-              <Text style={styles.buttonText}>GENERATE ROOM CODE</Text>
-            </TouchableOpacity>
+              style={{ marginTop: 12, marginBottom: 12 }}
+            />
 
-            <TouchableOpacity
-              style={styles.cancelLink}
+            <Button
+              label="CANCEL"
               onPress={() => setMode("menu")}
-            >
-              <Text style={[styles.cancelText, { color: colors.textMuted }]}>Cancel</Text>
-            </TouchableOpacity>
+              variant="ghost"
+            />
           </View>
         );
 
@@ -248,29 +246,27 @@ export default function PrivateLobbyScreen() {
             <Text style={[styles.title, { color: colors.text }]}>ROOM CREATED</Text>
             <Text style={[styles.subtitle, { color: colors.textMuted }]}>Share this 6-digit code with your opponent</Text>
 
-            <View style={[styles.codeBox, { backgroundColor: colors.cardBg, borderColor: colors.cardBorder }]}>
+            <Card style={styles.codeBox}>
               <Text style={[styles.codeText, { color: colors.accent }]}>{roomCode}</Text>
-            </View>
+            </Card>
 
-            <TouchableOpacity
-              style={[styles.primaryButton, { backgroundColor: colors.primary }]}
+            <Button
+              label="SHARE INVITE CODE"
               onPress={handleShareCode}
-            >
-              <Text style={styles.buttonText}>SHARE INVITE CODE</Text>
-            </TouchableOpacity>
+              style={{ marginBottom: 20 }}
+            />
 
-            <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: 32, marginBottom: 8 }} />
+            <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: 24, marginBottom: 8 }} />
             <Text style={[styles.waitingLabel, { color: colors.textMuted }]}>Waiting for opponent to connect...</Text>
 
-            <TouchableOpacity
-              style={styles.cancelLink}
+            <Button
+              label="FORFEIT / CLOSE ROOM"
               onPress={() => {
                 if (wsRef.current) wsRef.current.close();
                 setMode("menu");
               }}
-            >
-              <Text style={[styles.cancelText, { color: colors.textMuted }]}>Forfeit / Close Room</Text>
-            </TouchableOpacity>
+              variant="ghost"
+            />
           </View>
         );
 
@@ -278,7 +274,7 @@ export default function PrivateLobbyScreen() {
         return (
           <View style={styles.menuContainer}>
             <Text style={[styles.title, { color: colors.text }]}>JOIN ROOM</Text>
-            <Text style={[styles.subtitle, { color: colors.textMuted }]}>Enter your friend's 6-digit access code</Text>
+            <Text style={[styles.subtitle, { color: colors.textMuted }]}>{"Enter your friend's 6-digit access code"}</Text>
 
             <TextInput
               style={[styles.codeInput, { borderColor: colors.cardBorder, color: colors.text }]}
@@ -290,19 +286,17 @@ export default function PrivateLobbyScreen() {
               onChangeText={(text) => setJoinCode(text.replace(/[^0-9]/g, ""))}
             />
 
-            <TouchableOpacity
-              style={[styles.primaryButton, { backgroundColor: colors.primary, marginTop: 16 }]}
+            <Button
+              label="CONNECT & DUEL"
               onPress={handleJoinRoom}
-            >
-              <Text style={styles.buttonText}>CONNECT & DUEL</Text>
-            </TouchableOpacity>
+              style={{ marginTop: 16, marginBottom: 12 }}
+            />
 
-            <TouchableOpacity
-              style={styles.cancelLink}
+            <Button
+              label="BACK"
               onPress={() => setMode("menu")}
-            >
-              <Text style={[styles.cancelText, { color: colors.textMuted }]}>Back</Text>
-            </TouchableOpacity>
+              variant="ghost"
+            />
           </View>
         );
     }
@@ -356,56 +350,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 40,
   },
-  primaryButton: {
-    height: 60,
-    borderRadius: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    shadowColor: "#6366F1",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-    marginBottom: 12,
-  },
-  buttonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  secondaryButton: {
-    height: 60,
-    borderRadius: 16,
-    borderWidth: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 36,
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: "800",
-    letterSpacing: 1,
-  },
-  backButton: {
-    borderTopWidth: 1,
-    paddingTop: 24,
-    alignItems: "center",
-  },
-  backButtonText: {
-    fontSize: 14,
-    fontWeight: "700",
-    letterSpacing: 0.5,
-  },
   settingRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 18,
-    borderBottomWidth: 1,
+    paddingVertical: 14,
   },
   settingLabel: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
   },
   toggleBtn: {
@@ -436,20 +388,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "700",
   },
-  cancelLink: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  cancelText: {
-    fontSize: 15,
-    fontWeight: "700",
-  },
   codeBox: {
-    paddingVertical: 20,
-    borderRadius: 20,
-    borderWidth: 1,
     alignItems: "center",
     marginBottom: 24,
+    marginRight: 0,
   },
   codeText: {
     fontSize: 48,
@@ -463,7 +405,7 @@ const styles = StyleSheet.create({
   },
   codeInput: {
     height: 72,
-    borderWidth: 1,
+    borderWidth: 2,
     borderRadius: 18,
     fontSize: 36,
     fontWeight: "900",
